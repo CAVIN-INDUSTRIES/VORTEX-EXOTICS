@@ -1,0 +1,20 @@
+{
+  "name": "vex-website",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "pnpm --filter @vex/api dev",
+    "dev:web": "pnpm --filter @vex/web dev",
+    "dev:crm": "pnpm --filter @vex/crm dev",
+    "build": "pnpm -r run build",
+    "build:api": "pnpm --filter @vex/api build",
+    "build:web": "pnpm --filter @vex/web build",
+    "build:crm": "pnpm --filter @vex/crm build"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

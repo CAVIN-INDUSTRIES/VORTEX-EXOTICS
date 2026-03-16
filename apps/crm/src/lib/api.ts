@@ -48,6 +48,22 @@ export async function getLead(token: string, id: string) {
   return res.json();
 }
 
+export async function createLead(
+  token: string,
+  data: { source?: string; name?: string; email?: string; phone?: string; vehicleInterest?: string; notes?: string }
+) {
+  const res = await fetch(`${API_BASE}/leads`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(typeof err.message === "string" ? err.message : "Failed to create lead");
+  }
+  return res.json();
+}
+
 export async function updateLead(token: string, id: string, data: { status?: string; assignedToId?: string; notes?: string }) {
   const res = await fetch(`${API_BASE}/leads/${id}`, {
     method: "PATCH",

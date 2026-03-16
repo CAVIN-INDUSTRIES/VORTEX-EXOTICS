@@ -41,7 +41,14 @@ export default function CRMLoginPage() {
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: "100%", marginBottom: "1rem" }} />
         <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem" }}>Password</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: "100%", marginBottom: "1rem" }} />
-        {error && <p style={{ color: "#e57373", marginBottom: "0.5rem", fontSize: "0.9rem" }}>{error}</p>}
+        {error && (
+          <p style={{ color: "#e57373", marginBottom: "0.5rem", fontSize: "0.9rem" }}>{error}</p>
+        )}
+        {error && error.includes("Cannot reach API") && (
+          <p style={{ color: "var(--text-muted)", marginBottom: "0.5rem", fontSize: "0.8rem" }}>
+            Open <a href="http://localhost:3001/health" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>http://localhost:3001/health</a> in a new tab to check if the API is running. Restart the CRM dev server after changing <code style={{ fontSize: "0.75rem" }}>.env.local</code>.
+          </p>
+        )}
         <button type="submit" disabled={submitting} style={{ width: "100%", padding: "0.6rem", background: "var(--accent)", color: "#0d0d0d", border: "none", borderRadius: "6px", fontWeight: 600 }}>
           {submitting ? "Signing in…" : "Sign in"}
         </button>

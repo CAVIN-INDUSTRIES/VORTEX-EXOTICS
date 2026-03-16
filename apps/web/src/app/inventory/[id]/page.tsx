@@ -53,7 +53,8 @@ export default function InventoryDetailPage() {
   }
 
   const imageUrls = item.imageUrls ?? (Array.isArray(item.vehicle?.imageUrls) ? item.vehicle?.imageUrls : null) ?? [];
-  const primaryImage = imageUrls[0];
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const mainImage = imageUrls[selectedIndex];
 
   return (
     <>
@@ -65,15 +66,22 @@ export default function InventoryDetailPage() {
 
         <div className={styles.content}>
           <div className={styles.gallery}>
-            {primaryImage ? (
-              <img src={primaryImage} alt="" className={styles.heroImage} />
+            {mainImage ? (
+              <img src={mainImage} alt="" className={styles.heroImage} loading="eager" />
             ) : (
               <div className={styles.placeholder}>No image</div>
             )}
             {imageUrls.length > 1 && (
               <div className={styles.thumbnails}>
-                {imageUrls.slice(1, 5).map((url, i) => (
-                  <img key={i} src={url} alt="" />
+                {imageUrls.slice(0, 6).map((url, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={styles.thumb + (i === selectedIndex ? " " + styles.thumbActive : "")}
+                    onClick={() => setSelectedIndex(i)}
+                  >
+                    <img src={url} alt="" loading="lazy" />
+                  </button>
                 ))}
               </div>
             )}
@@ -110,11 +118,11 @@ export default function InventoryDetailPage() {
             )}
 
             <div className={styles.ctas}>
-              <Link href={`/build?inventoryId=${item.id}`} className={styles.ctaPrimary}>
-                Configure & buy
+              <Link href={`/checkout?inventoryId=${item.id}`} className={styles.ctaPrimary}>
+                Add to deal · Reserve / Pay deposit
               </Link>
-              <Link href={`/checkout?inventoryId=${item.id}`} className={styles.ctaSecondary}>
-                Reserve / Pay deposit
+              <Link href={`/build?inventoryId=${item.id}`} className={styles.ctaSecondary}>
+                Configure & customize
               </Link>
             </div>
           </div>

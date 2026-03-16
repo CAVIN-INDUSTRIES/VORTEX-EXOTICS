@@ -13,6 +13,51 @@
   margin-bottom: 1.5rem;
 }
 
+.costBreakdown {
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.breakdownTitle {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.breakdownRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.breakdownRow .credit {
+  color: #7cb342;
+}
+
+.breakdownTotal {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .section {
   background: var(--bg-card);
   border-radius: 8px;

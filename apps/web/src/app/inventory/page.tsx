@@ -148,7 +148,7 @@ export default function InventoryPage() {
                   <Link key={item.id} href={`/inventory/${item.id}`} className={styles.card}>
                     <div className={styles.cardImage}>
                       {imageUrl(item) ? (
-                        <img src={imageUrl(item)!} alt="" />
+                        <img src={imageUrl(item)!} alt="" loading="lazy" />
                       ) : (
                         <div className={styles.placeholder}>No image</div>
                       )}

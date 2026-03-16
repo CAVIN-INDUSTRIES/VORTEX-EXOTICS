@@ -161,6 +161,44 @@ export default function CheckoutPage() {
 
         {canSubmit && (
           <>
+            <section className={styles.costBreakdown}>
+              <h2 className={styles.breakdownTitle}>Cost breakdown</h2>
+              <div className={styles.breakdownRows}>
+                <div className={styles.breakdownRow}>
+                  <span>{displayVehicle ? `${displayVehicle.make} ${displayVehicle.model} ${displayVehicle.year}` : "Vehicle"}</span>
+                  <span>£{effectiveTotal.toLocaleString()}</span>
+                </div>
+                {buildMode && options.filter((o) => selectedOptions[o.category] === o.id).map((o) => (
+                  <div key={o.id} className={styles.breakdownRow}>
+                    <span>+ {o.name}</span>
+                    <span>+£{Number(o.priceDelta).toLocaleString()}</span>
+                  </div>
+                ))}
+                {shippingQuote && (
+                  <div className={styles.breakdownRow}>
+                    <span>Shipping</span>
+                    <span>£{shippingQuote.amount.toFixed(2)}</span>
+                  </div>
+                )}
+                {tradeInSnapshot && typeof (tradeInSnapshot as { estimatedValue?: number }).estimatedValue === "number" && (
+                  <div className={styles.breakdownRow}>
+                    <span>Trade-in credit</span>
+                    <span className={styles.credit}>-£{(tradeInSnapshot as { estimatedValue: number }).estimatedValue.toLocaleString()}</span>
+                  </div>
+                )}
+                {financeResult && (
+                  <div className={styles.breakdownRow}>
+                    <span>Financing (est. total)</span>
+                    <span>£{financeResult.totalAmount.toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+              <div className={styles.breakdownTotal}>
+                <span>Total{deposit ? " (deposit £" + Number(deposit).toLocaleString() + ")" : ""}</span>
+                <span>£{(effectiveTotal + (shippingQuote?.amount ?? 0) - (typeof (tradeInSnapshot as { estimatedValue?: number })?.estimatedValue === "number" ? (tradeInSnapshot as { estimatedValue: number }).estimatedValue : 0)).toLocaleString()}</span>
+              </div>
+            </section>
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Order summary</h2>
               <p className={styles.summaryLine}>

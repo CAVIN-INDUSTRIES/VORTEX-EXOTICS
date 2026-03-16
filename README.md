@@ -6,6 +6,7 @@ Luxury automotive marketplace: customer-facing site, build-your-own configurator
 
 - **Design:** [docs/plans/2025-03-15-vex-luxury-marketplace-design.md](docs/plans/2025-03-15-vex-luxury-marketplace-design.md)
 - **Implementation plan:** [docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md](docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md)
+- **Leads (SMS/email → CRM):** [docs/leads-webhooks.md](docs/leads-webhooks.md)
 
 ## Repo structure
 

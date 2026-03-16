@@ -21,7 +21,10 @@ export default function LeadsPage() {
 
   return (
     <main style={{ padding: "1.5rem", maxWidth: "1000px", margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Leads</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+        <h1 style={{ margin: 0, color: "var(--text-primary)" }}>Leads</h1>
+        <Link href="/leads/new" style={{ padding: "0.5rem 1rem", background: "var(--accent)", color: "#0d0d0d", borderRadius: "6px", fontWeight: 600, fontSize: "0.9rem" }}>Add lead</Link>
+      </div>
       <div style={{ marginBottom: "1rem" }}>
         <label style={{ marginRight: "0.5rem" }}>Status</label>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>

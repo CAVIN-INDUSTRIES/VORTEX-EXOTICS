@@ -15,14 +15,17 @@ import { dealAnalysisRouter } from "./routes/dealAnalysis.js";
 import { leadsRouter } from "./routes/leads.js";
 import { dashboardRouter } from "./routes/dashboard.js";
 import { customersRouter } from "./routes/customers.js";
+import { webhooksRouter } from "./routes/webhooks.js";
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const corsOrigin = process.env.CORS_ORIGIN;
+const isProd = process.env.NODE_ENV === "production";
 app.use(
   cors({
-    origin: corsOrigin
+    origin: isProd && corsOrigin
       ? corsOrigin.split(",").map((o) => o.trim())
       : true,
   })
@@ -62,5 +65,6 @@ app.use("/deal-analysis", dealAnalysisRouter);
 app.use("/leads", leadsRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/customers", customersRouter);
+app.use("/webhooks", webhooksRouter);
 
 export { app };

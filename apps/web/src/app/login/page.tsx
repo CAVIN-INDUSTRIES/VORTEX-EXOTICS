@@ -35,9 +35,9 @@ function LoginInner() {
   };
 
   return (
-    <main className={styles.main}>
+    <main id="main-content" className={styles.main}>
       <h1 className={styles.title}>Sign in</h1>
-      <p className={styles.subtitle}>Access your account and orders</p>
+      <p className={styles.subtitle}>Use your email and password.</p>
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>
           Email
@@ -67,7 +67,7 @@ function LoginInner() {
         </button>
       </form>
       <p className={styles.footer}>
-        Don&apos;t have an account? <Link href="/register">Register</Link>
+        New here? <Link href="/register">Create an account</Link>
       </p>
     </main>
   );
@@ -79,7 +79,7 @@ export default function LoginPage() {
       <Header />
       <Suspense
         fallback={
-          <main className={styles.main}>
+          <main id="main-content" className={styles.main}>
             <p className={styles.subtitle}>Loading sign-in…</p>
           </main>
         }

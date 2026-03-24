@@ -51,11 +51,20 @@
 
 .navLink {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: var(--text-secondary);
   transition: color 0.2s ease;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.15rem;
+}
+
+.navLink[aria-current="page"] {
+  color: var(--highlight);
+  font-weight: 600;
 }
 
 .navLink:hover {
@@ -66,10 +75,14 @@
 .cta {
   font-family: var(--font-montserrat), sans-serif;
   font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.6rem 1.1rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.15rem;
   background: linear-gradient(135deg, var(--accent-deep), var(--accent));
   color: #0a0906;
   border-radius: 2px;
@@ -98,10 +111,14 @@
 .ctaSecondary {
   font-family: var(--font-montserrat), sans-serif;
   font-weight: 700;
-  font-size: 0.76rem;
-  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 0.5rem 0.9rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
   background: transparent;
   color: var(--highlight);
   border: 1px solid var(--highlight);
@@ -116,12 +133,14 @@
 
 .logout {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.25rem 0;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
 }
 
 .logout:hover {
@@ -220,10 +239,13 @@
 
 .drawerLink {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-secondary);
-  padding: 0.9rem 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
   border-bottom: 1px solid var(--line);
 }
 

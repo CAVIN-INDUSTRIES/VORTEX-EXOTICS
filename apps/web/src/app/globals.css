@@ -95,3 +95,43 @@ button {
   cursor: pointer;
   font: inherit;
 }
+
+/* Easier UI: keyboard focus + skip link */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 200;
+  padding: 0.65rem 1rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  background: var(--accent-bright);
+  border: 2px solid var(--accent-deep);
+  border-radius: 6px;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  box-shadow: 0 0 0 3px var(--highlight-glow);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}

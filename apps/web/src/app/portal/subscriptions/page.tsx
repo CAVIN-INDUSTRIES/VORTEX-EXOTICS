@@ -78,7 +78,7 @@ export default function PortalSubscriptionsPage() {
     return (
       <>
         <Header />
-        <main className={styles.main}><p className={styles.loading}>Loading…</p></main>
+        <main id="main-content" className={styles.main}><p className={styles.loading}>Loading…</p></main>
       </>
     );
   }
@@ -86,7 +86,7 @@ export default function PortalSubscriptionsPage() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <Link href="/portal" className={styles.back}>← Portal</Link>
         <h1 className={styles.title}>Subscriptions</h1>
 

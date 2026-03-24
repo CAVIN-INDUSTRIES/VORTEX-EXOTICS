@@ -122,7 +122,7 @@ function CheckoutPageInner() {
     return (
       <>
         <Header />
-        <main className={styles.main}><p className={styles.loading}>Loading…</p></main>
+        <main id="main-content" className={styles.main}><p className={styles.loading}>Loading…</p></main>
       </>
     );
   }
@@ -131,7 +131,7 @@ function CheckoutPageInner() {
     return (
       <>
         <Header />
-        <main className={styles.main}>
+        <main id="main-content" className={styles.main}>
           <div className={styles.confirmation}>
             <h1 className={styles.confirmTitle}>Order placed</h1>
             <p className={styles.confirmId}>Order ID: {orderId}</p>
@@ -150,7 +150,7 @@ function CheckoutPageInner() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <h1 className={styles.title}>Checkout</h1>
 
         {noVehicle && !effectiveInventoryId && (
@@ -295,7 +295,7 @@ export default function CheckoutPage() {
       fallback={
         <>
           <Header />
-          <main className={styles.main}>
+          <main id="main-content" className={styles.main}>
             <p className={styles.loading}>Loading checkout…</p>
           </main>
         </>

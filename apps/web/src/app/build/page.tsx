@@ -9,7 +9,7 @@ import { formatUsd } from "@/lib/formatCurrency";
 import type { Vehicle } from "@/lib/api";
 import styles from "./build.module.css";
 
-const STEPS = ["Vehicle", "Paint", "Tyres", "Accessories", "Summary"];
+const STEPS = ["Car", "Paint", "Wheels", "Extras", "Review"];
 
 export const dynamic = "force-dynamic";
 
@@ -85,14 +85,14 @@ function BuildPageInner() {
 
   if (loading && !vehicle) {
     return (
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <p className={styles.loading}>Loading…</p>
       </main>
     );
   }
 
   return (
-    <main className={styles.main}>
+    <main id="main-content" className={styles.main}>
       <div className={styles.progress}>
         {STEPS.map((label, i) => (
           <button
@@ -231,7 +231,7 @@ export default function BuildPage() {
   return (
     <Suspense
       fallback={
-        <main className={styles.main}>
+        <main id="main-content" className={styles.main}>
           <p className={styles.loading}>Loading…</p>
         </main>
       }

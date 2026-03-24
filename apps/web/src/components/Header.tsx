@@ -3,21 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "./Header.module.css";
 
+/** Short labels, few choices — easier to scan on every screen size. */
 const NAV_LINKS = [
-  { href: "/inventory", label: "Exotics" },
-  { href: "/#featured", label: "Featured" },
-  { href: "/build", label: "Configure" },
-  { href: "/#configure", label: "Spec preview" },
-  { href: "/#pillars", label: "Why VEX" },
-  { href: "/#services", label: "Services" },
-  { href: "/#about", label: "About" },
+  { href: "/inventory", label: "Cars" },
+  { href: "/build", label: "Build" },
+  { href: "/#pillars", label: "How it works" },
   { href: "/#contact", label: "Contact" },
 ] as const;
 
 export function Header() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
@@ -59,7 +58,12 @@ export function Header() {
       </Link>
       <nav className={styles.navDesktop} aria-label="Main">
         {NAV_LINKS.map(({ href, label }) => (
-          <Link key={href} href={href} className={styles.navLink}>
+          <Link
+            key={href}
+            href={href}
+            className={styles.navLink}
+            aria-current={href.startsWith("/") && pathname === href ? "page" : undefined}
+          >
             {label}
           </Link>
         ))}
@@ -68,8 +72,8 @@ export function Header() {
         <div className={styles.actionsDesktop}>
           {user ? (
             <>
-              <Link href="/portal" className={styles.navLink}>
-                Portal
+              <Link href="/portal" className={styles.navLink} aria-current={pathname === "/portal" ? "page" : undefined}>
+                My account
               </Link>
               <button type="button" onClick={logout} className={styles.logout}>
                 Sign out
@@ -81,12 +85,12 @@ export function Header() {
                 Sign in
               </Link>
               <Link href="/register" className={styles.ctaSecondary}>
-                Register
+                Create account
               </Link>
             </>
           )}
           <Link href="/#test-drive" className={styles.cta}>
-            Book a test drive
+            Book a visit
           </Link>
         </div>
         <button
@@ -106,17 +110,23 @@ export function Header() {
           <div id="mobile-nav" className={styles.drawer}>
             <nav className={styles.drawerNav} aria-label="Mobile">
               {NAV_LINKS.map(({ href, label }) => (
-                <Link key={href} href={href} className={styles.drawerLink} onClick={() => setMenuOpen(false)}>
+                <Link
+                  key={href}
+                  href={href}
+                  className={styles.drawerLink}
+                  aria-current={href.startsWith("/") && pathname === href ? "page" : undefined}
+                  onClick={() => setMenuOpen(false)}
+                >
                   {label}
                 </Link>
               ))}
               <Link href="/#test-drive" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>
-                Book a test drive
+                Book a visit
               </Link>
               {user ? (
                 <>
                   <Link href="/portal" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>
-                    Portal
+                    My account
                   </Link>
                   <button type="button" className={styles.drawerBtn} onClick={() => { logout(); setMenuOpen(false); }}>
                     Sign out
@@ -128,7 +138,7 @@ export function Header() {
                     Sign in
                   </Link>
                   <Link href="/register" className={styles.drawerCta} onClick={() => setMenuOpen(false)}>
-                    Register
+                    Create account
                   </Link>
                 </>
               )}

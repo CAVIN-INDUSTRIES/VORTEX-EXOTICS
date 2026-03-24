@@ -16,38 +16,37 @@ export function Hero() {
       <div ref={revealRef} className={styles.shell} data-reveal>
         <div className={styles.copy}>
           <div className={styles.badgeRow}>
-            <span className={styles.badge}>The Exchange</span>
-            <span className={styles.lot}>LOT SERIES · 2026</span>
+            <span className={styles.badge}>VEX</span>
+            <span className={styles.lot}>Exotic cars</span>
           </div>
-          <p className={styles.kicker}>The private market for vehicles that refuse to blend in.</p>
+          <p className={styles.kicker}>Buy and sell exotic cars with clear pricing and trusted delivery.</p>
           <h1 className={styles.headline} id="hero-heading">
             <span className={styles.headlineGradient}>Rare metal.</span>
             <br />
             <span className={styles.headlineSolid}>No compromise.</span>
           </h1>
           <p className={styles.subhead}>
-            Curated exotic lots, sealed bids, and white-glove logistics — so the first time you see your car in person isn’t the first
-            time you’ve seen the truth of the deal.
+            Browse listings, place a bid, or build your spec — then track everything in one place.
           </p>
           <div className={styles.ctas}>
             <Link href="/inventory" className={styles.ctaPrimary}>
-              View catalog
+              Browse cars
             </Link>
-            <Link href="/#configure" className={styles.ctaSecondary}>
-              Configure a build
+            <Link href="/build" className={styles.ctaSecondary}>
+              Build yours
             </Link>
           </div>
           <dl className={styles.stats}>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Reserve</dt>
+              <dt className={styles.statLabel}>Sales</dt>
               <dd className={styles.statValue}>Private</dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Provenance</dt>
+              <dt className={styles.statLabel}>History</dt>
               <dd className={styles.statValue}>Verified</dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Logistics</dt>
+              <dt className={styles.statLabel}>Shipping</dt>
               <dd className={styles.statValue}>Enclosed</dd>
             </div>
           </dl>

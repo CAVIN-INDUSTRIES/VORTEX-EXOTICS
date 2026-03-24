@@ -10,7 +10,7 @@ export function HeroScrollHint() {
         className={styles.btn}
         onClick={() => document.getElementById("discover")?.scrollIntoView({ behavior: "smooth" })}
       >
-        <span className={styles.label}>Discover the exchange</span>
+        <span className={styles.label}>See more below</span>
         <span className={styles.chevron} aria-hidden />
       </button>
     </div>

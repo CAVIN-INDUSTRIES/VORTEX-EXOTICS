@@ -47,7 +47,7 @@ export default function AppraisalPage() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <h1 className={styles.title}>Trade-in value</h1>
         <p className={styles.subtitle}>Get an estimated value for your vehicle.</p>
 

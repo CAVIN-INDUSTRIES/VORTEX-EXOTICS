@@ -6,18 +6,18 @@ export function TestDriveStrip() {
     <section id="test-drive" className={styles.section}>
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>Private access</p>
-          <h2 className={styles.title}>Book a private viewing</h2>
+          <p className={styles.eyebrow}>Visit</p>
+          <h2 className={styles.title}>Book a visit</h2>
           <p className={styles.subhead}>
-            See the metal in person or take a guided walkaround — we schedule around your calendar, anywhere in the network.
+            See a car in person or on a video call. We work around your schedule.
           </p>
         </div>
         <div className={styles.ctas}>
           <Link href="/#contact" className={styles.primary}>
-            Contact concierge
+            Email us
           </Link>
           <Link href="/inventory" className={styles.secondary}>
-            Browse exotics
+            Browse cars
           </Link>
         </div>
       </div>

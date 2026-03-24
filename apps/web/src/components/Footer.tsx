@@ -2,11 +2,11 @@ import Link from "next/link";
 import styles from "./Footer.module.css";
 
 const FOOTER_LINKS = [
-  { href: "/inventory", label: "Exotics" },
-  { href: "/build", label: "Configure" },
-  { href: "/#pillars", label: "Why VEX" },
+  { href: "/inventory", label: "Cars" },
+  { href: "/build", label: "Build" },
+  { href: "/#pillars", label: "How it works" },
   { href: "/#services", label: "Services" },
-  { href: "/#test-drive", label: "Private viewing" },
+  { href: "/#test-drive", label: "Book a visit" },
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },
 ];

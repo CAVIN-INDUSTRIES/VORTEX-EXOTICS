@@ -38,7 +38,7 @@ export default function InventoryDetailPage() {
     return (
       <>
         <Header />
-        <main className={styles.main}>
+        <main id="main-content" className={styles.main}>
           <p className={styles.error}>{error}</p>
           <Link href="/inventory" className={styles.back}>
             ← Back to inventory
@@ -52,7 +52,7 @@ export default function InventoryDetailPage() {
     return (
       <>
         <Header />
-        <main className={styles.main}>
+        <main id="main-content" className={styles.main}>
           <p className={styles.loading}>Loading…</p>
         </main>
       </>
@@ -66,7 +66,7 @@ export default function InventoryDetailPage() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <Link href="/inventory" className={styles.back}>
           ← Back to inventory
         </Link>

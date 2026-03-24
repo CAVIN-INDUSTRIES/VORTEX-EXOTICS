@@ -26,7 +26,7 @@ export function FeaturedInventory() {
   if (loading) {
     return (
       <section id="featured" className={styles.section}>
-        <h2 className={styles.title}>Featured lots</h2>
+        <h2 className={styles.title}>Featured cars</h2>
         <p className={styles.subtitle}>Current listings on the exchange</p>
         <div className={styles.grid}>
           {[1, 2, 3].map((i) => (
@@ -41,7 +41,7 @@ export function FeaturedInventory() {
 
   return (
     <section id="featured" className={styles.section}>
-      <h2 className={styles.title}>Featured lots</h2>
+      <h2 className={styles.title}>Featured cars</h2>
       <p className={styles.subtitle}>Current listings on the exchange</p>
       <div className={styles.grid}>
         {items.map((item, index) => {
@@ -74,7 +74,7 @@ export function FeaturedInventory() {
         })}
       </div>
       <Link href="/inventory" className={styles.viewAll}>
-        View all exotics →
+        See all cars →
       </Link>
     </section>
   );

@@ -50,16 +50,16 @@ export default function InventoryPage() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <div className={styles.top}>
-          <h1 className={styles.title}>Inventory</h1>
-          <p className={styles.subtitle}>Browse our curated selection of exotic vehicles</p>
+          <h1 className={styles.title}>Browse cars</h1>
+          <p className={styles.subtitle}>Tap a car to see details, photos, and price.</p>
         </div>
 
         <aside className={styles.filters}>
-          <h2 className={styles.filterTitle}>Filters</h2>
+          <h2 className={styles.filterTitle}>Narrow results</h2>
           <label className={styles.label}>
-            Source
+            Seller
             <select
               value={filters.source ?? ""}
               onChange={(e) => applyFilters({ source: e.target.value || undefined })}

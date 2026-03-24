@@ -5,16 +5,16 @@ import styles from "./ExoticPillars.module.css";
 
 const PILLARS = [
   {
-    title: "Provenance you can stand behind",
-    body: "Company consignment and vetted private listings — documentation, history, and condition surfaced before you wire a deposit.",
+    title: "Know the car before you pay",
+    body: "Listings show history and condition up front — from our team or private sellers we’ve checked.",
   },
   {
-    title: "Built for collectors, not crowds",
-    body: "From one-off specs to allocation-grade builds — the flow stays quiet, fast, and precise, whether you’re adding or upgrading.",
+    title: "Built for serious buyers",
+    body: "Custom builds and rare stock without the noise. Fewer steps, clear choices.",
   },
   {
-    title: "Logistics as polished as the paint",
-    body: "Enclosed transport, white-glove handoff, and live tracking so your rare metal arrives exactly as promised.",
+    title: "Delivery you can track",
+    body: "Enclosed shipping and updates so you know where your car is from pickup to your door.",
   },
 ] as const;
 
@@ -23,11 +23,10 @@ export function ExoticPillars() {
   return (
     <section id="pillars" ref={ref} className={styles.section} data-reveal>
       <div className={styles.header}>
-        <p className={styles.eyebrow}>The exotic standard</p>
-        <h2 className={styles.title}>Where rare metal meets real execution</h2>
+        <p className={styles.eyebrow}>How it works</p>
+        <h2 className={styles.title}>Three things you can count on</h2>
         <p className={styles.lede}>
-          VEX is a digital exchange for exotic vehicles — not mass-market inventory. Every touchpoint is tuned for people who buy on instinct
-          and verify on detail.
+          VEX is for exotic cars only — not a general used-car lot. Here’s what you get when you work with us.
         </p>
       </div>
       <ul className={styles.grid}>

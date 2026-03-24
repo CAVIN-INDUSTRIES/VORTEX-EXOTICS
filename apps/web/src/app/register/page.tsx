@@ -34,9 +34,9 @@ export default function RegisterPage() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <h1 className={styles.title}>Create account</h1>
-        <p className={styles.subtitle}>Join VEX — build, order, and track your ride</p>
+        <p className={styles.subtitle}>We’ll email you when something needs your attention.</p>
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
             Email

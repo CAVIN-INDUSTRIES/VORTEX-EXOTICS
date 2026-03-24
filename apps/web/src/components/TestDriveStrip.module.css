@@ -31,13 +31,14 @@
 }
 
 .title {
-  font-family: var(--font-montserrat), sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-family: var(--font-display), "Georgia", serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.2vw, 2.15rem);
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
   margin-bottom: 0.5rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .subhead {

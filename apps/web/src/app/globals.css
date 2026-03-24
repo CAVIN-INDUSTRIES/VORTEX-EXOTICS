@@ -39,6 +39,10 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
   color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
 
 html,
@@ -53,6 +57,8 @@ body {
 
 body {
   position: relative;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
 }
 
 main {

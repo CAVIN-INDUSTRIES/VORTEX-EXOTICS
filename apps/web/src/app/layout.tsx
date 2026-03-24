@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Oswald, Cormorant_Garamond, Inter, Poppins } from "next/font/google";
+import { Syne, Fraunces, Plus_Jakarta_Sans, Outfit, Playfair_Display } from "next/font/google";
 import { BuildProvider } from "@/contexts/BuildContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Footer } from "@/components/Footer";
@@ -7,32 +7,49 @@ import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
 import "./globals.css";
 
-/* Sleek display + editorial serif — variable names preserved for existing CSS */
-const oswald = Oswald({
+/**
+ * Typography stack (CSS variable names kept for existing modules):
+ * - --font-montserrat → Syne (bold gallery/display for UI, labels, section titles)
+ * - --font-display → Playfair (hero & marquee-scale headlines)
+ * - --font-serif → Fraunces (italic ledes, editorial moments)
+ * - --font-inter → Plus Jakarta Sans (body, forms, readable UI)
+ * - --font-poppins → Outfit (nav, cards, secondary UI)
+ */
+const syne = Syne({
   subsets: ["latin"],
   variable: "--font-montserrat",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const cormorant = Cormorant_Garamond({
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+});
+
+const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
-const poppins = Poppins({
-  weight: ["400", "500", "600"],
+const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -47,8 +64,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-US" className={`${oswald.variable} ${cormorant.variable} ${inter.variable} ${poppins.variable}`}>
-      <body style={{ fontFamily: "var(--font-inter)" }}>
+    <html
+      lang="en-US"
+      className={`${syne.variable} ${playfair.variable} ${fraunces.variable} ${plusJakarta.variable} ${outfit.variable}`}
+    >
+      <body style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         <SkipToContent />
         <AmbientShell />
         <AuthProvider>

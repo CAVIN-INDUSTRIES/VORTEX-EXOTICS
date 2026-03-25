@@ -5,7 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Footer } from "@/components/Footer";
 import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
-import { CursorFX, MagneticFX, ParallaxBackdrop } from "@/components/fx";
+import { CursorFX, MagneticFX, ParallaxBackdrop, RouteTransitionFX } from "@/components/fx";
 import "./globals.css";
 
 /**
@@ -74,6 +74,7 @@ export default function RootLayout({
         <AmbientShell />
         <ParallaxBackdrop />
         <MagneticFX />
+        <RouteTransitionFX />
         <CursorFX />
         <AuthProvider>
           <BuildProvider>

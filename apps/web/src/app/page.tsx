@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import "./home-landing.css";
 import { Hero } from "@/components/Hero";
 import { PrestigeMarquee } from "@/components/PrestigeMarquee";
 import { ExoticPillars } from "@/components/ExoticPillars";
@@ -12,7 +13,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main id="main-content" className="home-main" aria-label="Vortex Exotic Exchange home">
+      <main id="main-content" className="home-main home-landing" aria-label="Vortex Exotic Exchange home">
         <Hero />
         <PrestigeMarquee />
         <ExoticPillars />

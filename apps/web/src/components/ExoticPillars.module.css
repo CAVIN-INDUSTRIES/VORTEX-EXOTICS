@@ -1,14 +1,14 @@
 .section {
-  padding: 4rem 2rem;
-  max-width: 1100px;
+  padding: clamp(4rem, 11vw, 6.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  max-width: 72rem;
   margin: 0 auto;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header {
   text-align: center;
-  max-width: 720px;
-  margin: 0 auto 2.5rem;
+  max-width: 40rem;
+  margin: 0 auto 3rem;
 }
 
 .eyebrow {
@@ -43,22 +43,23 @@
 .grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.5rem;
 }
 
 .card {
-  padding: 1.5rem;
-  border-radius: 4px;
-  background: linear-gradient(145deg, rgba(14, 18, 28, 0.95), rgba(6, 8, 14, 0.98));
-  border: 1px solid var(--line);
-  box-shadow: 0 0 0 1px var(--edge-08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding: 1.75rem 1.65rem;
+  border-radius: 16px;
+  background: linear-gradient(155deg, rgba(16, 18, 26, 0.96), rgba(7, 8, 12, 0.99));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 32px rgba(232, 204, 122, 0.08);
+  transform: translateY(-4px);
+  border-color: rgba(201, 169, 98, 0.22);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.48), 0 0 48px rgba(201, 169, 98, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .cardTitle {

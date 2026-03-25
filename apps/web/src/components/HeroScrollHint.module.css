@@ -3,51 +3,54 @@
   z-index: 2;
   display: flex;
   justify-content: center;
-  padding: 0 1rem 2.5rem;
-  margin-top: -0.5rem;
+  padding: 0 1rem 1.75rem;
+  margin-top: 0.25rem;
 }
 
 .btn {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: transparent;
-  border: none;
+  gap: 0.45rem;
+  padding: 0.65rem 1.35rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
   color: var(--text-muted);
   font-family: var(--font-montserrat), sans-serif;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 0.25s ease;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
 .btn:hover,
 .btn:focus-visible {
   color: var(--highlight);
+  border-color: rgba(201, 169, 98, 0.35);
+  background: rgba(201, 169, 98, 0.05);
   outline: none;
 }
 
 .label {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .chevron {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-right: 1px solid var(--line-gold);
   border-bottom: 1px solid var(--line-gold);
-  transform: rotate(45deg) translateY(-4px);
+  transform: rotate(45deg) translateY(-3px);
   animation: heroChevron 2.4s ease-in-out infinite;
 }
 
 @keyframes heroChevron {
   0%,
   100% {
-    transform: rotate(45deg) translateY(-4px);
+    transform: rotate(45deg) translateY(-3px);
     opacity: 0.55;
   }
   50% {

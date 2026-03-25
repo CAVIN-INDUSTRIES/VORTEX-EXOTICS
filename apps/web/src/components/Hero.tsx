@@ -52,7 +52,6 @@ export function Hero() {
           </dl>
         </div>
         <div className={styles.visualWrap}>
-          <div className={styles.visualFrame} aria-hidden />
           <div className={styles.visualInner}>
             <ExoticVisualization />
           </div>

@@ -29,10 +29,10 @@ export function Hero() {
             Browse listings, place a bid, or build your spec — then track everything in one place.
           </p>
           <div className={styles.ctas}>
-            <Link href="/inventory" className={styles.ctaPrimary}>
+            <Link href="/inventory" className={styles.ctaPrimary} data-magnetic="true">
               Browse cars
             </Link>
-            <Link href="/build" className={styles.ctaSecondary}>
+            <Link href="/build" className={styles.ctaSecondary} data-magnetic="true">
               Build yours
             </Link>
           </div>

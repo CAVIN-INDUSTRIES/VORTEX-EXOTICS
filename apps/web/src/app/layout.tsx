@@ -5,6 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Footer } from "@/components/Footer";
 import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
+import { CursorFX, MagneticFX, ParallaxBackdrop } from "@/components/fx";
 import "./globals.css";
 
 /**
@@ -71,6 +72,9 @@ export default function RootLayout({
       <body style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
         <SkipToContent />
         <AmbientShell />
+        <ParallaxBackdrop />
+        <MagneticFX />
+        <CursorFX />
         <AuthProvider>
           <BuildProvider>
             {children}

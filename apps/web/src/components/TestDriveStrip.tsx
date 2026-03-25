@@ -13,10 +13,10 @@ export function TestDriveStrip() {
           </p>
         </div>
         <div className={styles.ctas}>
-          <Link href="/#contact" className={styles.primary}>
+          <Link href="/#contact" className={styles.primary} data-magnetic="true">
             Email us
           </Link>
-          <Link href="/inventory" className={styles.secondary}>
+          <Link href="/inventory" className={styles.secondary} data-magnetic="true">
             Browse cars
           </Link>
         </div>

@@ -1,0 +1,42 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  --px: 0.5;
+  --py: 0.35;
+  --sy: 0px;
+  opacity: 0.65;
+  contain: strict;
+}
+
+/* A subtle moving “specular” sweep that follows pointer + scroll */
+.root::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(
+      circle at calc(var(--px) * 100%) calc(var(--py) * 100%),
+      rgba(201, 169, 98, 0.08),
+      rgba(232, 204, 122, 0.03) 30%,
+      transparent 62%
+    ),
+    radial-gradient(
+      circle at calc((1 - var(--px)) * 100%) calc((1 - var(--py)) * 100%),
+      rgba(139, 141, 148, 0.04),
+      transparent 58%
+    );
+  filter: blur(42px);
+  transform: translate3d(0, calc(var(--sy) * -0.02), 0);
+}
+
+.root::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 85% 70% at 50% 40%, transparent 20%, rgba(0, 0, 0, 0.28) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+

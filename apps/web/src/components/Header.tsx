@@ -84,12 +84,12 @@ export function Header() {
               <Link href="/login" className={styles.navLink}>
                 Sign in
               </Link>
-              <Link href="/register" className={styles.ctaSecondary}>
+              <Link href="/register" className={styles.ctaSecondary} data-magnetic="true">
                 Create account
               </Link>
             </>
           )}
-          <Link href="/#test-drive" className={styles.cta}>
+          <Link href="/#test-drive" className={styles.cta} data-magnetic="true">
             Book a visit
           </Link>
         </div>

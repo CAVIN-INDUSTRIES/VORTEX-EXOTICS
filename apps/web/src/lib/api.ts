@@ -138,7 +138,7 @@ export async function createOrder(payload: CreateOrderPayload, token: string): P
     const err = await res.json().catch(() => ({}));
     throw new Error((err as { message?: string }).message || "Failed to create order");
   }
-  return res.json();
+  return unwrap(await res.json());
 }
 
 export interface ShippingQuotePayload {
@@ -426,6 +426,49 @@ export async function getOwnerAdminOverview(token: string): Promise<{
     const err = await res.json().catch(() => ({}));
     throw new Error((err as { message?: string }).message || "Failed to load admin overview");
   }
+  return unwrap(await res.json());
+}
+
+export async function getOwnerMrrDashboard(token: string): Promise<{
+  totalMrr: number;
+  activeTenants: number;
+  usageByKind: Array<{ kind: string; quantity: number; amountUsd: number }>;
+  generatedAt: string;
+}> {
+  const res = await fetch(`${API_BASE}/admin/mrr`, { headers: authHeaders(token) });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || "Failed to load MRR dashboard");
+  }
+  return unwrap(await res.json());
+}
+
+export async function getRaisePackage(token: string): Promise<{
+  generatedAt: string;
+  tenantCount: number;
+  activeTenantCount: number;
+  mrr: number;
+  usageRevenueUsd: number;
+  highlights: string[];
+}> {
+  const res = await fetch(`${API_BASE}/capital/package`, { headers: authHeaders(token) });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || "Failed to load raise package");
+  }
+  return unwrap(await res.json());
+}
+
+export async function getInvestorPackageByToken(token: string): Promise<{
+  generatedAt: string;
+  tenantCount: number;
+  activeTenantCount: number;
+  mrr: number;
+  usageRevenueUsd: number;
+  highlights: string[];
+}> {
+  const res = await fetch(`${API_BASE}/capital/investor/${encodeURIComponent(token)}`);
+  if (!res.ok) throw new Error("Investor link expired or invalid");
   return unwrap(await res.json());
 }
 

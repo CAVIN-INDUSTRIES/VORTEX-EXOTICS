@@ -16,6 +16,8 @@
     "seed:demo": "tsx prisma/seed.ts",
     "test:e2e": "tsx scripts/e2e-appraisal-isolation.ts",
     "test:e2e:appraisal": "tsx scripts/e2e-appraisal-isolation.ts",
+    "test:e2e:global": "tsx scripts/e2e-tenant-residency.ts",
+    "test:global": "tsx scripts/e2e-tenant-residency.ts",
     "test:valuation:unit": "tsx scripts/test-valuation-unit.ts",
     "test:valuation:integration": "tsx scripts/test-valuation-integration.ts",
     "load-test:scale": "tsx scripts/load-test-scale.ts"

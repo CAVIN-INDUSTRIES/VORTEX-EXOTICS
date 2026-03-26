@@ -40,3 +40,31 @@ growthRouter.post("/referrals/claim", requireAuth, async (req, res) => {
   });
   return res.json({ data: { ok: true, couponUsd: 50 }, error: null });
 });
+
+growthRouter.post("/referrals/generate", requireAuth, async (req, res) => {
+  if (!req.user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
+  const raw = crypto.randomBytes(10).toString("hex");
+  const codeHash = hashClaim(raw);
+  const existing = await prisma.referral.findFirst({ where: { codeHash } });
+  if (!existing) {
+    await prisma.referral.create({
+      data: {
+        tenantId: req.user.tenantId,
+        codeHash,
+        createdBy: req.user.userId,
+        isActive: true,
+      },
+    });
+  }
+  await prisma.auditLog.create({
+    data: {
+      tenantId: req.user.tenantId,
+      actorId: req.user.userId,
+      action: "REFERRAL_CODE_GENERATED",
+      entity: "Referral",
+      entityId: codeHash,
+      payload: { maxUses: 100 },
+    },
+  });
+  return res.status(201).json({ data: { claimCode: raw }, error: null });
+});

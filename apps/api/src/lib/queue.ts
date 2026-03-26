@@ -3,8 +3,11 @@ import { Queue, Worker, type Job } from "bullmq";
 import { runWithTenant } from "./tenant.js";
 import { prisma } from "./tenant.js";
 import { provisionTenantDemo } from "./provision.js";
+import { sendLifecycleNotification } from "./notify.js";
+import { PilotAnalyticsService } from "./iteration.js";
 
 const QUEUE_NAME = "vex-main";
+const pilotAnalyticsService = new PilotAnalyticsService();
 
 function newConnection(): Redis | null {
   const url = process.env.REDIS_URL;
@@ -91,6 +94,28 @@ export async function enqueueRetentionScore(data: { tenantId: string }): Promise
   await q.add("retention-score", data, { jobId: `retention:${data.tenantId}` });
 }
 
+export async function enqueuePilotSuccessNudge(data: {
+  tenantId: string;
+  userId: string;
+  email?: string;
+  phone?: string;
+  step: "welcome" | "first_appraisal_24h" | "nps_7d";
+}): Promise<void> {
+  const q = getQueue();
+  if (!q) return;
+  await q.add(
+    "pilot-success-nudge",
+    data,
+    { jobId: `pilot-nudge:${data.tenantId}:${data.userId}:${data.step}` }
+  );
+}
+
+export async function enqueueIterationAnalysis(data: { tenantId: string }): Promise<void> {
+  const q = getQueue();
+  if (!q) return;
+  await q.add("iteration-analysis", data, { jobId: `iteration:${data.tenantId}` });
+}
+
 let workerInstance: Worker | null = null;
 
 async function processJob(job: Job): Promise<void> {
@@ -175,6 +200,53 @@ async function processJob(job: Job): Promise<void> {
           tenantId,
           type: "job.retention_score",
           payload: { status: "queued" },
+        },
+      });
+      return;
+    }
+    if (name === "pilot-success-nudge") {
+      const step = String(data.step ?? "welcome");
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.pilot_success_nudge",
+          payload: { userId: String(data.userId ?? ""), step },
+        },
+      });
+      const toEmail = typeof data.email === "string" ? data.email : null;
+      const smsTo = typeof data.phone === "string" ? data.phone : null;
+      const msgByStep: Record<string, { subject: string; message: string }> = {
+        welcome: {
+          subject: "Welcome to Vex pilot",
+          message: "Welcome aboard. Your pilot tenant is ready; run your first appraisal to unlock the dashboard.",
+        },
+        first_appraisal_24h: {
+          subject: "Run your first appraisal",
+          message: "Quick nudge: teams that run one appraisal in day one convert at much higher rates.",
+        },
+        nps_7d: {
+          subject: "How is your first week?",
+          message: "Share feedback and NPS so we can tailor workflows for your dealership.",
+        },
+      };
+      const copy = msgByStep[step] ?? msgByStep.welcome;
+      await sendLifecycleNotification({
+        type: "ONBOARDING_COMPLETE",
+        toEmail,
+        smsTo,
+        subject: copy.subject,
+        message: copy.message,
+      });
+      return;
+    }
+    if (name === "iteration-analysis") {
+      const metric = await pilotAnalyticsService.buildCohortMetric(tenantId);
+      await pilotAnalyticsService.upsertBacklogFromMetric(metric);
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.iteration_analysis",
+          payload: metric,
         },
       });
       return;

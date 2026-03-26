@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start -p 3002",
     "test:mobile": "tsx scripts/test-mobile.ts",
-    "test:enterprise": "tsx scripts/test-enterprise.ts"
+    "test:enterprise": "tsx scripts/test-enterprise.ts",
+    "test:pilot": "tsx scripts/test-pilot.ts",
+    "test:pilot-scale": "tsx scripts/test-pilot-scale.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -6,3 +6,4 @@ import * as adminController from "../controllers/adminController.js";
 export const adminRouter: Router = Router();
 
 adminRouter.get("/overview", requireAuth, requireRole("ADMIN"), adminController.overview);
+adminRouter.get("/mrr", requireAuth, requireRole("ADMIN"), adminController.mrr);

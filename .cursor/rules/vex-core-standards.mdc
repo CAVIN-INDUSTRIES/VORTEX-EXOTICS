@@ -20,4 +20,11 @@ alwaysApply: true
 - **AI/PWA growth**
   - AI outputs must be versioned and auditable.
   - Offline-first mobile flows should queue mutations and sync safely when online.
+- **Pilot onboarding + live MRR**
+  - Pilot onboarding and provisioning must be idempotent and auditable.
+  - Persist revenue/usage events for dashboarding and investor reporting.
+- **Post-launch acceleration**
+  - Feed pilot usage and feedback into an auditable iteration backlog.
+  - Keep upsell/referral automations tenant-scoped, idempotent, and consent-aware.
+  - Retention cycles must log churn prediction outputs and campaign actions for auditability.
 

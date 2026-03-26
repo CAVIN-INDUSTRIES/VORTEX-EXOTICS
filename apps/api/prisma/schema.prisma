@@ -37,6 +37,11 @@ model Tenant {
   parentTenantId          String? @map("parent_tenant_id")
   locationType            LocationType @default(SINGLE) @map("location_type")
   groupSettings           Json?   @map("group_settings")
+  region                  TenantRegion @default(US)
+  currency                String   @default("USD")
+  taxId                   String?  @map("tax_id")
+  locale                  String   @default("en-US")
+  dataResidency           String   @default("US") @map("data_residency")
   onboardedAt             DateTime? @map("onboarded_at")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -63,6 +68,9 @@ model Tenant {
   referrals            Referral[]
   growthMetrics        GrowthMetric[]
   complianceReports    ComplianceReport[]
+  countryCompliances   CountryCompliance[]
+  complianceLogs       ComplianceLog[]
+  iterationBacklogItems IterationBacklog[]
   locations            Location[] @relation("LocationTenant")
   groupLocations       Location[] @relation("LocationGroup")
 
@@ -73,6 +81,14 @@ enum LocationType {
   GROUP
   SINGLE
   DEALERSHIP
+}
+
+enum TenantRegion {
+  US
+  EU
+  LATAM
+  APAC
+  OTHER
 }
 
 model Plan {
@@ -582,4 +598,57 @@ model ComplianceReport {
 
   @@index([tenantId, period, createdAt])
   @@map("compliance_reports")
+}
+
+model CountryCompliance {
+  id               String   @id @default(cuid())
+  tenantId         String   @map("tenant_id")
+  countryCode      String   @map("country_code")
+  framework        String
+  status           String   @default("active")
+  consentRequired  Boolean  @default(false) @map("consent_required")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, countryCode, framework])
+  @@index([tenantId, countryCode])
+  @@map("country_compliances")
+}
+
+model ComplianceLog {
+  id             String   @id @default(cuid())
+  tenantId       String   @map("tenant_id")
+  actorId        String?  @map("actor_id")
+  eventType      String   @map("event_type")
+  region         String?
+  dataResidency  String?  @map("data_residency")
+  payload        Json?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, eventType, createdAt])
+  @@index([tenantId, createdAt])
+  @@map("compliance_logs")
+}
+
+model IterationBacklog {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  priority    Int      @default(50)
+  title       String
+  description String
+  source      String   @default("analytics")
+  status      String   @default("open")
+  score       Decimal? @db.Decimal(5, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status, priority])
+  @@index([tenantId, createdAt])
+  @@map("iteration_backlog")
 }

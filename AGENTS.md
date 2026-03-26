@@ -90,3 +90,15 @@ Build a best-in-class **B2B SaaS platform for auto dealers** (CRM + Inventory + 
 - **Hierarchy**: support group/location structures with explicit override controls for `GROUP_ADMIN`.
 - **Compliance**: SOC2-lite exports and immutable audit trail access controls.
 - **Retention/expansion**: usage-driven offers and campaigns must be consent-aware and tenant-scoped.
+
+## Phase 10 — Live launch + pilot MRR
+- **Pilot onboarding**: paid-pilot flow must be idempotent; queue-based provisioning and audit logs required.
+- **Revenue telemetry**: Stripe lifecycle events should persist usage/revenue logs for MRR reporting.
+- **MRR visibility**: owner/admin dashboard exposes real-time-ish MRR + usage aggregates.
+- **Customer success loop**: pilot feedback + nudge sequences must be async, consent-aware, and audited.
+
+## Phase 11 — Post-launch acceleration + Series A
+- **Iteration loop**: pilot usage must feed an auditable iteration backlog with prioritized actions.
+- **Upsell automation**: usage events and offers must be server-signed, idempotent, and margin-aware.
+- **Pilot-scale telemetry**: customer success signals should be captured without blocking critical API paths.
+- **Capital package**: expose investor-facing KPI pages with access controls and auditability.

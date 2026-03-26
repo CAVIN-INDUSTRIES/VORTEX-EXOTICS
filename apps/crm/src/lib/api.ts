@@ -260,3 +260,22 @@ export async function valuateAppraisal(
   }
   return unwrap(body) as AppraisalValuateResponse;
 }
+
+export async function getIterationBacklog(token: string) {
+  const res = await fetch(`${API_BASE}/iteration/backlog`, { headers: authHeaders(token) });
+  if (!res.ok) throw new Error("Failed to load iteration backlog");
+  return unwrap(await res.json());
+}
+
+export async function submitPilotFeedback(
+  token: string,
+  data: { rating: number; message: string; channel?: "in_app" | "email" | "sms" }
+) {
+  const res = await fetch(`${API_BASE}/success/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ ...data, channel: data.channel ?? "in_app" }),
+  });
+  if (!res.ok) throw new Error("Failed to submit feedback");
+  return unwrap(await res.json());
+}

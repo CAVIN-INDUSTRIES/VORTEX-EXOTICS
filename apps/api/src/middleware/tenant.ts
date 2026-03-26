@@ -73,6 +73,57 @@ export async function tenantMiddleware(req: Request, res: Response, next: NextFu
       }
     }
 
+    const tenant = await basePrisma.tenant.findFirst({
+      where: { id: tenantId },
+      select: { id: true, region: true, dataResidency: true },
+    });
+    if (!tenant) {
+      return res.status(404).json({ code: "NOT_FOUND", message: "Tenant not found" });
+    }
+    const requestRegionRaw = req.header("x-vex-region") ?? req.header("x-region");
+    const requestRegion = typeof requestRegionRaw === "string" ? requestRegionRaw.trim().toUpperCase() : null;
+    const dataResidency = (tenant.dataResidency || tenant.region || "OTHER").toUpperCase();
+    const hasCrossRegionConsent = req.header("x-cross-region-consent") === "true";
+
+    if (requestRegion && requestRegion !== dataResidency && !hasCrossRegionConsent) {
+      await basePrisma.auditLog.create({
+        data: {
+          tenantId,
+          actorId: parsed.data.userId,
+          action: "DATA_RESIDENCY_BLOCKED",
+          entity: "tenant",
+          entityId: tenantId,
+          payload: {
+            requestRegion,
+            dataResidency,
+            path: req.path,
+            method: req.method,
+          },
+        },
+      });
+      return res.status(403).json({
+        code: "FORBIDDEN",
+        message: "Cross-region request blocked by data residency policy",
+      });
+    }
+    if (requestRegion && requestRegion !== dataResidency && hasCrossRegionConsent) {
+      await basePrisma.auditLog.create({
+        data: {
+          tenantId,
+          actorId: parsed.data.userId,
+          action: "DATA_RESIDENCY_CONSENT_OVERRIDE",
+          entity: "tenant",
+          entityId: tenantId,
+          payload: {
+            requestRegion,
+            dataResidency,
+            path: req.path,
+            method: req.method,
+          },
+        },
+      });
+    }
+
     req.tenantId = tenantId;
 
     return runWithTenant(tenantId, () => next());

@@ -7,6 +7,7 @@ import {
   onboardingThemeStepSchema,
   onboardingDemoSeedStepSchema,
   onboardingConfirmSchema,
+  PilotOnboardSchema,
   type OnboardingStartInput,
 } from "@vex/shared";
 import { enqueueProvisionTenant } from "../lib/queue.js";
@@ -160,4 +161,66 @@ onboardRouter.post("/confirm", validateBody(onboardingConfirmSchema), async (req
     })
   );
   return res.json({ data: { magicLink: `/login?tenantId=${encodeURIComponent(tenantId)}` }, error: null });
+});
+
+onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) => {
+  const body = req.body as {
+    email: string;
+    dealerName: string;
+    password: string;
+    tier: "STARTER" | "PRO" | "ENTERPRISE";
+    interval: "monthly" | "yearly";
+    captchaToken: string;
+    customDomain?: string;
+    enableDemoData: boolean;
+  };
+  const ip = req.ip ?? "unknown";
+  if (!allowIp(ip)) {
+    return res.status(429).json({ code: "RATE_LIMITED", message: "Too many onboarding attempts from this IP." });
+  }
+  const existing = await basePrisma.user.findUnique({ where: { email: body.email } });
+  if (existing) {
+    return res.status(409).json({ code: "CONFLICT", message: "Email already exists" });
+  }
+
+  const created = await basePrisma.$transaction(async (tx) => {
+    const tenant = await tx.tenant.create({
+      data: {
+        name: body.dealerName,
+        billingTier: body.tier,
+        stripeSubscriptionStatus: "PENDING",
+        customDomain: body.customDomain ?? null,
+      },
+    });
+    const user = await tx.user.create({
+      data: {
+        tenantId: tenant.id,
+        email: body.email,
+        passwordHash: `pilot:${Date.now()}`,
+        role: "ADMIN",
+        name: body.dealerName,
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        tenantId: tenant.id,
+        actorId: user.id,
+        action: "PILOT_ONBOARD_START",
+        entity: "Tenant",
+        entityId: tenant.id,
+        payload: { tier: body.tier, interval: body.interval },
+      },
+    });
+    return { tenantId: tenant.id, userId: user.id };
+  });
+
+  if (body.enableDemoData) {
+    await enqueueProvisionTenant({
+      tenantId: created.tenantId,
+      tier: body.tier,
+      email: body.email,
+    });
+  }
+
+  return res.status(201).json({ data: { ...created, billingStatus: "PENDING" }, error: null });
 });

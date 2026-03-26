@@ -39,3 +39,35 @@ export async function overview(req: Request, res: Response) {
     error: null,
   });
 }
+
+export async function mrr(req: Request, res: Response) {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
+  if (user.role !== "ADMIN") return res.status(403).json({ code: "FORBIDDEN", message: "Admin role required" });
+
+  const tenants = await prisma.tenant.findMany({
+    select: { id: true, billingTier: true, stripeSubscriptionStatus: true, createdAt: true },
+  });
+  const active = tenants.filter((t) => t.stripeSubscriptionStatus && t.stripeSubscriptionStatus !== "CANCELED");
+  const totalMrr = active.reduce((sum, t) => sum + monthlyAmountForTier(t.billingTier), 0);
+  const usageByKindRows = await prisma.usageLog.groupBy({
+    by: ["kind"],
+    _sum: { quantity: true, amountUsd: true },
+  });
+
+  const usageByKind = usageByKindRows.map((r) => ({
+    kind: r.kind,
+    quantity: r._sum.quantity ?? 0,
+    amountUsd: Number(r._sum.amountUsd ?? 0),
+  }));
+
+  return res.json({
+    data: {
+      totalMrr,
+      activeTenants: active.length,
+      usageByKind,
+      generatedAt: new Date().toISOString(),
+    },
+    error: null,
+  });
+}

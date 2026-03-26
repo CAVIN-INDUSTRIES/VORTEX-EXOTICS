@@ -55,23 +55,30 @@ function fallbackFormula(input: ValuationInput): ValuationResult {
 
 const dailySpend = new Map<string, { date: string; spentUsd: number }>();
 
-function chargeOrReject(tenantId: string, amountUsd: number): boolean {
+function getDailySpendRow(tenantId: string): { date: string; spentUsd: number } {
   const today = new Date().toISOString().slice(0, 10);
   const row = dailySpend.get(tenantId);
   if (!row || row.date !== today) {
     dailySpend.set(tenantId, { date: today, spentUsd: 0 });
   }
-  const now = dailySpend.get(tenantId)!;
-  if (now.spentUsd + amountUsd > valuationConfig.costCaps.dailyUsdCap) return false;
-  now.spentUsd += amountUsd;
-  dailySpend.set(tenantId, now);
-  return true;
+  return dailySpend.get(tenantId)!;
 }
 
-async function callEdmunds(input: ValuationInput): Promise<ValuationResult | null> {
+function canCharge(tenantId: string, amountUsd: number): boolean {
+  const now = getDailySpendRow(tenantId);
+  return now.spentUsd + amountUsd <= valuationConfig.costCaps.dailyUsdCap;
+}
+
+function addCharge(tenantId: string, amountUsd: number): void {
+  const now = getDailySpendRow(tenantId);
+  now.spentUsd += amountUsd;
+  dailySpend.set(tenantId, now);
+}
+
+async function callEdmunds(input: ValuationInput): Promise<{ attempted: boolean; result: ValuationResult | null }> {
   const key = process.env.EDMUNDS_API_KEY;
   const secret = process.env.EDMUNDS_SECRET;
-  if (!key || !secret) return null;
+  if (!key || !secret) return { attempted: false, result: null };
 
   const qs = new URLSearchParams({
     api_key: key,
@@ -87,29 +94,32 @@ async function callEdmunds(input: ValuationInput): Promise<ValuationResult | nul
   const resp = await fetch(`https://api.edmunds.com/v1/tmv?${qs.toString()}`, {
     headers: { "x-edmunds-secret": secret },
   });
-  if (resp.status === 429 || resp.status >= 500) return null;
-  if (!resp.ok) return null;
+  if (resp.status === 429 || resp.status >= 500) return { attempted: true, result: null };
+  if (!resp.ok) return { attempted: true, result: null };
   const raw = await resp.json().catch(() => null);
-  if (!raw) return null;
+  if (!raw) return { attempted: true, result: null };
 
   const avg = Number(raw?.tmv ?? raw?.value ?? raw?.average ?? 0);
-  if (!Number.isFinite(avg) || avg <= 0) return null;
+  if (!Number.isFinite(avg) || avg <= 0) return { attempted: true, result: null };
 
   return {
-    source: "edmunds",
-    valueLow: Math.round(avg * 0.93),
-    valueAvg: Math.round(avg),
-    valueHigh: Math.round(avg * 1.07),
-    currency: "USD",
-    confidence: 86,
-    timestamp: new Date(),
-    rawData: raw,
+    attempted: true,
+    result: {
+      source: "edmunds",
+      valueLow: Math.round(avg * 0.93),
+      valueAvg: Math.round(avg),
+      valueHigh: Math.round(avg * 1.07),
+      currency: "USD",
+      confidence: 86,
+      timestamp: new Date(),
+      rawData: raw,
+    },
   };
 }
 
-async function callMarketCheck(input: ValuationInput): Promise<ValuationResult | null> {
+async function callMarketCheck(input: ValuationInput): Promise<{ attempted: boolean; result: ValuationResult | null }> {
   const key = process.env.MARKETCHECK_API_KEY;
-  if (!key) return null;
+  if (!key) return { attempted: false, result: null };
 
   const qs = new URLSearchParams({
     api_key: key,
@@ -122,29 +132,32 @@ async function callMarketCheck(input: ValuationInput): Promise<ValuationResult |
   if (input.vin) qs.set("vin", input.vin);
 
   const resp = await fetch(`https://api.marketcheck.com/v2/search/car/active?${qs.toString()}`);
-  if (resp.status === 429 || resp.status >= 500) return null;
-  if (!resp.ok) return null;
+  if (resp.status === 429 || resp.status >= 500) return { attempted: true, result: null };
+  if (!resp.ok) return { attempted: true, result: null };
   const raw = await resp.json().catch(() => null);
-  if (!raw) return null;
+  if (!raw) return { attempted: true, result: null };
 
   const prices: number[] = Array.isArray(raw?.listings)
     ? raw.listings.map((x: any) => Number(x?.price)).filter((x: number) => Number.isFinite(x) && x > 0)
     : [];
-  if (prices.length === 0) return null;
+  if (prices.length === 0) return { attempted: true, result: null };
   prices.sort((a, b) => a - b);
   const low = prices[Math.floor(prices.length * 0.2)] ?? prices[0];
   const high = prices[Math.floor(prices.length * 0.8)] ?? prices[prices.length - 1];
   const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
 
   return {
-    source: "marketcheck",
-    valueLow: Math.round(low),
-    valueAvg: avg,
-    valueHigh: Math.round(high),
-    currency: "USD",
-    confidence: 73,
-    timestamp: new Date(),
-    rawData: raw,
+    attempted: true,
+    result: {
+      source: "marketcheck",
+      valueLow: Math.round(low),
+      valueAvg: avg,
+      valueHigh: Math.round(high),
+      currency: "USD",
+      confidence: 73,
+      timestamp: new Date(),
+      rawData: raw,
+    },
   };
 }
 
@@ -181,16 +194,30 @@ export class ValuationService {
     try {
       let result: ValuationResult | null = null;
 
-      if (!chargeOrReject(input.tenantId, valuationConfig.costCaps.minPerCallUsd)) {
-        return { success: false, errorCode: "DAILY_COST_CAP_EXCEEDED", fallbackValue: null };
-      }
-
-      result = await callEdmunds(input);
-      if (!result) {
-        if (!chargeOrReject(input.tenantId, valuationConfig.costCaps.maxPerCallUsd)) {
+      const hasEdmundsConfig = Boolean(process.env.EDMUNDS_API_KEY && process.env.EDMUNDS_SECRET);
+      if (hasEdmundsConfig) {
+        if (!canCharge(input.tenantId, valuationConfig.costCaps.minPerCallUsd)) {
           return { success: false, errorCode: "DAILY_COST_CAP_EXCEEDED", fallbackValue: null };
         }
-        result = await callMarketCheck(input);
+        const edmunds = await callEdmunds(input);
+        if (edmunds.attempted) {
+          addCharge(input.tenantId, valuationConfig.costCaps.minPerCallUsd);
+        }
+        result = edmunds.result;
+      }
+
+      if (!result) {
+        const hasMarketCheckConfig = Boolean(process.env.MARKETCHECK_API_KEY);
+        if (hasMarketCheckConfig) {
+          if (!canCharge(input.tenantId, valuationConfig.costCaps.maxPerCallUsd)) {
+            return { success: false, errorCode: "DAILY_COST_CAP_EXCEEDED", fallbackValue: null };
+          }
+          const marketCheck = await callMarketCheck(input);
+          if (marketCheck.attempted) {
+            addCharge(input.tenantId, valuationConfig.costCaps.maxPerCallUsd);
+          }
+          result = marketCheck.result;
+        }
       }
       if (!result) result = fallbackFormula(input);
 

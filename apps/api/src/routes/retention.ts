@@ -4,6 +4,7 @@ import { requireRole } from "../middleware/requireRole.js";
 import { validateBody } from "../middleware/validate.js";
 import { retentionTriggerSchema, upsellOfferSchema } from "@vex/shared";
 import { prisma } from "../lib/tenant.js";
+import { runTenantRetentionCycle } from "../lib/retention.js";
 
 export const retentionRouter: Router = Router();
 
@@ -41,4 +42,9 @@ retentionRouter.post("/upsell-offer", requireAuth, requireRole("ADMIN", "GROUP_A
     },
   });
   return res.json({ data: { ok: true, offer: body }, error: null });
+});
+
+retentionRouter.post("/cycle", requireAuth, requireRole("ADMIN", "GROUP_ADMIN"), async (req, res) => {
+  const result = await runTenantRetentionCycle(req.tenantId!);
+  return res.json({ data: result, error: null });
 });

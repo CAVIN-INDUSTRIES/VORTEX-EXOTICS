@@ -34,6 +34,10 @@ import { growthRouter } from "./routes/growth.js";
 import { dmsRouter } from "./routes/dms.js";
 import { complianceRouter } from "./routes/compliance.js";
 import { retentionRouter } from "./routes/retention.js";
+import { successRouter } from "./routes/success.js";
+import { iterationRouter } from "./routes/iteration.js";
+import { upsellRouter } from "./routes/upsell.js";
+import { capitalRouter } from "./routes/capital.js";
 
 const app: Express = express();
 
@@ -112,5 +116,9 @@ app.use("/growth", growthRouter);
 app.use("/dms", dmsRouter);
 app.use("/compliance", complianceRouter);
 app.use("/retention", retentionRouter);
+app.use("/success", successRouter);
+app.use("/iteration", iterationRouter);
+app.use("/upsell", upsellRouter);
+app.use("/capital", capitalRouter);
 
 export { app };

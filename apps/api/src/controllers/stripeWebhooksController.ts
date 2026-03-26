@@ -93,6 +93,20 @@ export async function stripe(req: Request, res: Response) {
                   },
                 });
               }
+              await prisma.usageLog.create({
+                data: {
+                  tenantId: user.tenantId,
+                  kind: "subscription_payment",
+                  quantity: 1,
+                  amountUsd: amount ?? undefined,
+                  meta: {
+                    stripeCheckoutSessionId,
+                    stripeSubscriptionId: stripeSubscriptionId ?? null,
+                    billingInterval,
+                    plan,
+                  },
+                },
+              });
             });
           }
         }

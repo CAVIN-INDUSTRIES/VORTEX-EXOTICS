@@ -34,7 +34,7 @@ const IMAGE = {
 
 /** glTF demo for 3D viewer — replace per listing with photogrammetry output URL when ready */
 const LIBRARY_DEMO_GLB =
-  "https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/CesiumMilkTruck/glTF-Binary/CesiumMilkTruck.glb";
+  "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CarConcept/glTF-Binary/CarConcept.glb";
 
 type VehicleSeed = {
   make: string;

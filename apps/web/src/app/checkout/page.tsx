@@ -219,12 +219,12 @@ function CheckoutPageInner() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Financing</h2>
               <div className={styles.formRow}>
-                <label>Term (months)</label>
-                <input type="number" min={12} max={96} value={termMonths} onChange={(e) => setTermMonths(Number(e.target.value))} className={styles.input} />
+                <label htmlFor="checkout-term">Term (months)</label>
+                <input id="checkout-term" type="number" min={12} max={96} value={termMonths} onChange={(e) => setTermMonths(Number(e.target.value))} className={styles.input} />
               </div>
               <div className={styles.formRow}>
-                <label>APR (%)</label>
-                <input type="number" step={0.1} min={0} value={apr} onChange={(e) => setApr(Number(e.target.value))} className={styles.input} />
+                <label htmlFor="checkout-apr">APR (%)</label>
+                <input id="checkout-apr" type="number" step={0.1} min={0} value={apr} onChange={(e) => setApr(Number(e.target.value))} className={styles.input} />
               </div>
               {financeResult && (
                 <p className={styles.financeResult}>
@@ -236,16 +236,16 @@ function CheckoutPageInner() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Shipping</h2>
               <div className={styles.formRow}>
-                <label>Origin</label>
-                <input type="text" placeholder="Address or city" value={shippingOrigin} onChange={(e) => setShippingOrigin(e.target.value)} className={styles.input} />
+                <label htmlFor="checkout-origin">Origin</label>
+                <input id="checkout-origin" type="text" placeholder="Address or city" value={shippingOrigin} onChange={(e) => setShippingOrigin(e.target.value)} className={styles.input} />
               </div>
               <div className={styles.formRow}>
-                <label>Destination</label>
-                <input type="text" placeholder="Address or city" value={shippingDest} onChange={(e) => setShippingDest(e.target.value)} className={styles.input} />
+                <label htmlFor="checkout-dest">Destination</label>
+                <input id="checkout-dest" type="text" placeholder="Address or city" value={shippingDest} onChange={(e) => setShippingDest(e.target.value)} className={styles.input} />
               </div>
               <div className={styles.formRow}>
-                <label>Transport</label>
-                <select value={shippingType} onChange={(e) => setShippingType(e.target.value as "OPEN" | "ENCLOSED")} className={styles.select}>
+                <label htmlFor="checkout-transport">Transport</label>
+                <select id="checkout-transport" value={shippingType} onChange={(e) => setShippingType(e.target.value as "OPEN" | "ENCLOSED")} className={styles.select}>
                   <option value="OPEN">Open</option>
                   <option value="ENCLOSED">Enclosed</option>
                 </select>

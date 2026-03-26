@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import type { CreateLeadInput, UpdateLeadInput } from "@vex/shared";
-import { requireAuth } from "../middleware/auth.js";
 
 const prisma = new PrismaClient();
 

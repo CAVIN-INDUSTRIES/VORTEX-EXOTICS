@@ -15,7 +15,7 @@ export function AmbientShell() {
   useEffect(() => {
     ambientLog.debug("shell", "Ambient atmosphere active", {
       reducedMotion,
-      layers: ["deep", "mesh", "sweep", "grid", "orbs", "grain", "vignette"],
+      layers: ["deep", "aurora", "mesh", "sweep", "grid", "orbs", "twinkle", "grain", "vignette"],
     });
   }, [reducedMotion]);
 
@@ -28,6 +28,7 @@ export function AmbientShell() {
       data-ambient-root
     >
       <div className={styles.layerDeep} />
+      <div className={`${styles.layerAurora} ${staticMotion ? styles.layerAuroraStatic : ""}`} />
       <div className={`${styles.layerMesh} ${staticMotion ? styles.layerMeshStatic : ""}`} />
       <div className={`${styles.layerSweep} ${staticMotion ? styles.layerSweepStatic : ""}`} />
       <div className={styles.layerGrid} />
@@ -37,6 +38,7 @@ export function AmbientShell() {
         <div className={`${styles.orb} ${styles.orb3} ${staticMotion ? styles.orbStatic : ""}`} />
         <div className={`${styles.orb} ${styles.orb4} ${staticMotion ? styles.orbStatic : ""}`} />
       </div>
+      <div className={`${styles.layerTwinkle} ${staticMotion ? styles.layerTwinkleStatic : ""}`} />
       <div className={`${styles.layerGrain} ${staticMotion ? styles.layerGrainStatic : ""}`} />
       <div className={styles.layerVignette} />
     </div>

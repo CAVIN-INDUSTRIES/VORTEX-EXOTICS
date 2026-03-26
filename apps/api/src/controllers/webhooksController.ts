@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
 function checkSecret(req: Request, res: Response): boolean {
-  if (!WEBHOOK_SECRET) return true;
+  if (!WEBHOOK_SECRET) {
+    res.status(503).json({ code: "NOT_CONFIGURED", message: "WEBHOOK_SECRET is not set — webhooks are disabled" });
+    return false;
+  }
   const secret = req.headers["x-webhook-secret"] || req.query.secret;
   if (secret !== WEBHOOK_SECRET) {
     res.status(401).json({ code: "UNAUTHORIZED", message: "Invalid webhook secret" });

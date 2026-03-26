@@ -270,6 +270,9 @@
   justify-self: end;
   width: 100%;
   max-width: 32rem;
+  height: clamp(420px, 55vh, 720px);
+  display: flex;
+  align-items: stretch;
   padding: 1px;
   border-radius: 22px;
   background: linear-gradient(145deg, rgba(201, 169, 98, 0.55), rgba(255, 255, 255, 0.12) 42%, rgba(201, 169, 98, 0.35));
@@ -281,7 +284,10 @@
   z-index: 1;
   border-radius: 21px;
   overflow: hidden;
+  height: 100%;
+  width: 100%;
   background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(201, 169, 98, 0.06), transparent 50%), #07080c;
+  display: flex;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -338,6 +344,8 @@
   .visualWrap {
     justify-self: center;
     max-width: 22rem;
+    height: auto;
+    min-height: 360px;
   }
 }
 

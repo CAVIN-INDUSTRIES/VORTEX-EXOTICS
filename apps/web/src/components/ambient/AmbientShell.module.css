@@ -21,6 +21,43 @@
     linear-gradient(185deg, #070709 0%, #030304 42%, #020203 100%);
 }
 
+.layerAurora {
+  position: absolute;
+  inset: -22%;
+  opacity: 0.35;
+  filter: blur(38px) saturate(1.1);
+  background:
+    conic-gradient(
+      from 170deg at 50% 40%,
+      rgba(201, 169, 98, 0.22),
+      rgba(232, 204, 122, 0.11) 18%,
+      transparent 33%,
+      rgba(139, 141, 148, 0.11) 50%,
+      transparent 70%,
+      rgba(201, 169, 98, 0.18) 88%,
+      transparent 100%
+    );
+  transform-origin: 50% 50%;
+  animation: ambientAurora 42s ease-in-out infinite;
+}
+
+.layerAuroraStatic {
+  animation: none;
+  opacity: 0.24;
+}
+
+@keyframes ambientAurora {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.28;
+  }
+  50% {
+    transform: rotate(9deg) scale(1.04);
+    opacity: 0.4;
+  }
+}
+
 .layerMesh {
   position: absolute;
   inset: -15%;
@@ -93,6 +130,40 @@
     linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 85% 65% at 50% 38%, black 15%, transparent 72%);
+}
+
+.layerTwinkle {
+  position: absolute;
+  inset: -6%;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.2px),
+    radial-gradient(circle, rgba(232, 204, 122, 0.28) 0 1px, transparent 1.2px),
+    radial-gradient(circle, rgba(201, 169, 98, 0.24) 0 1px, transparent 1.2px);
+  background-size: 170px 170px, 240px 240px, 310px 310px;
+  background-position: 0% 0%, 30% 55%, 80% 18%;
+  animation: ambientTwinkle 18s ease-in-out infinite alternate;
+}
+
+.layerTwinkleStatic {
+  animation: none;
+  opacity: 0.16;
+}
+
+@keyframes ambientTwinkle {
+  0% {
+    opacity: 0.16;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.34;
+    transform: translateY(-0.6%);
+  }
+  100% {
+    opacity: 0.22;
+    transform: translateY(0.35%);
+  }
 }
 
 .orbs {
@@ -221,13 +292,17 @@
 
 .reduced .layerMesh,
 .reduced .layerSweep,
-.reduced .layerGrain {
+.reduced .layerGrain,
+.reduced .layerAurora,
+.reduced .layerTwinkle {
   opacity: 0.65;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .layerAurora,
   .layerMesh,
   .layerSweep,
+  .layerTwinkle,
   .orb,
   .layerGrain {
     animation: none !important;

@@ -48,6 +48,35 @@
   transition: transform 120ms ease, width 120ms ease, height 120ms ease, border-color 120ms ease;
 }
 
+.spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translate(-9999px, -9999px) scale(0.5);
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.95), rgba(232, 204, 122, 0.8) 45%, rgba(201, 169, 98, 0) 70%);
+  filter: blur(0.2px);
+  pointer-events: none;
+}
+
+.spark[data-active="1"] {
+  animation: sparkPop 260ms ease-out forwards;
+}
+
+@keyframes sparkPop {
+  from {
+    opacity: var(--sa, 0.7);
+    transform: translate(calc(var(--sx) - 50%), calc(var(--sy) - 50%)) scale(calc(var(--ss) * 0.6));
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(var(--sx) - 50%), calc(var(--sy) - 50% - 10px)) scale(calc(var(--ss) * 1.5));
+  }
+}
+
 .root[data-mode="interactive"] .ring {
   width: 56px;
   height: 56px;

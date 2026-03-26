@@ -39,12 +39,17 @@ export async function create(req: Request, res: Response) {
 
 export async function getById(req: Request, res: Response) {
   const { id } = req.params;
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required to view appraisals" });
+  }
+
   const appraisal = await prisma.appraisal.findUnique({ where: { id } });
   if (!appraisal) return res.status(404).json({ code: "NOT_FOUND", message: "Appraisal not found" });
 
-  const user = req.user;
-  if (user && appraisal.userId && appraisal.userId !== user.userId) {
-    return res.status(403).json({ code: "FORBIDDEN", message: "Not your appraisal" });
+  const isStaff = user.role === "STAFF" || user.role === "ADMIN";
+  if (!isStaff && appraisal.userId && appraisal.userId !== user.userId) {
+    return res.status(404).json({ code: "NOT_FOUND", message: "Appraisal not found" });
   }
 
   return res.json({

@@ -17,6 +17,9 @@ export function CursorFX() {
   const [enabled, setEnabled] = useState(false);
   const raf = useRef<number | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const sparksRef = useRef<Array<HTMLSpanElement | null>>([]);
+  const sparkIdx = useRef(0);
+  const lastSparkAt = useRef(0);
 
   const state = useMemo(
     () => ({
@@ -27,6 +30,7 @@ export function CursorFX() {
       mx: 0,
       my: 0,
       down: false,
+      interactive: false,
     }),
     []
   );
@@ -69,8 +73,36 @@ export function CursorFX() {
     const onOver = (e: PointerEvent) => {
       const t = e.target as HTMLElement | null;
       const interactive = t?.closest?.("a,button,[role='button'],[data-cursor='interactive']");
-      if (interactive) root.dataset.mode = "interactive";
-      else delete root.dataset.mode;
+      if (interactive) {
+        root.dataset.mode = "interactive";
+        state.interactive = true;
+      } else {
+        delete root.dataset.mode;
+        state.interactive = false;
+      }
+    };
+
+    const spawnSpark = (x: number, y: number) => {
+      const now = performance.now();
+      if (now - lastSparkAt.current < 70) return;
+      lastSparkAt.current = now;
+      const list = sparksRef.current;
+      const idx = sparkIdx.current % list.length;
+      sparkIdx.current += 1;
+      const el = list[idx];
+      if (!el) return;
+      const ox = (Math.random() - 0.5) * 22;
+      const oy = (Math.random() - 0.5) * 22;
+      const s = 0.7 + Math.random() * 0.7;
+      const a = 0.45 + Math.random() * 0.45;
+      el.style.setProperty("--sx", `${x + ox}px`);
+      el.style.setProperty("--sy", `${y + oy}px`);
+      el.style.setProperty("--ss", s.toFixed(2));
+      el.style.setProperty("--sa", a.toFixed(2));
+      el.dataset.active = "1";
+      window.setTimeout(() => {
+        delete el.dataset.active;
+      }, 260);
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -90,6 +122,7 @@ export function CursorFX() {
       root.style.setProperty("--cy", `${state.my}px`);
       root.style.setProperty("--tx", `${state.tx}px`);
       root.style.setProperty("--ty", `${state.ty}px`);
+      if (state.interactive) spawnSpark(state.mx, state.my);
 
       raf.current = window.requestAnimationFrame(tick);
     };
@@ -113,6 +146,15 @@ export function CursorFX() {
       <div className={styles.trail} />
       <div className={styles.dot} />
       <div className={styles.ring} />
+      {Array.from({ length: 14 }).map((_, i) => (
+        <span
+          key={i}
+          ref={(el) => {
+            sparksRef.current[i] = el;
+          }}
+          className={styles.spark}
+        />
+      ))}
     </div>
   );
 }

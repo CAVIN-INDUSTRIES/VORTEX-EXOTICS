@@ -22,6 +22,16 @@ export type ConfiguratorVehicleCanvasProps = {
   premium?: boolean;
   /** Subtle floor grid when `compact` (hero strip). */
   compactGrid?: boolean;
+  /** External camera preset control (hero HUD). */
+  cameraPresetOverride?: CameraPreset | null;
+  /** External auto-rotate control (hero HUD). */
+  autoRotateOverride?: boolean;
+  /** External auto-rotate setter (hero HUD). */
+  onAutoRotateChange?: (next: boolean) => void;
+  /** External camera preset setter (hero HUD). */
+  onCameraPresetChange?: (next: CameraPreset | null) => void;
+  /** Callback when a preset transition completes under external control. */
+  onCameraPresetApplied?: () => void;
 };
 
 function CanvasLoader() {
@@ -49,18 +59,32 @@ export function ConfiguratorVehicleCanvas({
   embed = false,
   premium,
   compactGrid = false,
+  cameraPresetOverride,
+  autoRotateOverride,
+  onAutoRotateChange,
+  onCameraPresetChange,
+  onCameraPresetApplied,
 }: ConfiguratorVehicleCanvasProps) {
   const [cameraPreset, setCameraPreset] = useState<CameraPreset | null>(null);
   const [autoRotate, setAutoRotate] = useState(false);
   const hintId = useId();
   const cam = getCanvasCamera(compact);
+  const controlledPreset = cameraPresetOverride !== undefined;
+  const controlledRotate = autoRotateOverride !== undefined;
+  const resolvedPreset = controlledPreset ? cameraPresetOverride : cameraPreset;
+  const resolvedAutoRotate = controlledRotate ? Boolean(autoRotateOverride) : autoRotate;
 
   const onPresetApplied = useCallback(() => {
-    setCameraPreset(null);
-  }, []);
+    if (controlledPreset) {
+      onCameraPresetApplied?.();
+    } else {
+      setCameraPreset(null);
+    }
+  }, [controlledPreset, onCameraPresetApplied]);
 
   const handlePreset = (id: CameraPreset) => {
-    setCameraPreset(id);
+    if (controlledPreset) onCameraPresetChange?.(id);
+    else setCameraPreset(id);
   };
 
   return (
@@ -87,9 +111,13 @@ export function ConfiguratorVehicleCanvas({
           <div className={styles.toolsRow}>
             <button
               type="button"
-              className={`${styles.toggle} ${autoRotate ? styles.toggleOn : ""}`}
-              onClick={() => setAutoRotate((v) => !v)}
-              aria-pressed={autoRotate}
+              className={`${styles.toggle} ${resolvedAutoRotate ? styles.toggleOn : ""}`}
+              onClick={() => {
+                const next = !resolvedAutoRotate;
+                if (controlledRotate) onAutoRotateChange?.(next);
+                else setAutoRotate(next);
+              }}
+              aria-pressed={resolvedAutoRotate}
             >
               Auto rotate
             </button>
@@ -111,9 +139,9 @@ export function ConfiguratorVehicleCanvas({
               finishId={finishId}
               edition={edition}
               powertrain={powertrain}
-              cameraPreset={cameraPreset}
+              cameraPreset={resolvedPreset}
               onPresetApplied={onPresetApplied}
-              autoRotate={autoRotate}
+              autoRotate={resolvedAutoRotate}
               compact={compact}
               premium={premium}
               compactGrid={compactGrid}
@@ -122,7 +150,7 @@ export function ConfiguratorVehicleCanvas({
         </Canvas>
         <p id={hintId} className={styles.hint}>
           Drag to orbit · Scroll to zoom
-          {autoRotate ? " · Auto-rotating" : ""}
+          {resolvedAutoRotate ? " · Auto-rotating" : ""}
         </p>
       </div>
     </div>

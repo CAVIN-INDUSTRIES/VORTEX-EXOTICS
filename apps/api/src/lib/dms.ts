@@ -1,4 +1,4 @@
-import { dmsSyncInputSchema, dmsSyncOutputSchema, type z } from "@vex/shared";
+import { dmsSyncInputSchema, dmsSyncOutputSchema } from "@vex/shared";
 import { prisma } from "./tenant.js";
 
 const vendorWindow = new Map<string, { minute: string; count: number }>();
@@ -36,7 +36,7 @@ function addSpend(tenantId: string, usd: number): boolean {
 }
 
 export class DMSService {
-  async sync(inputRaw: z.infer<typeof dmsSyncInputSchema>) {
+  async sync(inputRaw: unknown) {
     const input = dmsSyncInputSchema.parse(inputRaw);
     if (!allowVendorRate(input.tenantId, input.vendor)) {
       return { imported: 0, skipped: 0, lastSyncAt: new Date(), vendor: input.vendor };

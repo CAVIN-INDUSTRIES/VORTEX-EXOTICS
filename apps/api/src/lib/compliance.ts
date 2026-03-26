@@ -16,7 +16,10 @@ export async function logComplianceEvent(input: {
       action: input.action,
       entity: input.entity,
       entityId: input.entityId,
-      payload: { before: input.before ?? null, after: input.after ?? null },
+      payload: {
+        before: input.before == null ? null : String(input.before),
+        after: input.after == null ? null : String(input.after),
+      },
     },
   });
 }

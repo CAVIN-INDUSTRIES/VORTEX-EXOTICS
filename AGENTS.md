@@ -84,3 +84,9 @@ Build a best-in-class **B2B SaaS platform for auto dealers** (CRM + Inventory + 
 - **AI insights**: model outputs must include version; enforce per-tenant inference caps and fallback scoring.
 - **PWA**: offline-first appraisal drafts with background sync queue behavior.
 - **Growth**: referral/claim flows must be idempotent and audited.
+
+## Phase 7 — Enterprise readiness
+- **DMS integrations**: vendor syncs must be idempotent (`externalId + tenantId`) and audited.
+- **Hierarchy**: support group/location structures with explicit override controls for `GROUP_ADMIN`.
+- **Compliance**: SOC2-lite exports and immutable audit trail access controls.
+- **Retention/expansion**: usage-driven offers and campaigns must be consent-aware and tenant-scoped.

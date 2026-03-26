@@ -19,8 +19,11 @@ export async function stats(req: Request, res: Response) {
   ]);
 
   return res.json({
-    leads: { new: leadsNew, total: leadsTotal },
-    orders: { draft: ordersDraft, depositPaid: ordersDepositPaid, confirmed: ordersConfirmed, fulfilled: ordersFulfilled },
-    inventory: { available: inventoryAvailable },
+    data: {
+      leads: { new: leadsNew, total: leadsTotal },
+      orders: { draft: ordersDraft, depositPaid: ordersDepositPaid, confirmed: ordersConfirmed, fulfilled: ordersFulfilled },
+      inventory: { available: inventoryAvailable },
+    },
+    error: null,
   });
 }

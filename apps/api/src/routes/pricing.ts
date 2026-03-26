@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
 import { validateBody } from "../middleware/validate.js";
 import { requireAuth } from "../middleware/auth.js";
 import { createPortalSessionSchema } from "@vex/shared";
 import { getStripeClient } from "../lib/stripe.js";
+import { prisma } from "../lib/tenant.js";
 
 export const pricingRouter: Router = Router();
-const prisma = new PrismaClient();
 
 const PLANS = [
   { tier: "STARTER", name: "Starter", monthly: 49, yearly: 470, features: ["1 user", "Basic CRM", "Inventory core"] },
@@ -21,7 +20,7 @@ pricingRouter.get("/plans", async (_req, res) => {
 pricingRouter.get("/current", requireAuth, async (req, res) => {
   const user = req.user;
   if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
-  const tenant = await prisma.tenant.findUnique({
+  const tenant = await prisma.tenant.findFirst({
     where: { id: user.tenantId },
     select: {
       id: true,
@@ -41,7 +40,7 @@ pricingRouter.post("/portal/session", requireAuth, validateBody(createPortalSess
   const user = req.user;
   if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
 
-  const tenant = await prisma.tenant.findUnique({
+  const tenant = await prisma.tenant.findFirst({
     where: { id: user.tenantId },
     select: { stripeCustomerId: true },
   });

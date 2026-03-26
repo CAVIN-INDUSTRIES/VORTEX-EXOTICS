@@ -32,3 +32,4 @@ alwaysApply: false
 - Revenue pipeline: onboarding/provision/referral/pilot routes must write `AuditLog` rows for critical state transitions.
 - Compliance: avoid returning secrets or unhashed referral codes from API persistence layers.
 - AI/growth endpoints must require auth + tenant scope and never trust tenant identifiers from clients.
+- `GROUP_ADMIN` cross-location access must require explicit group-scope flags and be validated server-side.

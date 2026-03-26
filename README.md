@@ -107,3 +107,5 @@ Place your **VEX logo (no background)** at `apps/web/public/vex-logo.png`. The h
 - Live MRR dashboard URL: `https://app.vex.example/admin` (replace with your production domain).
 - Pilot signup link: `https://app.vex.example/pilot` (replace with your production domain).
 - Live seed metrics dashboard URL: `https://app.vex.example/seed-metrics` (replace with your production domain).
+- Enterprise pilot signup link: `https://app.vex.example/pilot?segment=enterprise` (replace with your production domain).
+- Live SOC2 status: `https://app.vex.example/compliance/soc2-report` (replace with your production domain).

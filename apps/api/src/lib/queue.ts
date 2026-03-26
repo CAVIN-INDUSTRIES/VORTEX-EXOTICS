@@ -79,6 +79,18 @@ export async function enqueueProvisionTenant(data: { tenantId: string; tier: str
   await q.add("provision-tenant", data, { jobId: `provision:${data.tenantId}` });
 }
 
+export async function enqueueDmsSync(data: { tenantId: string; vendor: string; mode?: "full" | "delta" }): Promise<void> {
+  const q = getQueue();
+  if (!q) return;
+  await q.add("dms-sync", data, { jobId: `dms:${data.tenantId}:${data.vendor}:${data.mode ?? "delta"}` });
+}
+
+export async function enqueueRetentionScore(data: { tenantId: string }): Promise<void> {
+  const q = getQueue();
+  if (!q) return;
+  await q.add("retention-score", data, { jobId: `retention:${data.tenantId}` });
+}
+
 let workerInstance: Worker | null = null;
 
 async function processJob(job: Job): Promise<void> {
@@ -143,6 +155,26 @@ async function processJob(job: Job): Promise<void> {
           tenantId,
           type: "job.provision_tenant",
           payload: { tier: String(data.tier ?? "STARTER"), email: String(data.email ?? "") },
+        },
+      });
+      return;
+    }
+    if (name === "dms-sync") {
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.dms_sync",
+          payload: { vendor: String(data.vendor ?? ""), mode: String(data.mode ?? "delta") },
+        },
+      });
+      return;
+    }
+    if (name === "retention-score") {
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.retention_score",
+          payload: { status: "queued" },
         },
       });
       return;

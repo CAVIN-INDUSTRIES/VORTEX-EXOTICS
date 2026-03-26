@@ -10,3 +10,4 @@ globs: apps/api/**,apps/web/**,packages/shared/**
 - Pilot funnel endpoints must validate with Zod and avoid exposing secrets in responses.
 - AI insights must include versioned outputs with cost/inference caps and audit logs.
 - Growth claims/referral credits must be idempotent and tenant-scoped.
+- Enterprise-readiness: DMS sync, compliance exports, and group hierarchy actions must be fully audited.

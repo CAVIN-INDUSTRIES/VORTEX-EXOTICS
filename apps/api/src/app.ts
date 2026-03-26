@@ -31,6 +31,9 @@ import { referralRouter } from "./routes/referral.js";
 import { pilotRouter } from "./routes/pilot.js";
 import { aiRouter } from "./routes/ai.js";
 import { growthRouter } from "./routes/growth.js";
+import { dmsRouter } from "./routes/dms.js";
+import { complianceRouter } from "./routes/compliance.js";
+import { retentionRouter } from "./routes/retention.js";
 
 const app: Express = express();
 
@@ -106,5 +109,8 @@ app.use("/admin", adminRouter);
 app.use("/referrals", referralRouter);
 app.use("/ai", aiRouter);
 app.use("/growth", growthRouter);
+app.use("/dms", dmsRouter);
+app.use("/compliance", complianceRouter);
+app.use("/retention", retentionRouter);
 
 export { app };

@@ -86,6 +86,7 @@ export async function getAnalytics(req: Request, res: Response) {
       revenueTotal,
       revenueByMonth,
     },
+    error: null,
   });
 }
 

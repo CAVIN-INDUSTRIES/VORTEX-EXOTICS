@@ -13,3 +13,4 @@ globs: apps/api/**,apps/crm/**,apps/web/**,packages/shared/**
 - **Frontends**: prefer React Query for server state; lazy-load heavy CRM routes; PWA manifests for field use.
 - **GTM**: onboarding and pilot funnels should emit telemetry/audit events and avoid client-side trust for billing/referrals.
 - **Phase 6**: AI inference endpoints must cap spend and sanitize PII; mobile PWA paths should support offline-first drafts/sync.
+- **Enterprise**: group hierarchy and DMS pipelines must remain shard-safe (`tenantId`) and idempotent under retries.

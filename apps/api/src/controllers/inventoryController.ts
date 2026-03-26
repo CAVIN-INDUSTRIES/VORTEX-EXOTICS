@@ -152,7 +152,7 @@ export async function create(req: Request, res: Response) {
       tenant: { connect: { id: req.tenantId! } },
       source: body.source,
       vehicle: { connect: { id: body.vehicleId } },
-      ...(body.source === "PRIVATE_SELLER" ? { listedBy: { connect: { id: user.userId } } } : { listedBy: undefined }),
+      ...(body.source === "PRIVATE_SELLER" ? { listedBy: { connect: { id: user.userId } } } : {}),
       location: body.location ?? null,
       listPrice: body.listPrice,
       mileage: body.mileage ?? null,
@@ -201,7 +201,9 @@ export async function update(req: Request, res: Response) {
       ...(body.status !== undefined && { status: body.status }),
       ...(body.vin !== undefined && { vin: body.vin }),
       ...(body.verificationStatus !== undefined && { verificationStatus: body.verificationStatus }),
-      ...(body.imageUrls !== undefined && { imageUrls: body.imageUrls }),
+      ...(body.imageUrls !== undefined && {
+        imageUrls: body.imageUrls === null ? Prisma.JsonNull : (body.imageUrls as Prisma.InputJsonValue),
+      }),
       ...(body.specs !== undefined && {
         specs: body.specs === null ? Prisma.JsonNull : (body.specs as Prisma.InputJsonValue),
       }),

@@ -346,7 +346,7 @@ async function main() {
     if (globalOptionCount === 0) {
       await prisma.configurationOption.createMany({
         data: [
-          { vehicleId: null, category: "TYRES", name: "Performance tire package", priceDelta: 3500, isRequired: false },
+          { vehicleId: null, category: "TIRES", name: "Performance tire package", priceDelta: 3500, isRequired: false },
           { vehicleId: null, category: "ACCESSORIES", name: "Ceramic coating (full body)", priceDelta: 4200, isRequired: false },
         ],
       });

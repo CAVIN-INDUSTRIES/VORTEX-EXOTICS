@@ -111,7 +111,7 @@
 **Steps:**
 1. Model Vehicle: id, make, model, trimLevel, year, basePrice, bodyType?, imageUrls (Json?), isActive (default true), createdAt, updatedAt.
 2. Model Inventory: id, source (enum COMPANY, PRIVATE_SELLER), vehicleId (FK Vehicle), listedByUserId? (FK User, for private), location?, listPrice, mileage?, status (enum AVAILABLE, RESERVED, SOLD), vin?, verificationStatus? (enum PENDING, APPROVED, REJECTED for private), imageUrls? (Json), specs? (Json), createdAt, updatedAt.
-3. Model ConfigurationOption: id, vehicleId? (nullable, FK Vehicle), category (enum TYRES, PAINT, ACCESSORIES, STYLING), name, priceDelta, isRequired (default false), createdAt, updatedAt.
+3. Model ConfigurationOption: id, vehicleId? (nullable, FK Vehicle), category (enum TIRES, PAINT, ACCESSORIES, STYLING), name, priceDelta, isRequired (default false), createdAt, updatedAt.
 4. Run `pnpm exec prisma generate`. Create migration: `prisma migrate dev --name add_vehicles_inventory_options`.
 5. Commit: `feat(api): add Vehicle, Inventory, ConfigurationOption models`
 
@@ -286,12 +286,12 @@
 **Files:**
 - Create: `apps/web/src/app/build/page.tsx`
 - Create: `apps/web/src/app/build/layout.tsx` (optional progress wrapper)
-- Create: `apps/web/src/components/build/StepVehicle.tsx`, `StepTrim.tsx`, `StepPaint.tsx`, `StepTyres.tsx`, `StepAccessories.tsx`, `StepSummary.tsx`
+- Create: `apps/web/src/components/build/StepVehicle.tsx`, `StepTrim.tsx`, `StepPaint.tsx`, `StepTires.tsx`, `StepAccessories.tsx`, `StepSummary.tsx`
 - Create: `apps/web/src/store/buildStore.ts` (context or zustand: selected vehicle, options, running total)
 
 **Steps:**
 1. Build store: selectedVehicleId, selectedOptions (category -> optionId), derived total. Load vehicles and options from API.
-2. Step 1: list vehicles (cards), select one → next. Step 2: trim if applicable or skip. Step 3: paint (from options category PAINT). Step 4: tyres (TYRES). Step 5: accessories (ACCESSORIES, STYLING). Step 6: summary with total, “Continue to checkout” → redirect to /checkout?build=1 (or pass state).
+2. Step 1: list vehicles (cards), select one → next. Step 2: trim if applicable or skip. Step 3: paint (from options category PAINT). Step 4: tires (TIRES). Step 5: accessories (ACCESSORIES, STYLING). Step 6: summary with total, “Continue to checkout” → redirect to /checkout?build=1 (or pass state).
 3. Progress indicator at top (1–6). Back/Next; minimal clicks, clear CTAs.
 4. Commit: `feat(web): add build-your-own flow`
 

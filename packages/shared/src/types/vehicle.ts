@@ -13,7 +13,7 @@ export interface Vehicle {
 }
 
 export enum OptionCategory {
-  TYRES = "TYRES",
+  TIRES = "TIRES",
   PAINT = "PAINT",
   ACCESSORIES = "ACCESSORIES",
   STYLING = "STYLING",

@@ -34,7 +34,7 @@ A consumer-first exotic car platform where the customer is in full control of th
 | **users** | id, email, role (customer \| staff \| admin), name, phone, tier (e.g. standard, vip), created_at |
 | **vehicles** | Base catalog for build-your-own: make, model, trim_level, year, base_price, body_type, image_urls, is_active |
 | **inventory** | Physical/listed units. source (company \| private_seller), vehicle_id, listed_by_user_id (private), location, list_price, mileage, status, vin, verification_status (for private), image_urls, specs (JSON) |
-| **configuration_options** | Options for build-your-own: vehicle_id (nullable), category (tyres \| paint \| accessories \| styling), name, price_delta, is_required |
+| **configuration_options** | Options for build-your-own: vehicle_id (nullable), category (tires \| paint \| accessories \| styling), name, price_delta, is_required |
 | **saved_vehicles** | user_id, inventory_id or config snapshot (JSON), created_at |
 | **orders** | user_id, type (inventory \| custom_build), inventory_id or vehicle_id + config_snapshot, status, deposit_amount, total_amount, financing_snapshot, trade_in_snapshot, shipping_snapshot, styling_addons_snapshot, created_at, updated_at |
 | **shipments** | order_id, carrier, tracking_url, status, estimated_delivery, open_enclosed (open \| enclosed), quote_amount, origin, destination |
@@ -67,7 +67,7 @@ A consumer-first exotic car platform where the customer is in full control of th
 | **/** | Home: hero (video/image + overlay), headline, CTAs (View Inventory, Build Your Ride, Book a Test Drive), featured cars, trust strip, footer |
 | **/inventory** | Grid of vehicles; filters: source (company/private), location, price range, make, model, year, color, VIN; sort; saved vehicles indicator |
 | **/inventory/[id]** | Detail: gallery, specs, price, shipping estimate CTA, “Configure & buy” / “Reserve / Pay deposit” |
-| **/build** | Multi-step build-your-own: (1) base vehicle (2) trim (3) paint (4) tyres/wheels (5) accessories (6) summary → checkout |
+| **/build** | Multi-step build-your-own: (1) base vehicle (2) trim (3) paint (4) tires/wheels (5) accessories (6) summary → checkout |
 | **/build/checkout** or **/checkout** | Order summary, trade-in (link to appraisal), financing calculator, shipping (open/enclosed, quote), styling add-ons, deposit, submit → confirmation |
 | **/appraisal** or **/trade-in** | Form: make, model, year, mileage, condition → estimated value; “Use as trade-in” → attach to order |
 | **/financing** | Optional standalone calculator |

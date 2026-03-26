@@ -114,7 +114,7 @@ model Inventory {
 }
 
 enum OptionCategory {
-  TYRES
+  TIRES
   PAINT
   ACCESSORIES
   STYLING

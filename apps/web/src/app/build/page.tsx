@@ -153,28 +153,28 @@ function BuildPageInner() {
           {(optionsByCategory.PAINT || []).length === 0 && <p className={styles.noOptions}>No paint options — proceed to next step.</p>}
           <div className={styles.actions}>
             <button type="button" className={styles.ctaSecondary} onClick={() => setStep(0)}>Back</button>
-            <button type="button" className={styles.cta} onClick={() => setStep(2)}>Next: Tyres</button>
+            <button type="button" className={styles.cta} onClick={() => setStep(2)}>Next: Tires</button>
           </div>
         </section>
       )}
 
       {step === 2 && vehicle && (
         <section className={styles.section}>
-          <p className={styles.subtitle}>Tyres & wheels</p>
+          <p className={styles.subtitle}>Tires & wheels</p>
           <div className={styles.optionGrid}>
-            {(optionsByCategory.TYRES || []).map((o) => (
+            {(optionsByCategory.TIRES || []).map((o) => (
               <button
                 key={o.id}
                 type="button"
-                className={`${styles.optionCard} ${selectedOptions.TYRES === o.id ? styles.selected : ""}`}
-                onClick={() => setSelectedOption("TYRES", o.id)}
+                className={`${styles.optionCard} ${selectedOptions.TIRES === o.id ? styles.selected : ""}`}
+                onClick={() => setSelectedOption("TIRES", o.id)}
               >
                 <span className={styles.optionName}>{o.name}</span>
                 <span className={styles.optionPrice}>{o.priceDelta > 0 ? `+${formatUsd(o.priceDelta)}` : "Included"}</span>
               </button>
             ))}
           </div>
-          {(optionsByCategory.TYRES || []).length === 0 && <p className={styles.noOptions}>No tyre options.</p>}
+          {(optionsByCategory.TIRES || []).length === 0 && <p className={styles.noOptions}>No tire options.</p>}
           <div className={styles.actions}>
             <button type="button" className={styles.ctaSecondary} onClick={() => setStep(1)}>Back</button>
             <button type="button" className={styles.cta} onClick={() => setStep(3)}>Next: Accessories</button>

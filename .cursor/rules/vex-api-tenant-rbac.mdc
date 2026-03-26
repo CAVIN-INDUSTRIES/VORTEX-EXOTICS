@@ -1,0 +1,29 @@
+---
+description: API rules: tenant isolation + RBAC required on every route
+globs: apps/api/src/**/*.ts
+alwaysApply: false
+---
+
+# API: tenant isolation + RBAC
+
+## Tenant isolation (mandatory)
+
+- Every read/write must be **scoped to tenant**.
+- Never accept `tenantId` from the client as authority.
+- Resolve tenant from:
+  - authenticated token claims, or
+  - server-side lookup (user → tenant), or
+  - explicit staff/admin override rules.
+
+## RBAC (mandatory)
+
+- Every route must specify required roles (at minimum).
+- Prefer middleware: `requireAuth` + role checks + tenant scoping.
+
+## Patterns
+
+- Use `validateBody(...)` (Zod) on every route with a JSON body.
+- Keep handlers **idempotent** where possible (especially payments/webhooks).
+- Use AsyncLocalStorage request context + Prisma middleware to enforce tenant scoping.
+- Avoid unsafe Prisma unique actions (`findUnique/update/delete/upsert`) on the tenant-scoped client; prefer `findFirst/updateMany/deleteMany`.
+

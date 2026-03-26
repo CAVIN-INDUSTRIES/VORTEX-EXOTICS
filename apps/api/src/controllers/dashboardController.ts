@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { requireAuth } from "../middleware/auth.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 export async function stats(req: Request, res: Response) {
   const user = req.user;

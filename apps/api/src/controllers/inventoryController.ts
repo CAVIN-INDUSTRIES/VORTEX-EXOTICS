@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { InventorySource, InventoryStatus, Prisma, PrismaClient } from "@prisma/client";
+import { InventorySource, InventoryStatus, Prisma } from "@prisma/client";
 import type { CreateInventoryInput, UpdateInventoryInput } from "@vex/shared";
 import { requireAuth } from "../middleware/auth.js";
 import { optionalJson } from "../utils/prismaJson.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 function toInventory(record: {
   id: string;
@@ -104,17 +103,20 @@ export async function list(req: Request, res: Response) {
   ]);
 
   return res.json({
-    items: items.map(toInventory),
-    total,
-    limit,
-    offset,
+    data: {
+      items: items.map(toInventory),
+      total,
+      limit,
+      offset,
+    },
+    error: null,
   });
 }
 
 export async function getById(req: Request, res: Response) {
   const { id } = req.params;
 
-  const item = await prisma.inventory.findUnique({
+  const item = await prisma.inventory.findFirst({
     where: { id },
     include: { vehicle: true },
   });
@@ -127,7 +129,7 @@ export async function getById(req: Request, res: Response) {
     return res.status(404).json({ code: "NOT_FOUND", message: "Inventory item not found" });
   }
 
-  return res.json(toInventory(item));
+  return res.json({ data: toInventory(item), error: null });
 }
 
 export async function create(req: Request, res: Response) {
@@ -140,16 +142,17 @@ export async function create(req: Request, res: Response) {
     return res.status(403).json({ code: "FORBIDDEN", message: "Only staff can add company inventory" });
   }
 
-  const vehicle = await prisma.vehicle.findUnique({ where: { id: body.vehicleId } });
+  const vehicle = await prisma.vehicle.findFirst({ where: { id: body.vehicleId } });
   if (!vehicle) {
     return res.status(400).json({ code: "BAD_REQUEST", message: "Vehicle not found" });
   }
 
   const inventory = await prisma.inventory.create({
     data: {
+      tenant: { connect: { id: req.tenantId! } },
       source: body.source,
-      vehicleId: body.vehicleId,
-      listedByUserId: body.source === "PRIVATE_SELLER" ? user.userId : null,
+      vehicle: { connect: { id: body.vehicleId } },
+      ...(body.source === "PRIVATE_SELLER" ? { listedBy: { connect: { id: user.userId } } } : { listedBy: undefined }),
       location: body.location ?? null,
       listPrice: body.listPrice,
       mileage: body.mileage ?? null,
@@ -164,7 +167,7 @@ export async function create(req: Request, res: Response) {
     include: { vehicle: true },
   });
 
-  return res.status(201).json(toInventory(inventory));
+  return res.status(201).json({ data: toInventory(inventory), error: null });
 }
 
 export async function update(req: Request, res: Response) {
@@ -172,7 +175,7 @@ export async function update(req: Request, res: Response) {
   const body = req.body as UpdateInventoryInput;
   const user = req.user;
 
-  const existing = await prisma.inventory.findUnique({ where: { id } });
+  const existing = await prisma.inventory.findFirst({ where: { id } });
   if (!existing) {
     return res.status(404).json({ code: "NOT_FOUND", message: "Inventory item not found" });
   }
@@ -189,7 +192,7 @@ export async function update(req: Request, res: Response) {
     }
   }
 
-  const inventory = await prisma.inventory.update({
+  const updated = await prisma.inventory.updateMany({
     where: { id },
     data: {
       ...(body.location !== undefined && { location: body.location }),
@@ -211,8 +214,23 @@ export async function update(req: Request, res: Response) {
             : (body.modelSourcePhotoIds as Prisma.InputJsonValue),
       }),
     },
-    include: { vehicle: true },
   });
+  if (updated.count === 0) return res.status(404).json({ code: "NOT_FOUND", message: "Inventory item not found" });
 
-  return res.json(toInventory(inventory));
+  const inventory = await prisma.inventory.findFirst({ where: { id }, include: { vehicle: true } });
+  if (!inventory) return res.status(404).json({ code: "NOT_FOUND", message: "Inventory item not found" });
+
+  return res.json({ data: toInventory(inventory), error: null });
+}
+
+export async function remove(req: Request, res: Response) {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
+  if (user.role !== "STAFF" && user.role !== "ADMIN") {
+    return res.status(403).json({ code: "FORBIDDEN", message: "Staff or admin required" });
+  }
+  const { id } = req.params;
+  const deleted = await prisma.inventory.deleteMany({ where: { id } });
+  if (deleted.count === 0) return res.status(404).json({ code: "NOT_FOUND", message: "Inventory item not found" });
+  return res.json({ data: { id }, error: null });
 }

@@ -1,0 +1,17 @@
+---
+description: Core execution standards for Vex coding agents
+alwaysApply: true
+---
+
+# Vex core standards
+
+- **Always run** `pnpm -w turbo run build` after substantive changes (and before any commit/PR).
+- **No secrets in git**: never commit `.env` files or keys.
+- **No inline imports**: keep imports at the top of files.
+- **TypeScript**
+  - Prefer strict types in `packages/shared` and core domain logic.
+  - Allow looser typing only at edges (Express `req/res`, external payloads) with validation (Zod) and narrow types immediately.
+- **API contracts**
+  - Validate request bodies with Zod schemas from `@vex/shared`.
+  - Return consistent error objects: `{ code, message }`.
+

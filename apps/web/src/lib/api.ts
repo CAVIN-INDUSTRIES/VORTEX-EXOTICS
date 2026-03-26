@@ -4,6 +4,13 @@ function authHeaders(token: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
+function unwrap<T>(payload: unknown): T {
+  if (payload && typeof payload === "object" && "data" in (payload as Record<string, unknown>)) {
+    return (payload as { data: T }).data;
+  }
+  return payload as T;
+}
+
 export interface InventoryItem {
   id: string;
   source: string;
@@ -283,6 +290,75 @@ export async function createSubscription(
   });
   if (!res.ok) throw new Error("Failed to subscribe");
   return res.json();
+}
+
+export async function createStripeCheckoutSession(
+  payload: { plan: string; billingInterval?: "monthly" | "yearly" },
+  token: string
+): Promise<{ id: string; url: string | null }> {
+  const res = await fetch(`${API_BASE}/subscriptions/stripe/checkout-session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || "Failed to start Stripe checkout");
+  }
+  return res.json();
+}
+
+export async function getPricingPlans(): Promise<{
+  plans: Array<{ tier: "STARTER" | "PRO" | "ENTERPRISE"; name: string; monthly: number; yearly: number; features: string[] }>;
+}> {
+  const res = await fetch(`${API_BASE}/pricing/plans`);
+  if (!res.ok) throw new Error("Failed to fetch pricing plans");
+  return unwrap(await res.json());
+}
+
+export async function createTierCheckoutSession(
+  payload: { tier: "STARTER" | "PRO" | "ENTERPRISE"; interval?: "monthly" | "yearly" },
+  token: string
+): Promise<{ id: string; url: string | null }> {
+  const res = await fetch(`${API_BASE}/stripe/checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ planId: payload.tier, interval: payload.interval ?? "monthly" }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || "Failed to start tier checkout");
+  }
+  return unwrap(await res.json());
+}
+
+export async function createBillingPortalSession(
+  payload: { returnUrl?: string },
+  token: string
+): Promise<{ url: string }> {
+  const res = await fetch(`${API_BASE}/pricing/portal/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message || "Failed to create billing portal session");
+  }
+  return unwrap(await res.json());
+}
+
+export async function getCurrentTenantBilling(token: string): Promise<{
+  id: string;
+  name: string;
+  billingTier: string;
+  stripeSubscriptionStatus: string | null;
+  customDomain: string | null;
+  themeJson: Record<string, unknown> | null;
+}> {
+  const res = await fetch(`${API_BASE}/pricing/current`, { headers: authHeaders(token) });
+  if (!res.ok) throw new Error("Failed to fetch tenant billing");
+  return unwrap(await res.json());
 }
 
 export async function runDealAnalysis(

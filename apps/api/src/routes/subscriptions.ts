@@ -7,4 +7,10 @@ import * as subscriptionsController from "../controllers/subscriptionsController
 export const subscriptionsRouter: Router = Router();
 
 subscriptionsRouter.post("/", requireAuth, validateBody(createSubscriptionSchema), subscriptionsController.create);
+subscriptionsRouter.post(
+  "/stripe/checkout-session",
+  requireAuth,
+  validateBody(createSubscriptionSchema),
+  subscriptionsController.createStripeCheckoutSession
+);
 subscriptionsRouter.get("/me", requireAuth, subscriptionsController.listMine);

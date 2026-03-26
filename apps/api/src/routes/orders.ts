@@ -10,3 +10,5 @@ ordersRouter.post("/", requireAuth, validateBody(createOrderSchema), ordersContr
 ordersRouter.get("/", requireAuth, ordersController.list);
 ordersRouter.get("/:id", requireAuth, ordersController.getById);
 ordersRouter.patch("/:id", requireAuth, validateBody(updateOrderSchema), ordersController.update);
+ordersRouter.put("/:id", requireAuth, validateBody(updateOrderSchema), ordersController.update);
+ordersRouter.delete("/:id", requireAuth, ordersController.remove);

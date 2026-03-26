@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/tenant.js";
 import { requireAuth } from "../middleware/auth.js";
-
-const prisma = new PrismaClient();
 
 export async function list(req: Request, res: Response) {
   const user = req.user;
@@ -41,14 +39,11 @@ export async function markRead(req: Request, res: Response) {
   if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
 
   const { id } = req.params;
-  const notification = await prisma.notification.findUnique({ where: { id } });
+  const notification = await prisma.notification.findFirst({ where: { id } });
   if (!notification) return res.status(404).json({ code: "NOT_FOUND", message: "Notification not found" });
   if (notification.userId !== user.userId) return res.status(403).json({ code: "FORBIDDEN", message: "Not your notification" });
 
-  await prisma.notification.update({
-    where: { id },
-    data: { readAt: new Date() },
-  });
+  await prisma.notification.updateMany({ where: { id }, data: { readAt: new Date() } });
 
   return res.json({ id, readAt: new Date().toISOString() });
 }

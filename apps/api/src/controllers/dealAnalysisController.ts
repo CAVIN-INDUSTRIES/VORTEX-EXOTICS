@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import type { DealAnalysisInput } from "@vex/shared";
 import { requireAuth } from "../middleware/auth.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 export async function run(req: Request, res: Response) {
   const user = req.user;

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/tenant.js";
 import { optionalJson } from "../utils/prismaJson.js";
 import type { CreateSavedVehicleInput } from "@vex/shared";
-
-const prisma = new PrismaClient();
 
 export async function list(req: Request, res: Response) {
   const user = req.user;
@@ -50,14 +48,15 @@ export async function create(req: Request, res: Response) {
   }
 
   if (body.inventoryId) {
-    const inv = await prisma.inventory.findUnique({ where: { id: body.inventoryId } });
+    const inv = await prisma.inventory.findFirst({ where: { id: body.inventoryId } });
     if (!inv) return res.status(400).json({ code: "BAD_REQUEST", message: "Inventory not found" });
   }
 
   const saved = await prisma.savedVehicle.create({
     data: {
-      userId: user.userId,
-      inventoryId: body.inventoryId ?? null,
+      tenant: { connect: { id: req.tenantId! } },
+      user: { connect: { id: user.userId } },
+      ...(body.inventoryId ? { inventory: { connect: { id: body.inventoryId } } } : {}),
       configSnapshot: optionalJson(body.configSnapshot),
     },
   });
@@ -69,10 +68,10 @@ export async function remove(req: Request, res: Response) {
   if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
 
   const { id } = req.params;
-  const saved = await prisma.savedVehicle.findUnique({ where: { id } });
+  const saved = await prisma.savedVehicle.findFirst({ where: { id } });
   if (!saved) return res.status(404).json({ code: "NOT_FOUND", message: "Saved vehicle not found" });
   if (saved.userId !== user.userId) return res.status(403).json({ code: "FORBIDDEN", message: "Not yours" });
 
-  await prisma.savedVehicle.delete({ where: { id } });
+  await prisma.savedVehicle.deleteMany({ where: { id } });
   return res.status(204).send();
 }

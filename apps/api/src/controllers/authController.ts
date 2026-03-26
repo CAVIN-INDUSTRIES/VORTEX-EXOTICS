@@ -15,6 +15,7 @@ const JWT_EXPIRY = "7d";
 
 function toPublicUser(user: {
   id: string;
+  tenantId: string;
   email: string;
   role: string;
   name: string | null;
@@ -25,6 +26,7 @@ function toPublicUser(user: {
 }) {
   return {
     id: user.id,
+    tenantId: user.tenantId,
     email: user.email,
     role: user.role,
     name: user.name,
@@ -35,7 +37,7 @@ function toPublicUser(user: {
   };
 }
 
-function signToken(payload: { userId: string; email: string; role: string }) {
+function signToken(payload: { userId: string; email: string; role: string; tenantId: string }) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 }
 
@@ -48,11 +50,14 @@ export async function register(req: Request, res: Response) {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
+  const tenant = await prisma.tenant.create({
+    data: { name: `Tenant ${email}` },
+  });
   const user = await prisma.user.create({
-    data: { email, passwordHash, name: name || null, role: "CUSTOMER" },
+    data: { tenantId: tenant.id, email, passwordHash, name: name || null, role: "CUSTOMER" },
   });
 
-  const token = signToken({ userId: user.id, email: user.email, role: user.role });
+  const token = signToken({ userId: user.id, email: user.email, role: user.role, tenantId: user.tenantId });
   return res.status(201).json({ user: toPublicUser(user), token });
 }
 
@@ -64,7 +69,7 @@ export async function login(req: Request, res: Response) {
     return res.status(401).json({ code: "UNAUTHORIZED", message: "Invalid email or password" });
   }
 
-  const token = signToken({ userId: user.id, email: user.email, role: user.role });
+  const token = signToken({ userId: user.id, email: user.email, role: user.role, tenantId: user.tenantId });
   return res.json({ user: toPublicUser(user), token });
 }
 

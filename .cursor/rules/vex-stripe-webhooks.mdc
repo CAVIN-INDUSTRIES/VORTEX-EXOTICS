@@ -1,0 +1,26 @@
+---
+description: Stripe rules: signature verification, idempotency, and server-owned pricing
+globs: apps/api/src/**/stripe*.ts
+alwaysApply: false
+---
+
+# Stripe (API)
+
+## Webhooks
+
+- **Verify signature** with `STRIPE_WEBHOOK_SECRET`.
+- Use **raw body** for Stripe webhook route (`express.raw({ type: "application/json" })`).
+- Handlers must be **idempotent**:
+  - prefer `upsert` by `stripeCheckoutSessionId` or `stripeSubscriptionId`
+  - safe to receive duplicate events
+
+## Pricing / plans
+
+- Never trust client-provided `amount`.
+- Map internal plan IDs → Stripe `priceId` on the server via env/config.
+
+## Persistence
+
+- Store Stripe identifiers in Prisma (`customer`, `subscription`, `checkoutSession`) with uniqueness.
+- Prefer lifecycle updates from Stripe events (`subscription.updated/deleted`) over local timers.
+

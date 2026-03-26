@@ -16,8 +16,16 @@ import { leadsRouter } from "./routes/leads.js";
 import { dashboardRouter } from "./routes/dashboard.js";
 import { customersRouter } from "./routes/customers.js";
 import { webhooksRouter } from "./routes/webhooks.js";
+import { tenantMiddleware } from "./middleware/tenant.js";
+import { stripeRouter } from "./routes/stripe.js";
+import { pricingRouter } from "./routes/pricing.js";
+import { publicRouter } from "./routes/public.js";
+import { analyticsRouter } from "./routes/analytics.js";
 
 const app: Express = express();
+
+// Stripe needs raw body for signature verification.
+app.use("/stripe/webhook", express.raw({ type: "application/json" }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +40,9 @@ app.use(
 );
 
 // Quick root route so the base URL actually responds with something useful
+// White-label: resolve tenant theme by Host — no auth, before tenant middleware.
+app.use("/public", publicRouter);
+
 app.get("/", (_req, res) => {
   res.json({
     api: "@vex/api",
@@ -50,6 +61,8 @@ app.get("/", (_req, res) => {
   });
 });
 
+app.use(tenantMiddleware);
+
 app.use("/health", healthRouter);
 app.use("/auth", authRouter);
 app.use("/vehicles", vehiclesRouter);
@@ -66,5 +79,8 @@ app.use("/leads", leadsRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/customers", customersRouter);
 app.use("/webhooks", webhooksRouter);
+app.use("/stripe", stripeRouter);
+app.use("/pricing", pricingRouter);
+app.use("/analytics", analyticsRouter);
 
 export { app };

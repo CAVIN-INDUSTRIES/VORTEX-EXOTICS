@@ -265,10 +265,13 @@ const CATALOG: { vehicle: VehicleSeed; inventory: InventorySeed }[] = [
 async function main() {
   const hash = await bcrypt.hash(ADMIN_PASSWORD, 12);
 
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@vex.demo" },
-    update: {},
-    create: {
+  const demoTenant = await prisma.tenant.create({
+    data: { name: "VEX Demo Tenant" },
+  });
+
+  const admin = await prisma.user.create({
+    data: {
+      tenantId: demoTenant.id,
       email: "admin@vex.demo",
       passwordHash: hash,
       role: "ADMIN",
@@ -277,10 +280,9 @@ async function main() {
   });
   console.log("Admin user:", admin.email);
 
-  const staff = await prisma.user.upsert({
-    where: { email: "staff@vex.demo" },
-    update: {},
-    create: {
+  const staff = await prisma.user.create({
+    data: {
+      tenantId: demoTenant.id,
       email: "staff@vex.demo",
       passwordHash: hash,
       role: "STAFF",
@@ -292,8 +294,10 @@ async function main() {
   const reset = process.env.SEED_INVENTORY_RESET === "1";
   if (reset) {
     await prisma.savedVehicle.deleteMany();
+    await prisma.shipment.deleteMany();
+    await prisma.order.deleteMany();
     await prisma.inventory.deleteMany();
-    await prisma.configurationOption.deleteMany({ where: { vehicleId: { not: null } } });
+    await prisma.configurationOption.deleteMany();
     await prisma.vehicle.deleteMany();
     console.log("Cleared vehicles & inventory (SEED_INVENTORY_RESET=1).");
   }
@@ -311,6 +315,7 @@ async function main() {
     for (const row of CATALOG) {
       const vehicle = await prisma.vehicle.create({
         data: {
+          tenantId: demoTenant.id,
           make: row.vehicle.make,
           model: row.vehicle.model,
           trimLevel: row.vehicle.trimLevel,
@@ -326,6 +331,7 @@ async function main() {
 
       await prisma.inventory.create({
         data: {
+          tenantId: demoTenant.id,
           source: "COMPANY",
           vehicleId: vehicle.id,
           location: row.inventory.location,
@@ -346,8 +352,8 @@ async function main() {
     if (globalOptionCount === 0) {
       await prisma.configurationOption.createMany({
         data: [
-          { vehicleId: null, category: "TIRES", name: "Performance tire package", priceDelta: 3500, isRequired: false },
-          { vehicleId: null, category: "ACCESSORIES", name: "Ceramic coating (full body)", priceDelta: 4200, isRequired: false },
+          { tenantId: demoTenant.id, vehicleId: null, category: "TIRES", name: "Performance tire package", priceDelta: 3500, isRequired: false },
+          { tenantId: demoTenant.id, vehicleId: null, category: "ACCESSORIES", name: "Ceramic coating (full body)", priceDelta: 4200, isRequired: false },
         ],
       });
     }
@@ -359,6 +365,7 @@ async function main() {
   if (leadCount === 0) {
     const lead = await prisma.lead.create({
       data: {
+        tenantId: demoTenant.id,
         source: "WEBSITE",
         email: "prospect@example.com",
         name: "Sample Lead",

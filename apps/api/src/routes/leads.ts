@@ -10,3 +10,5 @@ leadsRouter.get("/", requireAuth, leadsController.list);
 leadsRouter.post("/", optionalAuth, validateBody(createLeadSchema), leadsController.create);
 leadsRouter.get("/:id", requireAuth, leadsController.getById);
 leadsRouter.patch("/:id", requireAuth, validateBody(updateLeadSchema), leadsController.update);
+leadsRouter.put("/:id", requireAuth, validateBody(updateLeadSchema), leadsController.update);
+leadsRouter.delete("/:id", requireAuth, leadsController.remove);

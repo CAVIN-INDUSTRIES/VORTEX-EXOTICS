@@ -10,3 +10,5 @@ inventoryRouter.get("/", inventoryController.list);
 inventoryRouter.get("/:id", inventoryController.getById);
 inventoryRouter.post("/", requireAuth, validateBody(createInventorySchema), inventoryController.create);
 inventoryRouter.patch("/:id", requireAuth, validateBody(updateInventorySchema), inventoryController.update);
+inventoryRouter.put("/:id", requireAuth, validateBody(updateInventorySchema), inventoryController.update);
+inventoryRouter.delete("/:id", requireAuth, inventoryController.remove);

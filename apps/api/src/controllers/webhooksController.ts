@@ -3,6 +3,13 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+const WEBHOOK_TENANT_ID = process.env.WEBHOOK_TENANT_ID;
+
+async function resolveWebhookTenantId(): Promise<string | null> {
+  if (WEBHOOK_TENANT_ID) return WEBHOOK_TENANT_ID;
+  const first = await prisma.tenant.findFirst({ select: { id: true } });
+  return first?.id ?? null;
+}
 
 function checkSecret(req: Request, res: Response): boolean {
   if (!WEBHOOK_SECRET) {
@@ -32,8 +39,12 @@ export async function sms(req: Request, res: Response) {
     return res.status(400).json({ code: "BAD_REQUEST", message: "Missing From and Body" });
   }
 
+  const tenantId = await resolveWebhookTenantId();
+  if (!tenantId) return res.status(503).json({ code: "NOT_CONFIGURED", message: "No tenant available for webhook leads" });
+
   const lead = await prisma.lead.create({
     data: {
+      tenantId,
       source: "SMS",
       phone: from || null,
       notes: messageBody || null,
@@ -60,8 +71,12 @@ export async function email(req: Request, res: Response) {
 
   const notes = [subject, text].filter(Boolean).join("\n\n");
 
+  const tenantId = await resolveWebhookTenantId();
+  if (!tenantId) return res.status(503).json({ code: "NOT_CONFIGURED", message: "No tenant available for webhook leads" });
+
   const lead = await prisma.lead.create({
     data: {
+      tenantId,
       source: "EMAIL",
       email: from || null,
       notes: notes || null,

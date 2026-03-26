@@ -16,7 +16,7 @@ export default function CustomerDetailPage() {
   useEffect(() => {
     if (!token) return;
     getCustomer(token, id)
-      .then(setCustomer)
+      .then((value) => setCustomer(value as Record<string, unknown>))
       .catch(() => router.replace("/customers"));
   }, [token, id, router]);
 

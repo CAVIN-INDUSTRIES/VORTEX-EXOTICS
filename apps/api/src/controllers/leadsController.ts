@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import type { CreateLeadInput, UpdateLeadInput } from "@vex/shared";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 function requireStaff(req: Request, res: Response): boolean {
   const user = req.user;
@@ -41,7 +39,8 @@ export async function list(req: Request, res: Response) {
   ]);
 
   return res.json({
-    items: items.map((l) => ({
+    data: {
+      items: items.map((l) => ({
       id: l.id,
       source: l.source,
       email: l.email,
@@ -54,10 +53,12 @@ export async function list(req: Request, res: Response) {
       assignedTo: l.assignedTo,
       createdAt: l.createdAt,
       updatedAt: l.updatedAt,
-    })),
-    total,
-    limit,
-    offset,
+      })),
+      total,
+      limit,
+      offset,
+    },
+    error: null,
   });
 }
 
@@ -68,28 +69,32 @@ export async function create(req: Request, res: Response) {
 
   const lead = await prisma.lead.create({
     data: {
+      tenant: { connect: { id: req.tenantId! } },
       source: body.source ?? "WEBSITE",
       email: body.email ?? null,
       phone: body.phone ?? null,
       name: body.name ?? null,
       vehicleInterest: body.vehicleInterest ?? null,
       notes: body.notes ?? null,
-      assignedToId: isStaff ? user?.userId : null,
+      ...(isStaff ? { assignedTo: { connect: { id: user.userId } } } : {}),
     },
   });
 
   return res.status(201).json({
-    id: lead.id,
-    source: lead.source,
-    email: lead.email,
-    phone: lead.phone,
-    name: lead.name,
-    vehicleInterest: lead.vehicleInterest,
-    notes: lead.notes,
-    status: lead.status,
-    assignedToId: lead.assignedToId,
-    createdAt: lead.createdAt,
-    updatedAt: lead.updatedAt,
+    data: {
+      id: lead.id,
+      source: lead.source,
+      email: lead.email,
+      phone: lead.phone,
+      name: lead.name,
+      vehicleInterest: lead.vehicleInterest,
+      notes: lead.notes,
+      status: lead.status,
+      assignedToId: lead.assignedToId,
+      createdAt: lead.createdAt,
+      updatedAt: lead.updatedAt,
+    },
+    error: null,
   });
 }
 
@@ -97,15 +102,18 @@ export async function getById(req: Request, res: Response) {
   if (!requireStaff(req, res)) return;
 
   const { id } = req.params;
-  const lead = await prisma.lead.findUnique({
+  const lead = await prisma.lead.findFirst({
     where: { id },
     include: { assignedTo: { select: { id: true, email: true, name: true } } },
   });
   if (!lead) return res.status(404).json({ code: "NOT_FOUND", message: "Lead not found" });
 
   return res.json({
-    ...lead,
-    assignedTo: lead.assignedTo,
+    data: {
+      ...lead,
+      assignedTo: lead.assignedTo,
+    },
+    error: null,
   });
 }
 
@@ -115,7 +123,7 @@ export async function update(req: Request, res: Response) {
   const { id } = req.params;
   const body = req.body as UpdateLeadInput;
 
-  const lead = await prisma.lead.update({
+  const updated = await prisma.lead.updateMany({
     where: { id },
     data: {
       ...(body.status != null && { status: body.status }),
@@ -125,8 +133,17 @@ export async function update(req: Request, res: Response) {
       ...(body.phone !== undefined && { phone: body.phone }),
       ...(body.name !== undefined && { name: body.name }),
     },
-    include: { assignedTo: { select: { id: true, email: true, name: true } } },
   });
+  if (updated.count === 0) return res.status(404).json({ code: "NOT_FOUND", message: "Lead not found" });
+  const lead = await prisma.lead.findFirst({ where: { id }, include: { assignedTo: { select: { id: true, email: true, name: true } } } });
+  if (!lead) return res.status(404).json({ code: "NOT_FOUND", message: "Lead not found" });
+  return res.json({ data: lead, error: null });
+}
 
-  return res.json(lead);
+export async function remove(req: Request, res: Response) {
+  if (!requireStaff(req, res)) return;
+  const { id } = req.params;
+  const deleted = await prisma.lead.deleteMany({ where: { id } });
+  if (deleted.count === 0) return res.status(404).json({ code: "NOT_FOUND", message: "Lead not found" });
+  return res.json({ data: { id }, error: null });
 }

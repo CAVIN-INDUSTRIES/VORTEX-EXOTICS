@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 function toVehicle(record: {
   id: string;
@@ -70,7 +68,7 @@ export async function list(req: Request, res: Response) {
 export async function getOptions(req: Request, res: Response) {
   const { id } = req.params;
 
-  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  const vehicle = await prisma.vehicle.findFirst({ where: { id } });
   if (!vehicle) {
     return res.status(404).json({ code: "NOT_FOUND", message: "Vehicle not found" });
   }

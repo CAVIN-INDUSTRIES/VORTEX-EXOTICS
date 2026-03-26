@@ -1,0 +1,46 @@
+"use client";
+
+import { useEffect } from "react";
+import { tenantThemeJsonSchema, type TenantThemeJson } from "@vex/shared";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+function applyTheme(theme: TenantThemeJson | null) {
+  const root = document.documentElement;
+  if (!theme) {
+    root.style.removeProperty("--accent");
+    root.style.removeProperty("--bg-primary");
+    root.style.removeProperty("--bg-card");
+    root.style.removeProperty("--text-primary");
+    root.style.removeProperty("--text-secondary");
+    root.style.removeProperty("--text-muted");
+    return;
+  }
+  const parsed = tenantThemeJsonSchema.safeParse(theme);
+  const t = parsed.success ? parsed.data : theme;
+  if (t.accent) root.style.setProperty("--accent", t.accent);
+  if (t.bgPrimary) root.style.setProperty("--bg-primary", t.bgPrimary);
+  if (t.bgCard) root.style.setProperty("--bg-card", t.bgCard);
+  if (t.textPrimary) root.style.setProperty("--text-primary", t.textPrimary);
+  if (t.textSecondary) root.style.setProperty("--text-secondary", t.textSecondary);
+  if (t.textMuted) root.style.setProperty("--text-muted", t.textMuted);
+}
+
+export function TenantThemeProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const domain =
+      process.env.NEXT_PUBLIC_TENANT_DOMAIN || window.location.hostname;
+    const ctrl = new AbortController();
+    fetch(`${API_BASE}/public/branding?domain=${encodeURIComponent(domain)}`, { signal: ctrl.signal })
+      .then((r) => r.json())
+      .then((body) => {
+        const data = body?.data as { theme?: Record<string, unknown> | null } | undefined;
+        applyTheme((data?.theme as TenantThemeJson) ?? null);
+      })
+      .catch(() => {});
+    return () => ctrl.abort();
+  }, []);
+
+  return <>{children}</>;
+}

@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { getDashboardStats, getLeads, getOrders } from "@/lib/api";
+import { getCurrentTenantBilling, getDashboardStats, getLeads, getOrders } from "@/lib/api";
 
 export default function DashboardPage() {
   const { token } = useAuth();
   const [stats, setStats] = useState<Record<string, unknown> | null>(null);
   const [recentLeads, setRecentLeads] = useState<unknown[]>([]);
   const [recentOrders, setRecentOrders] = useState<unknown[]>([]);
+  const [billingTier, setBillingTier] = useState<string>("STARTER");
 
   useEffect(() => {
     if (!token) return;
@@ -17,6 +18,7 @@ export default function DashboardPage() {
       getDashboardStats(token).then(setStats),
       getLeads(token).then((r) => setRecentLeads((r as { items: unknown[] }).items?.slice(0, 5) ?? [])),
       getOrders(token).then((r) => setRecentOrders((r as { items: unknown[] }).items?.slice(0, 5) ?? [])),
+      getCurrentTenantBilling(token).then((b) => setBillingTier((b as { billingTier?: string }).billingTier ?? "STARTER")),
     ]).catch(() => {});
   }, [token]);
 
@@ -43,6 +45,18 @@ export default function DashboardPage() {
           <div style={{ background: "var(--bg-card)", padding: "1rem", borderRadius: "8px" }}>
             <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Inventory available</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{s.inventory?.available ?? 0}</div>
+          </div>
+          <div style={{ background: "var(--bg-card)", padding: "1rem", borderRadius: "8px" }}>
+            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Billing tier</div>
+            <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{billingTier}</div>
+            <a
+              href={(process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000") + "/portal/subscriptions"}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-block", marginTop: "0.4rem", fontSize: "0.85rem" }}
+            >
+              Upgrade plan →
+            </a>
           </div>
         </div>
       )}

@@ -1,9 +1,21 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import type { CreateSubscriptionInput } from "@vex/shared";
 import { requireAuth } from "../middleware/auth.js";
+import Stripe from "stripe";
+import { prisma } from "../lib/tenant.js";
 
-const prisma = new PrismaClient();
+function getStripe(): Stripe | null {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  return new Stripe(key, { apiVersion: "2026-03-25.dahlia" });
+}
+
+function getPriceId(plan: string, billingInterval: string): string | null {
+  const interval = billingInterval === "yearly" ? "YEARLY" : "MONTHLY";
+  if (plan === "CHECK_MY_DEAL") return process.env[`STRIPE_PRICE_CHECK_MY_DEAL_${interval}`] ?? null;
+  if (plan === "VIP_CONCIERGE") return process.env[`STRIPE_PRICE_VIP_CONCIERGE_${interval}`] ?? null;
+  return null;
+}
 
 export async function create(req: Request, res: Response) {
   const user = req.user;
@@ -19,7 +31,8 @@ export async function create(req: Request, res: Response) {
 
   const sub = await prisma.subscription.create({
     data: {
-      userId: user.userId,
+      tenant: { connect: { id: req.tenantId! } },
+      user: { connect: { id: user.userId } },
       plan: body.plan,
       status: "ACTIVE",
       billingInterval: body.billingInterval ?? "monthly",
@@ -37,6 +50,56 @@ export async function create(req: Request, res: Response) {
     expiresAt: sub.expiresAt,
     createdAt: sub.createdAt,
   });
+}
+
+export async function createStripeCheckoutSession(req: Request, res: Response) {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required" });
+
+  const stripe = getStripe();
+  if (!stripe) {
+    return res.status(503).json({ code: "NOT_CONFIGURED", message: "STRIPE_SECRET_KEY is not set" });
+  }
+
+  const body = req.body as CreateSubscriptionInput;
+  const billingInterval = body.billingInterval === "yearly" ? "yearly" : "monthly";
+  const priceId = getPriceId(body.plan, billingInterval);
+  if (!priceId) {
+    return res.status(503).json({
+      code: "NOT_CONFIGURED",
+      message: `Missing Stripe price env for ${body.plan} (${billingInterval})`,
+    });
+  }
+
+  const origin =
+    (typeof req.headers.origin === "string" && req.headers.origin) ||
+    process.env.PUBLIC_WEB_URL ||
+    "http://localhost:3000";
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "subscription",
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: `${origin}/portal/subscriptions?stripe=success`,
+    cancel_url: `${origin}/pricing?stripe=cancel`,
+    metadata: {
+      userId: user.userId,
+      plan: body.plan,
+      billingInterval,
+    },
+  });
+
+  await prisma.subscription.create({
+    data: {
+      tenant: { connect: { id: req.tenantId! } },
+      user: { connect: { id: user.userId } },
+      plan: body.plan,
+      status: "PENDING",
+      billingInterval,
+      stripeCheckoutSessionId: session.id,
+    },
+  });
+
+  return res.status(201).json({ id: session.id, url: session.url });
 }
 
 export async function listMine(req: Request, res: Response) {

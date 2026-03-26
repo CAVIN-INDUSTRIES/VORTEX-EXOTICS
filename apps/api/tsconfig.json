@@ -4,6 +4,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "skipLibCheck": true,
+    "strict": false,
     "noImplicitAny": false,
     "noUnusedLocals": false
   },

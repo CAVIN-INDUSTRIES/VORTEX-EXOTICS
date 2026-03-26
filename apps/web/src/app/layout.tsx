@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, Fraunces, Plus_Jakarta_Sans, Outfit, Playfair_Display } from "next/font/google";
 import { BuildProvider } from "@/contexts/BuildContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { TenantThemeProvider } from "@/components/TenantThemeProvider";
 import { Footer } from "@/components/Footer";
 import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
@@ -77,12 +78,14 @@ export default function RootLayout({
         <RouteTransitionFX />
         <CursorFX />
         <ButtonSoundFX />
-        <AuthProvider>
-          <BuildProvider>
-            {children}
-            <Footer />
-          </BuildProvider>
-        </AuthProvider>
+        <TenantThemeProvider>
+          <AuthProvider>
+            <BuildProvider>
+              {children}
+              <Footer />
+            </BuildProvider>
+          </AuthProvider>
+        </TenantThemeProvider>
       </body>
     </html>
   );

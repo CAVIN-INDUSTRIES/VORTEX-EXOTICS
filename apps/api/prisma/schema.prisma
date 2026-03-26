@@ -18,8 +18,88 @@ enum UserTier {
   VIP
 }
 
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  billingTier             String   @default("STARTER") @map("billing_tier")
+  stripeSubscriptionStatus String? @map("stripe_subscription_status")
+  stripeCustomerId        String? @unique @map("stripe_customer_id")
+  stripeSubscriptionId    String? @unique @map("stripe_subscription_id")
+  customDomain            String? @unique @map("custom_domain")
+  themeJson               Json?   @map("theme_json")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users                User[]
+  customers            Customer[]
+  vehicles             Vehicle[]
+  inventory            Inventory[]
+  configurationOptions ConfigurationOption[]
+  orders               Order[]
+  savedVehicles        SavedVehicle[]
+  shipments            Shipment[]
+  appraisals           Appraisal[]
+  subscriptions        Subscription[]
+  notifications        Notification[]
+  leads                Lead[]
+  checkoutSessions     CheckoutSession[]
+  flags                Flag[]
+  plans                Plan[]
+
+  @@map("tenants")
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  code        String
+  name        String
+  monthlyPrice Decimal @map("monthly_price") @db.Decimal(10, 2)
+  yearlyPrice  Decimal @map("yearly_price") @db.Decimal(10, 2)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("plans")
+}
+
+model Flag {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  key       String
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+  @@map("flags")
+}
+
+model CheckoutSession {
+  id                    String   @id @default(cuid())
+  tenantId              String   @map("tenant_id")
+  stripeCheckoutSessionId String  @unique @map("stripe_checkout_session_id")
+  mode                  String
+  status                String
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("checkout_sessions")
+}
+
 model User {
   id           String    @id @default(cuid())
+  tenantId     String    @map("tenant_id")
   email        String    @unique
   passwordHash String    @map("password_hash")
   role         UserRole  @default(CUSTOMER)
@@ -29,6 +109,8 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   inventoryListings Inventory[] @relation("ListedBy")
   orders           Order[]
   savedVehicles    SavedVehicle[]
@@ -36,12 +118,32 @@ model User {
   subscriptions   Subscription[]
   notifications   Notification[]
   leadsAssigned   Lead[]          @relation("AssignedTo")
+  customerProfile Customer?
 
+  @@index([tenantId])
   @@map("users")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  userId    String?  @unique @map("user_id")
+  name      String?
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@map("customers")
 }
 
 model Vehicle {
   id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
   make      String
   model     String
   trimLevel String   @map("trim_level")
@@ -53,10 +155,13 @@ model Vehicle {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   inventory            Inventory[]
   configurationOptions ConfigurationOption[]
   orders               Order[]
 
+  @@index([tenantId])
   @@map("vehicles")
 }
 
@@ -86,6 +191,7 @@ enum VehicleModelSource {
 
 model Inventory {
   id                 String             @id @default(cuid())
+  tenantId           String             @map("tenant_id")
   source             InventorySource
   vehicleId          String             @map("vehicle_id")
   listedByUserId     String?            @map("listed_by_user_id")
@@ -105,11 +211,13 @@ model Inventory {
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
 
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   vehicle       Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
   listedBy      User?          @relation("ListedBy", fields: [listedByUserId], references: [id], onDelete: SetNull)
   orders        Order[]
   savedVehicles SavedVehicle[]
 
+  @@index([tenantId])
   @@map("inventory")
 }
 
@@ -122,6 +230,7 @@ enum OptionCategory {
 
 model ConfigurationOption {
   id          String         @id @default(cuid())
+  tenantId    String         @map("tenant_id")
   vehicleId   String?        @map("vehicle_id")
   category    OptionCategory
   name        String
@@ -130,8 +239,10 @@ model ConfigurationOption {
   createdAt   DateTime       @default(now()) @map("created_at")
   updatedAt   DateTime       @updatedAt @map("updated_at")
 
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   vehicle Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("configuration_options")
 }
 
@@ -149,6 +260,7 @@ enum OrderStatus {
 
 model Order {
   id                    String       @id @default(cuid())
+  tenantId              String       @map("tenant_id")
   userId                String       @map("user_id")
   type                  OrderType
   inventoryId           String?      @map("inventory_id")
@@ -164,24 +276,29 @@ model Order {
   createdAt             DateTime     @default(now()) @map("created_at")
   updatedAt             DateTime     @updatedAt @map("updated_at")
 
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   inventory Inventory? @relation(fields: [inventoryId], references: [id], onDelete: SetNull)
   vehicle   Vehicle?   @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
   shipments Shipment[]
 
+  @@index([tenantId])
   @@map("orders")
 }
 
 model SavedVehicle {
   id             String   @id @default(cuid())
+  tenantId       String   @map("tenant_id")
   userId         String   @map("user_id")
   inventoryId    String?  @map("inventory_id")
   configSnapshot Json?   @map("config_snapshot")
   createdAt      DateTime @default(now()) @map("created_at")
 
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   inventory Inventory? @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("saved_vehicles")
 }
 
@@ -198,6 +315,7 @@ enum TransportType {
 
 model Shipment {
   id                 String         @id @default(cuid())
+  tenantId           String         @map("tenant_id")
   orderId            String         @map("order_id")
   carrier            String?
   trackingUrl        String?        @map("tracking_url")
@@ -210,21 +328,26 @@ model Shipment {
   createdAt          DateTime       @default(now()) @map("created_at")
   updatedAt          DateTime       @updatedAt @map("updated_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("shipments")
 }
 
 model Appraisal {
   id             String   @id @default(cuid())
+  tenantId       String   @map("tenant_id")
   userId         String?  @map("user_id")
   vehicleInfo    Json     @map("vehicle_info")
   estimatedValue Decimal? @map("estimated_value") @db.Decimal(12, 2)
   status         String   @default("PENDING")
   createdAt      DateTime @default(now()) @map("created_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([tenantId])
   @@map("appraisals")
 }
 
@@ -235,21 +358,28 @@ enum SubscriptionPlan {
 
 model Subscription {
   id              String            @id @default(cuid())
+  tenantId         String            @map("tenant_id")
   userId          String            @map("user_id")
   plan            SubscriptionPlan
   status          String            @default("ACTIVE")
   billingInterval String?           @map("billing_interval")
   amount          Decimal?          @map("amount") @db.Decimal(10, 2)
   expiresAt       DateTime?         @map("expires_at")
+  stripeCustomerId        String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId    String?   @unique @map("stripe_subscription_id")
+  stripeCheckoutSessionId String?   @unique @map("stripe_checkout_session_id")
   createdAt       DateTime          @default(now()) @map("created_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("subscriptions")
 }
 
 model Notification {
   id        String    @id @default(cuid())
+  tenantId  String    @map("tenant_id")
   userId    String    @map("user_id")
   type      String
   title     String
@@ -257,8 +387,10 @@ model Notification {
   readAt    DateTime? @map("read_at")
   createdAt DateTime  @default(now()) @map("created_at")
 
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("notifications")
 }
 
@@ -271,6 +403,7 @@ enum LeadStatus {
 
 model Lead {
   id           String     @id @default(cuid())
+  tenantId     String     @map("tenant_id")
   source       String     @default("WEBSITE")
   email        String?
   phone        String?
@@ -282,7 +415,9 @@ model Lead {
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
+  tenant     Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   assignedTo User? @relation("AssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
 
+  @@index([tenantId])
   @@map("leads")
 }

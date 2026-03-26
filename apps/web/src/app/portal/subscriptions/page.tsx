@@ -5,19 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
-import { getSubscriptions, createSubscription, runDealAnalysis } from "@/lib/api";
-import { useBuild } from "@/contexts/BuildContext";
-import type { SubscriptionItem } from "@/lib/api";
+import { createBillingPortalSession, createTierCheckoutSession, getCurrentTenantBilling, getPricingPlans } from "@/lib/api";
 import styles from "./subscriptions.module.css";
 
 export default function PortalSubscriptionsPage() {
   const router = useRouter();
   const { user, token, loading: authLoading } = useAuth();
-  const { vehicle, totalPrice } = useBuild();
-  const [subs, setSubs] = useState<SubscriptionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [analysis, setAnalysis] = useState<string[] | null>(null);
+  const [plans, setPlans] = useState<Array<{ tier: "STARTER" | "PRO" | "ENTERPRISE"; name: string; monthly: number; yearly: number; features: string[] }>>([]);
+  const [billingTier, setBillingTier] = useState<string>("STARTER");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,46 +26,41 @@ export default function PortalSubscriptionsPage() {
 
   useEffect(() => {
     if (!token) return;
-    getSubscriptions(token)
-      .then(setSubs)
-      .catch(() => setSubs([]))
+    Promise.all([getPricingPlans(), getCurrentTenantBilling(token)])
+      .then(([planResp, billing]) => {
+        setPlans(planResp.plans);
+        setBillingTier(billing.billingTier);
+      })
+      .catch(() => {
+        setPlans([]);
+      })
       .finally(() => setLoading(false));
   }, [token]);
 
-  const hasCheckMyDeal = subs.some((s) => s.plan === "CHECK_MY_DEAL" && s.status === "ACTIVE");
-  const handleSubscribe = async (plan: string, interval: string) => {
+  const startTierCheckout = async (tier: "STARTER" | "PRO" | "ENTERPRISE", interval: "monthly" | "yearly") => {
     if (!token) return;
     setSubmitting(true);
     setError(null);
     try {
-      await createSubscription(
-        { plan, billingInterval: interval, amount: plan === "CHECK_MY_DEAL" ? (interval === "yearly" ? 750 : 99) : 499 },
-        token
-      );
-      const updated = await getSubscriptions(token);
-      setSubs(updated);
+      const session = await createTierCheckoutSession({ tier, interval }, token);
+      if (session.url) window.location.href = session.url;
+      else setError("Stripe did not return a checkout URL.");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to subscribe");
+      setError(e instanceof Error ? e.message : "Failed to start checkout");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleRunAnalysis = async () => {
+  const openBillingPortal = async () => {
     if (!token) return;
     setSubmitting(true);
     setError(null);
-    setAnalysis(null);
     try {
-      const financing = { termMonths: 48, apr: 5.9 };
-      const total = totalPrice || 0;
-      const res = await runDealAnalysis(
-        { vehicle: vehicle ? { make: vehicle.make, model: vehicle.model, year: vehicle.year } : undefined, financing, totalAmount: total },
-        token
-      );
-      setAnalysis(res.recommendations);
+      const portal = await createBillingPortalSession({ returnUrl: `${window.location.origin}/portal/subscriptions` }, token);
+      window.location.href = portal.url;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Deal analysis failed");
+      setError(e instanceof Error ? e.message : "Failed to open billing portal");
     } finally {
       setSubmitting(false);
     }
@@ -95,58 +87,34 @@ export default function PortalSubscriptionsPage() {
         ) : (
           <>
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Check My Deal</h2>
-              <p className={styles.desc}>Get expert recommendations on your vehicle deal before you buy. We analyse financing, shipping, and add-ons.</p>
-              {hasCheckMyDeal ? (
-                <>
-                  <p className={styles.active}>Active</p>
-                  <button type="button" onClick={handleRunAnalysis} disabled={submitting} className={styles.cta}>
-                    {submitting ? "Running…" : "Run deal analysis now"}
-                  </button>
-                  {analysis && (
-                    <ul className={styles.recommendations}>
-                      {analysis.map((r, i) => (
-                        <li key={i}>{r}</li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              ) : (
-                <div className={styles.actions}>
-                  <button type="button" onClick={() => handleSubscribe("CHECK_MY_DEAL", "monthly")} disabled={submitting} className={styles.cta}>
-                    $99/month
-                  </button>
-                  <button type="button" onClick={() => handleSubscribe("CHECK_MY_DEAL", "yearly")} disabled={submitting} className={styles.ctaSecondary}>
-                    $750/year
-                  </button>
-                </div>
-              )}
+              <h2 className={styles.sectionTitle}>Billing tier</h2>
+              <p className={styles.desc}>Current tier: <strong>{billingTier}</strong></p>
+              <div className={styles.actions}>
+                <button type="button" onClick={openBillingPortal} disabled={submitting} className={styles.cta} data-magnetic="true" data-sfx="button">
+                  Open billing portal
+                </button>
+              </div>
             </section>
 
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>VIP Concierge</h2>
-              <p className={styles.desc}>Full-service deal execution: we handle vehicle selection, financing, shipping, and delivery for you.</p>
-              {subs.some((s) => s.plan === "VIP_CONCIERGE" && s.status === "ACTIVE") ? (
-                <p className={styles.active}>Active</p>
-              ) : (
-                <button type="button" onClick={() => handleSubscribe("VIP_CONCIERGE", "monthly")} disabled={submitting} className={styles.cta}>
-                  Subscribe — $499/mo
-                </button>
-              )}
+              <h2 className={styles.sectionTitle}>Upgrade plan</h2>
+              <div className={styles.list}>
+                {plans.map((plan) => (
+                  <div key={plan.tier} className={styles.card}>
+                    <p><strong>{plan.name}</strong> ({plan.tier})</p>
+                    <p className={styles.desc}>${plan.monthly}/mo or ${plan.yearly}/yr</p>
+                    <div className={styles.actions}>
+                      <button type="button" onClick={() => startTierCheckout(plan.tier, "monthly")} disabled={submitting} className={styles.cta} data-magnetic="true" data-sfx="button">
+                        Monthly
+                      </button>
+                      <button type="button" onClick={() => startTierCheckout(plan.tier, "yearly")} disabled={submitting} className={styles.ctaSecondary} data-magnetic="true" data-sfx="button">
+                        Annual
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
-
-            {subs.length > 0 && (
-              <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>Your subscriptions</h2>
-                <ul className={styles.list}>
-                  {subs.map((s) => (
-                    <li key={s.id} className={styles.card}>
-                      {s.plan} · {s.status} {s.expiresAt && `· Expires ${new Date(s.expiresAt).toLocaleDateString()}`}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
 
             {error && <p className={styles.error}>{error}</p>}
           </>

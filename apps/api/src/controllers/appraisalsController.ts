@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import type { CreateAppraisalInput } from "@vex/shared";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/tenant.js";
 
 function estimateValue(info: CreateAppraisalInput): number {
   const baseYear = 2024;
@@ -21,7 +19,8 @@ export async function create(req: Request, res: Response) {
 
   const appraisal = await prisma.appraisal.create({
     data: {
-      userId,
+      tenant: { connect: { id: req.tenantId! } },
+      ...(userId ? { user: { connect: { id: userId } } } : {}),
       vehicleInfo: body as unknown as object,
       estimatedValue,
       status: "COMPLETED",
@@ -44,7 +43,7 @@ export async function getById(req: Request, res: Response) {
     return res.status(401).json({ code: "UNAUTHORIZED", message: "Login required to view appraisals" });
   }
 
-  const appraisal = await prisma.appraisal.findUnique({ where: { id } });
+  const appraisal = await prisma.appraisal.findFirst({ where: { id } });
   if (!appraisal) return res.status(404).json({ code: "NOT_FOUND", message: "Appraisal not found" });
 
   const isStaff = user.role === "STAFF" || user.role === "ADMIN";

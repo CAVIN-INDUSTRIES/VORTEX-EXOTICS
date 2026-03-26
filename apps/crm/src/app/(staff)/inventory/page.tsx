@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getInventory } from "@/lib/api";
+import { createInventoryItem, getInventory } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 const WEB_URL = process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000";
@@ -10,6 +10,9 @@ const WEB_URL = process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000";
 export default function InventoryPage() {
   const { token } = useAuth();
   const [data, setData] = useState<{ items: unknown[] } | null>(null);
+  const [vehicleId, setVehicleId] = useState("");
+  const [listPrice, setListPrice] = useState("");
+  const [location, setLocation] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -20,12 +23,39 @@ export default function InventoryPage() {
 
   const items = (data?.items ?? []) as { id: string; source: string; listPrice: number; status: string; location: string | null; vehicle?: { make: string; model: string; year: number } }[];
 
+  const refresh = () => {
+    if (!token) return;
+    getInventory(token)
+      .then(setData)
+      .catch(() => setData({ items: [] }));
+  };
+
+  const onCreate = async () => {
+    if (!token || !vehicleId || !listPrice) return;
+    await createInventoryItem(token, {
+      source: "COMPANY",
+      vehicleId,
+      listPrice: Number(listPrice),
+      location: location || undefined,
+    });
+    setVehicleId("");
+    setListPrice("");
+    setLocation("");
+    refresh();
+  };
+
   return (
     <main style={{ padding: "1.5rem", maxWidth: "1000px", margin: "0 auto" }}>
       <h1 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Inventory</h1>
       <p style={{ marginBottom: "1rem", color: "var(--text-muted)", fontSize: "0.9rem" }}>
-        Manage from API or <a href={`${API_BASE.replace(/\/$/, "")}/inventory`} target="_blank" rel="noopener noreferrer">API docs</a>. Add/edit via CRM coming soon.
+        Manage from API or <a href={`${API_BASE.replace(/\/$/, "")}/inventory`} target="_blank" rel="noopener noreferrer">API docs</a>.
       </p>
+      <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr auto", gap: "0.5rem", marginBottom: "1rem" }}>
+        <input value={vehicleId} onChange={(e) => setVehicleId(e.target.value)} placeholder="Vehicle ID" />
+        <input value={listPrice} onChange={(e) => setListPrice(e.target.value)} placeholder="List price" />
+        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
+        <button type="button" onClick={onCreate}>Add</button>
+      </div>
       <table>
         <thead>
           <tr>

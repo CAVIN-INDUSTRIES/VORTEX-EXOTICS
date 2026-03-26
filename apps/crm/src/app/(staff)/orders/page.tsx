@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOrders } from "@/lib/api";
+import { createOrder, getOrders } from "@/lib/api";
 
 export default function OrdersPage() {
   const { token } = useAuth();
   const [data, setData] = useState<{ items: unknown[] } | null>(null);
   const [statusFilter, setStatusFilter] = useState("");
+  const [inventoryId, setInventoryId] = useState("");
+  const [totalAmount, setTotalAmount] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -19,9 +21,33 @@ export default function OrdersPage() {
 
   const items = (data?.items ?? []) as { id: string; type: string; status: string; totalAmount: number | null; createdAt: string }[];
 
+  const refresh = () => {
+    if (!token) return;
+    getOrders(token, statusFilter ? { status: statusFilter } : undefined)
+      .then(setData)
+      .catch(() => setData({ items: [] }));
+  };
+
+  const onCreate = async () => {
+    if (!token) return;
+    await createOrder(token, {
+      type: "INVENTORY",
+      ...(inventoryId ? { inventoryId } : {}),
+      ...(totalAmount ? { totalAmount: Number(totalAmount) } : {}),
+    });
+    setInventoryId("");
+    setTotalAmount("");
+    refresh();
+  };
+
   return (
     <main style={{ padding: "1.5rem", maxWidth: "1000px", margin: "0 auto" }}>
       <h1 style={{ marginBottom: "1rem", color: "var(--text-primary)" }}>Orders</h1>
+      <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr auto", gap: "0.5rem", marginBottom: "1rem" }}>
+        <input value={inventoryId} onChange={(e) => setInventoryId(e.target.value)} placeholder="Inventory ID (optional)" />
+        <input value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} placeholder="Total amount" />
+        <button type="button" onClick={onCreate}>Create</button>
+      </div>
       <div style={{ marginBottom: "1rem" }}>
         <label style={{ marginRight: "0.5rem" }}>Status</label>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>

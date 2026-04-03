@@ -20,9 +20,16 @@ function priceIdForPlan(planId: StripePlanId): string {
   return priceId;
 }
 
-export async function createCheckoutSession(planId: StripePlanId, tenantId: string, interval: "monthly" | "yearly" = "monthly") {
+export async function createCheckoutSession(
+  planId: StripePlanId,
+  tenantId: string,
+  interval: "monthly" | "yearly" = "monthly",
+  urls?: { successPath: string; cancelPath: string }
+) {
   const stripe = getStripeClient();
   const origin = process.env.PUBLIC_WEB_URL || "http://localhost:3000";
+  const successPath = urls?.successPath ?? "/portal/subscriptions?stripe=success";
+  const cancelPath = urls?.cancelPath ?? "/pricing?stripe=cancel";
   const priceEnv =
     planId === "STARTER"
       ? interval === "yearly"
@@ -37,11 +44,14 @@ export async function createCheckoutSession(planId: StripePlanId, tenantId: stri
           : process.env.STRIPE_PRICE_ENTERPRISE;
   const priceId = priceEnv || priceIdForPlan(planId);
 
+  const base = origin.replace(/\/$/, "");
+  const abs = (p: string) => (p.startsWith("/") ? `${base}${p}` : `${base}/${p}`);
+
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/portal/subscriptions?stripe=success`,
-    cancel_url: `${origin}/pricing?stripe=cancel`,
+    success_url: abs(successPath),
+    cancel_url: abs(cancelPath),
     metadata: { tenantId, planId, interval },
   });
 

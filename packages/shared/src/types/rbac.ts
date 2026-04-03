@@ -19,6 +19,11 @@ export const AUTHENTICATED_ROLES: readonly ApiRole[] = [
   "GROUP_ADMIN",
 ];
 
+/** Roles allowed to use the dealer CRM app (matches API `isDealerStaffRole`). */
+export function isCrmPortalRole(role: string): boolean {
+  return role === Role.STAFF || role === Role.ADMIN || role === "GROUP_ADMIN";
+}
+
 export const ROLE_PERMISSIONS: Readonly<Record<ApiRole, readonly string[]>> = {
   CUSTOMER: [
     "appraisal:create:own",

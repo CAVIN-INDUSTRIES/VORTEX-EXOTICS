@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { isCrmPortalRole } from "@vex/shared";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAnalytics } from "@/lib/api";
 import type { AnalyticsResponse } from "@vex/shared";
@@ -49,11 +50,11 @@ export default function AnalyticsPage() {
       </main>
     );
   }
-  if (!role || (role !== "STAFF" && role !== "ADMIN")) {
+  if (!role || !isCrmPortalRole(role)) {
     return (
       <main className="crm-shell">
         <h1>Forbidden</h1>
-        <p style={{ color: "var(--text-muted)" }}>Staff or admin role required to view analytics.</p>
+        <p style={{ color: "var(--text-muted)" }}>Staff, admin, or group admin role required to view analytics.</p>
       </main>
     );
   }

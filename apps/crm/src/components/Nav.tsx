@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function Nav() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { logout, role } = useAuth();
 
   const links = [
     { href: "/dashboard", label: "Dashboard" },
@@ -18,6 +18,7 @@ export function Nav() {
     { href: "/invoices", label: "Invoices" },
     { href: "/inventory", label: "Inventory" },
     { href: "/customers", label: "Customers" },
+    ...(role === "ADMIN" || role === "GROUP_ADMIN" ? [{ href: "/settings/flags", label: "Flags" }] : []),
   ];
 
   return (

@@ -13,6 +13,14 @@ function unwrap(payload: unknown): any {
   return payload as any;
 }
 
+async function readApiErrorMessage(res: Response, fallback: string): Promise<string> {
+  const raw = await res.json().catch(() => ({}));
+  const o = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  if (typeof o.message === "string" && o.message.length) return o.message;
+  if (typeof o.code === "string" && o.code.length) return o.code;
+  return fallback;
+}
+
 export async function login(
   email: string,
   password: string
@@ -365,4 +373,40 @@ export async function submitPilotFeedback(
   });
   if (!res.ok) throw new Error("Failed to submit feedback");
   return unwrap(await res.json());
+}
+
+export async function getFlags(token: string) {
+  const res = await fetch(`${API_BASE}/flags`, { headers: authHeaders(token) });
+  if (!res.ok) throw new Error(await readApiErrorMessage(res, "Failed to load feature flags"));
+  return unwrap(await res.json()) as { items: Array<{ id: string; key: string; enabled: boolean; updatedAt: string }>; total: number };
+}
+
+export async function setFlag(token: string, body: { key: string; enabled: boolean }) {
+  const res = await fetch(`${API_BASE}/flags`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await readApiErrorMessage(res, "Failed to update flag"));
+  return unwrap(await res.json()) as { id: string; key: string; enabled: boolean; updatedAt: string };
+}
+
+/** POST /autonomous/workflow — returns `{ queued, correlationId }` (queued is false when Redis is unavailable). */
+export async function submitAutonomousWorkflow(
+  token: string,
+  body: {
+    id: string;
+    workflowType: "valuation_sweep" | "lead_nurture" | "appraisal_marketplace_push";
+    enabled?: boolean;
+    maxParallelRuns?: number;
+    tenantDailyCostCapUsd?: number;
+  }
+) {
+  const res = await fetch(`${API_BASE}/autonomous/workflow`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await readApiErrorMessage(res, "Failed to queue workflow"));
+  return unwrap(await res.json()) as { queued: boolean; correlationId: string };
 }

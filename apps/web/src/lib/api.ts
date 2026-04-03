@@ -196,11 +196,17 @@ function publicAppraisalTenantQuery(): string {
   return id ? `?tenantId=${encodeURIComponent(id)}` : "";
 }
 
+function quickAppraisalQuery(tenantIdOverride?: string | null): string {
+  if (tenantIdOverride) return `?tenantId=${encodeURIComponent(tenantIdOverride)}`;
+  return publicAppraisalTenantQuery();
+}
+
 /** Public instant estimate (no auth) — uses /public/quick-appraisal + tenant resolution. */
 export async function createAppraisal(
-  payload: CreateAppraisalPayload
+  payload: CreateAppraisalPayload,
+  opts?: { tenantId?: string | null }
 ): Promise<{ id: string; value: number | null; notes: string | null }> {
-  const res = await fetch(`${API_BASE}/public/quick-appraisal${publicAppraisalTenantQuery()}`, {
+  const res = await fetch(`${API_BASE}/public/quick-appraisal${quickAppraisalQuery(opts?.tenantId)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -216,8 +222,13 @@ export async function createAppraisal(
   return data;
 }
 
-export async function getAppraisal(id: string): Promise<{ id: string; value: number | null; notes: string | null }> {
-  const res = await fetch(`${API_BASE}/public/quick-appraisal/${encodeURIComponent(id)}${publicAppraisalTenantQuery()}`);
+export async function getAppraisal(
+  id: string,
+  opts?: { tenantId?: string | null }
+): Promise<{ id: string; value: number | null; notes: string | null }> {
+  const res = await fetch(
+    `${API_BASE}/public/quick-appraisal/${encodeURIComponent(id)}${quickAppraisalQuery(opts?.tenantId)}`
+  );
   let body: unknown;
   try {
     body = await res.json();
@@ -341,6 +352,40 @@ export async function getPricingPlans(): Promise<{
   const res = await fetch(`${API_BASE}/pricing/plans`);
   if (!res.ok) throw new Error("Failed to fetch pricing plans");
   return unwrap(await res.json());
+}
+
+export type PlatformEngine = {
+  id: string;
+  name: string;
+  layer: string;
+  detail: string;
+  status: "operational" | "degraded" | "standby";
+};
+
+export type PlatformEnginesPayload = {
+  headline: string;
+  engines: PlatformEngine[];
+  signals: {
+    database: string;
+    redis: string;
+    stripeConfigured: boolean;
+    valuationProvidersConfigured: boolean;
+    erpConnectorsConfigured: boolean;
+  };
+  generatedAt: string;
+};
+
+/** Server-only: live multi-engine snapshot for marketing (ISR). */
+export async function fetchPlatformEnginesPublic(): Promise<PlatformEnginesPayload | null> {
+  try {
+    const res = await fetch(`${API_BASE}/public/platform-engines`, {
+      next: { revalidate: 15 },
+    });
+    if (!res.ok) return null;
+    return unwrap(await res.json());
+  } catch {
+    return null;
+  }
 }
 
 export async function createTierCheckoutSession(
@@ -482,6 +527,12 @@ export async function getInvestorPackageByToken(token: string): Promise<{
   mrr: number;
   usageRevenueUsd: number;
   highlights: string[];
+  pilotNetwork?: {
+    activePilots: number;
+    totalPilotAppraisals: number;
+    firstBillingEvents: number;
+    generatedAt: string;
+  };
 }> {
   const res = await fetch(`${API_BASE}/capital/investor/${encodeURIComponent(token)}`);
   if (!res.ok) throw new Error("Investor link expired or invalid");
@@ -676,20 +727,35 @@ export async function applyPilot(input: { name: string; email: string; dealershi
   return unwrap<{ leadId: string; status: string; autoApprove: boolean }>(body);
 }
 
+export async function requestPilotEmailVerificationCode(email: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/onboard/pilot/email-code`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((body as { message?: string }).message || "Failed to send verification code");
+}
+
 export async function onboardPilotSelfServe(input: {
   email: string;
   dealerName: string;
   password: string;
+  businessSize?: "1_5" | "6_20" | "21_50" | "51_PLUS";
+  expectedMonthlyVolume?: "UNDER_10" | "UNDER_50" | "UNDER_200" | "OVER_200";
   tier: "STARTER" | "PRO" | "ENTERPRISE";
   interval: "monthly" | "yearly";
   captchaToken: string;
   customDomain?: string;
   enableDemoData: boolean;
+  emailVerificationCode?: string;
 }): Promise<{
   tenantId: string;
   userId: string;
   billingStatus: string;
   checkout: { id: string; url: string | null } | null;
+  pilotSubdomain?: string;
+  demoAppraisalUrl?: string;
 }> {
   const res = await fetch(`${API_BASE}/onboard/pilot`, {
     method: "POST",
@@ -703,7 +769,25 @@ export async function onboardPilotSelfServe(input: {
 
 export async function getBillingUsage(token: string): Promise<{
   tenantId: string;
-  valuation: { dailyCapUsd: number; spentTodayUsd: number; remainingTodayUsd: number; callsToday: number };
+  pilot?: {
+    pilotSubdomain: string | null;
+    appraisalCount: number;
+    inviteCustomerUrl: string;
+    showNpsAfterFirstAppraisalClose: boolean;
+  };
+  valuation: {
+    dailyCapUsd: number;
+    spentTodayUsd: number;
+    remainingTodayUsd: number;
+    callsToday: number;
+    projectedSpendEodUsd: number;
+    projectedRemainingEodUsd: number;
+  };
+  activity?: {
+    appraisals: Array<{ id: string; status: string; updatedAt: string; value: number | null }>;
+    closedDeals: Array<{ id: string; status: string; updatedAt: string; totalAmount: number | null }>;
+    usageEvents: Array<{ id: string; kind: string; createdAt: string; amountUsd: number | null; quantity: number }>;
+  };
   usageMonth: { quantity: number; amountUsd: number };
   overage: { amountUsdToday: number };
 }> {

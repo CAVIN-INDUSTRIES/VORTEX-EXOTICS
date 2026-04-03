@@ -71,12 +71,21 @@ stripeRouter.post("/webhook", express.raw({ type: "application/json" }), async (
     });
   }
 
-  const alreadyHandled = await systemPrisma.stripeWebhookEvent.findUnique({
-    where: { id: event.id },
-    select: { id: true },
-  });
-  if (alreadyHandled) {
-    return res.json({ received: true });
+  /** Claim-before-process: prevents parallel delivery from double-applying tenant/billing side effects. */
+  let claimed = false;
+  try {
+    await systemPrisma.stripeWebhookEvent.create({
+      data: { id: event.id, type: event.type },
+    });
+    claimed = true;
+  } catch (insertErr) {
+    if (
+      insertErr instanceof Prisma.PrismaClientKnownRequestError &&
+      insertErr.code === "P2002"
+    ) {
+      return res.json({ received: true });
+    }
+    throw insertErr;
   }
 
   try {
@@ -228,22 +237,13 @@ stripeRouter.post("/webhook", express.raw({ type: "application/json" }), async (
       }
     }
 
-    try {
-      await systemPrisma.stripeWebhookEvent.create({
-        data: { id: event.id, type: event.type },
-      });
-    } catch (insertErr) {
-      if (
-        insertErr instanceof Prisma.PrismaClientKnownRequestError &&
-        insertErr.code === "P2002"
-      ) {
-        return res.json({ received: true });
-      }
-      throw insertErr;
-    }
-
     return res.json({ received: true });
   } catch (err) {
+    if (claimed) {
+      await systemPrisma.stripeWebhookEvent.delete({ where: { id: event.id } }).catch(() => {
+        /* best-effort: allow Stripe retries if handler failed mid-flight */
+      });
+    }
     return res.status(500).json({
       code: "INTERNAL",
       message: err instanceof Error ? err.message : "Webhook handler failed",

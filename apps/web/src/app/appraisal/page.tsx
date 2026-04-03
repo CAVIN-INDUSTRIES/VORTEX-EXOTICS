@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/Header";
 import { createAppraisal } from "@/lib/api";
 import { formatUsd } from "@/lib/formatCurrency";
 import styles from "./appraisal.module.css";
 
-export default function AppraisalPage() {
+function AppraisalForm() {
+  const searchParams = useSearchParams();
+  const tenantId = searchParams.get("tenantId");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
@@ -29,13 +32,16 @@ export default function AppraisalPage() {
     }
     setLoading(true);
     try {
-      const data = await createAppraisal({
-        make: make.trim(),
-        model: model.trim(),
-        year: y,
-        mileage: m,
-        condition: condition.trim() || undefined,
-      });
+      const data = await createAppraisal(
+        {
+          make: make.trim(),
+          model: model.trim(),
+          year: y,
+          mileage: m,
+          condition: condition.trim() || undefined,
+        },
+        { tenantId }
+      );
       setResult({ id: data.id, estimatedValue: data.value ?? 0 });
     } catch {
       setError("Failed to get appraisal.");
@@ -55,30 +61,71 @@ export default function AppraisalPage() {
           <div className={styles.result}>
             <p className={styles.estimateLabel}>Estimated value</p>
             <p className={styles.estimateValue}>{formatUsd(result.estimatedValue)}</p>
-            <Link href={`/checkout?tradeInId=${result.id}`} className={styles.cta}>Use as trade-in at checkout</Link>
-            <Link href="/checkout" className={styles.ctaSecondary}>Back to checkout</Link>
+            <Link href={`/checkout?tradeInId=${result.id}`} className={styles.cta}>
+              Use as trade-in at checkout
+            </Link>
+            <Link href="/checkout" className={styles.ctaSecondary}>
+              Back to checkout
+            </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className={styles.form}>
             <label className={styles.label}>
               Make
-              <input type="text" value={make} onChange={(e) => setMake(e.target.value)} className={styles.input} placeholder="e.g. Ferrari" required />
+              <input
+                type="text"
+                value={make}
+                onChange={(e) => setMake(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. Ferrari"
+                required
+              />
             </label>
             <label className={styles.label}>
               Model
-              <input type="text" value={model} onChange={(e) => setModel(e.target.value)} className={styles.input} placeholder="e.g. 488" required />
+              <input
+                type="text"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. 488"
+                required
+              />
             </label>
             <label className={styles.label}>
               Year
-              <input type="number" min={1990} max={2030} value={year} onChange={(e) => setYear(e.target.value)} className={styles.input} placeholder="e.g. 2020" required />
+              <input
+                type="number"
+                min={1990}
+                max={2030}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. 2020"
+                required
+              />
             </label>
             <label className={styles.label}>
               Mileage
-              <input type="number" min={0} value={mileage} onChange={(e) => setMileage(e.target.value)} className={styles.input} placeholder="e.g. 15000" required />
+              <input
+                type="number"
+                min={0}
+                value={mileage}
+                onChange={(e) => setMileage(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. 15000"
+                required
+              />
             </label>
             <label className={styles.label}>
               Condition (optional)
-              <input type="text" value={condition} onChange={(e) => setCondition(e.target.value)} className={styles.input} placeholder="e.g. Excellent" />
+              <input
+                type="text"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. Excellent"
+              />
             </label>
             {error && <p className={styles.error}>{error}</p>}
             <button type="submit" disabled={loading} className={styles.cta}>
@@ -88,5 +135,19 @@ export default function AppraisalPage() {
         )}
       </main>
     </>
+  );
+}
+
+export default function AppraisalPage() {
+  return (
+    <Suspense
+      fallback={
+        <main id="main-content" className={styles.main}>
+          <p className={styles.subtitle}>Loading…</p>
+        </main>
+      }
+    >
+      <AppraisalForm />
+    </Suspense>
   );
 }

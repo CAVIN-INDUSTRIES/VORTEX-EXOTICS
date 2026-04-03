@@ -28,6 +28,7 @@ export async function tenantMiddleware(req: Request, res: Response, next: NextFu
   if (req.path.startsWith("/public/")) return next();
   if (req.path.startsWith("/onboard/")) return next();
   if (req.path.startsWith("/pilot/")) return next();
+  if (req.path === "/dealer/pilots" && req.method === "GET") return next();
 
   return requireAuth(req, res, async () => {
     const attempted =

@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
 import { OrderStatus, OrderType } from "@prisma/client";
+import { DEALER_AUDIT_SCHEMA_VERSION, newDealerCorrelationId } from "../lib/dealerAudit.js";
 import { addAppraisalToInventory } from "./dealDeskService.js";
 
 type CreateErpOrderInput = {
@@ -104,6 +105,7 @@ export async function createErpOrderFromAppraisal(prisma: PrismaClient, input: C
       createdAt: existing.createdAt,
     };
   } else {
+    const erpCorrelationId = newDealerCorrelationId();
     const orderUserId = await resolveOrderUserId(prisma, input.tenantId, input.appraisalId);
     if (!orderUserId) throw new Error("ORDER_USER_NOT_FOUND");
 
@@ -161,6 +163,8 @@ export async function createErpOrderFromAppraisal(prisma: PrismaClient, input: C
           type: "RevenueEvent",
           payload: {
             source: "erp_order_create",
+            correlationId: erpCorrelationId,
+            schemaVersion: DEALER_AUDIT_SCHEMA_VERSION,
             appraisalId: input.appraisalId,
             orderId: created.id,
             inventoryId: inventory.id,
@@ -174,6 +178,7 @@ export async function createErpOrderFromAppraisal(prisma: PrismaClient, input: C
           tenantId: input.tenantId,
           type: "erp.invoice.issued",
           payload: {
+            correlationId: erpCorrelationId,
             appraisalId: input.appraisalId,
             orderId: created.id,
             invoiceNumber: invoiceNumberForOrder(created.id),
@@ -189,6 +194,9 @@ export async function createErpOrderFromAppraisal(prisma: PrismaClient, input: C
           entity: "Order",
           entityId: created.id,
           payload: {
+            correlationId: erpCorrelationId,
+            schemaVersion: DEALER_AUDIT_SCHEMA_VERSION,
+            integrationSurface: "erp",
             appraisalId: input.appraisalId,
             inventoryId: inventory.id,
             invoiceNumber: invoiceNumberForOrder(created.id),

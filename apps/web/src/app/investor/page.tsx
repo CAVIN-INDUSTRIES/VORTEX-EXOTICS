@@ -10,6 +10,12 @@ type InvestorPackage = {
   mrr: number;
   usageRevenueUsd: number;
   highlights: string[];
+  pilotNetwork?: {
+    activePilots: number;
+    totalPilotAppraisals: number;
+    firstBillingEvents: number;
+    generatedAt: string;
+  };
 };
 
 export default function InvestorPage() {
@@ -44,6 +50,22 @@ export default function InvestorPage() {
               <div style={{ fontSize: "1.6rem", fontWeight: 700 }}>${(data.mrr * 12).toLocaleString()}</div>
             </div>
           </div>
+          {data.pilotNetwork && (
+            <div style={{ marginTop: "1rem", display: "grid", gridTemplateColumns: "repeat(3,minmax(120px,1fr))", gap: "0.75rem" }}>
+              <div style={{ background: "#10141f", borderRadius: 8, padding: "0.85rem" }}>
+                <div style={{ opacity: 0.75, fontSize: "0.8rem" }}>Active pilots</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 700 }}>{data.pilotNetwork.activePilots}</div>
+              </div>
+              <div style={{ background: "#10141f", borderRadius: 8, padding: "0.85rem" }}>
+                <div style={{ opacity: 0.75, fontSize: "0.8rem" }}>Pilot appraisals</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 700 }}>{data.pilotNetwork.totalPilotAppraisals}</div>
+              </div>
+              <div style={{ background: "#10141f", borderRadius: 8, padding: "0.85rem" }}>
+                <div style={{ opacity: 0.75, fontSize: "0.8rem" }}>First billing</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 700 }}>{data.pilotNetwork.firstBillingEvents}</div>
+              </div>
+            </div>
+          )}
           <h2 style={{ marginTop: "1.25rem" }}>Highlights</h2>
           <ul>
             {data.highlights.map((h) => (

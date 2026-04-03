@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { isCrmPortalRole } from "@vex/shared";
 import { getMe, login as apiLogin, refreshSession } from "@/lib/api";
 
 const TOKEN_KEY = "vex_crm_token";
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       }
-      if (user && (user.role === "STAFF" || user.role === "ADMIN")) {
+      if (user && isCrmPortalRole(user.role)) {
         setToken(t);
         setRole(user.role);
       } else {
@@ -77,8 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const data = await apiLogin(email, password);
-    if (data.user.role !== "STAFF" && data.user.role !== "ADMIN") {
-      throw new Error("Staff or admin access required");
+    if (!isCrmPortalRole(data.user.role)) {
+      throw new Error("Staff, admin, or group admin access required");
     }
     if (typeof window !== "undefined") {
       localStorage.setItem(TOKEN_KEY, data.token);

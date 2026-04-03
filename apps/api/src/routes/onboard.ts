@@ -9,12 +9,15 @@ import {
   onboardingDemoSeedStepSchema,
   onboardingConfirmSchema,
   PilotOnboardSchema,
+  pilotEmailCodeRequestSchema,
   type OnboardingStartInput,
 } from "@vex/shared";
 import { enqueueProvisionTenant } from "../lib/queue.js";
 import { systemPrisma, prisma, runWithTenant } from "../lib/tenant.js";
 import { createCheckoutSession, type StripePlanId } from "../lib/stripe.js";
 import { sendLifecycleNotification } from "../lib/notify.js";
+import { pickUniquePilotSubdomain } from "../lib/pilotSubdomain.js";
+import { storePilotEmailCode, verifyAndConsumePilotEmailCode } from "../lib/pilotEmailVerification.js";
 
 export const onboardRouter: Router = Router();
 
@@ -166,26 +169,62 @@ onboardRouter.post("/confirm", validateBody(onboardingConfirmSchema), async (req
   return res.json({ data: { magicLink: `/login?tenantId=${encodeURIComponent(tenantId)}` }, error: null });
 });
 
+onboardRouter.post("/pilot/email-code", validateBody(pilotEmailCodeRequestSchema), async (req, res) => {
+  const ip = req.ip ?? "unknown";
+  if (!allowIp(ip)) {
+    return res.status(429).json({ code: "RATE_LIMITED", message: "Too many onboarding attempts from this IP." });
+  }
+  const { email } = req.body as { email: string };
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  storePilotEmailCode(email, code);
+  void sendLifecycleNotification({
+    type: "WELCOME",
+    toEmail: email,
+    subject: "Your VEX pilot verification code",
+    message: `Your verification code is: ${code}\n\nIt expires in 15 minutes. If you did not request this, ignore this email.`,
+  });
+  if (!process.env.RESEND_API_KEY) {
+    console.info(`[pilot-email-code] ${email}: ${code}`);
+  }
+  return res.json({ data: { ok: true }, error: null });
+});
+
 onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) => {
   const body = req.body as {
     email: string;
     dealerName: string;
     password: string;
+    businessSize?: "1_5" | "6_20" | "21_50" | "51_PLUS";
+    expectedMonthlyVolume?: "UNDER_10" | "UNDER_50" | "UNDER_200" | "OVER_200";
     tier: "STARTER" | "PRO" | "ENTERPRISE";
     interval: "monthly" | "yearly";
     captchaToken: string;
     customDomain?: string;
     enableDemoData: boolean;
+    emailVerificationCode?: string;
   };
   const ip = req.ip ?? "unknown";
   if (!allowIp(ip)) {
     return res.status(429).json({ code: "RATE_LIMITED", message: "Too many onboarding attempts from this IP." });
   }
+
+  const skipEmailVerify = process.env.PILOT_SKIP_EMAIL_VERIFY === "1";
+  if (!skipEmailVerify) {
+    const code = body.emailVerificationCode?.trim();
+    if (!code || !/^\d{6}$/.test(code)) {
+      return res.status(400).json({ code: "BAD_REQUEST", message: "Email verification code required" });
+    }
+    if (!verifyAndConsumePilotEmailCode(body.email, code)) {
+      return res.status(400).json({ code: "BAD_REQUEST", message: "Invalid or expired verification code" });
+    }
+  }
+
   const existing = await systemPrisma.user.findUnique({ where: { email: body.email } });
   if (existing) {
     return res.status(409).json({ code: "CONFLICT", message: "Email already exists" });
   }
 
+  let pilotSubdomainForResponse = "";
   const created = await systemPrisma.$transaction(async (tx) => {
     const passwordHash = await bcrypt.hash(body.password, 12);
     const tenant = await tx.tenant.create({
@@ -194,6 +233,19 @@ onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) 
         billingTier: body.tier,
         stripeSubscriptionStatus: "PENDING",
         customDomain: body.customDomain ?? null,
+      },
+    });
+    const pilotSubdomain = await pickUniquePilotSubdomain(tx, body.dealerName, tenant.id);
+    pilotSubdomainForResponse = pilotSubdomain;
+    await tx.tenant.update({
+      where: { id: tenant.id },
+      data: {
+        groupSettings: {
+          businessSize: body.businessSize ?? null,
+          expectedMonthlyVolume: body.expectedMonthlyVolume ?? null,
+          pilotSubdomain,
+          pilotOnboardedAt: new Date().toISOString(),
+        },
       },
     });
     const user = await tx.user.create({
@@ -212,7 +264,7 @@ onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) 
         action: "PILOT_ONBOARD_START",
         entity: "Tenant",
         entityId: tenant.id,
-        payload: { tier: body.tier, interval: body.interval },
+        payload: { tier: body.tier, interval: body.interval, expectedMonthlyVolume: body.expectedMonthlyVolume ?? null },
       },
     });
     return { tenantId: tenant.id, userId: user.id };
@@ -221,7 +273,10 @@ onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) 
   const interval = body.interval === "yearly" ? "yearly" : "monthly";
   let checkout: { id: string; url: string | null } | null = null;
   try {
-    const session = await createCheckoutSession(body.tier as StripePlanId, created.tenantId, interval);
+    const session = await createCheckoutSession(body.tier as StripePlanId, created.tenantId, interval, {
+      successPath: "/dealer/pilot?stripe=success",
+      cancelPath: "/pilot?stripe=cancel",
+    });
     checkout = { id: session.id, url: session.url };
   } catch {
     checkout = null;
@@ -235,16 +290,37 @@ onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) 
     });
   }
 
+  const webBase = process.env.PUBLIC_WEB_URL || "http://localhost:3000";
+  const crmBase = process.env.PUBLIC_CRM_URL || "http://localhost:3002";
+  const demoAppraisalUrl = `${webBase.replace(/\/$/, "")}/appraisal?tenantId=${encodeURIComponent(created.tenantId)}`;
   void sendLifecycleNotification({
     type: "WELCOME",
     toEmail: body.email,
-    subject: "Welcome to VEX pilot",
-    message:
-      "Your pilot tenant is created. Complete checkout to activate billing, then sign in to CRM at /login with your onboarding email.",
+    subject: "Welcome to VEX — your pilot workspace is ready",
+    message: [
+      `Hi ${body.dealerName},`,
+      "",
+      "Your Vortex Exotic Exchange pilot tenant is provisioned.",
+      "",
+      `• CRM sign-in: ${crmBase.replace(/\/$/, "")}/login`,
+      `  Use this email: ${body.email} and the password you chose during signup.`,
+      `• Customer quick-appraisal demo (shareable): ${demoAppraisalUrl}`,
+      `• After Stripe checkout, open your live pilot dashboard: ${webBase.replace(/\/$/, "")}/dealer/pilot`,
+      "",
+      checkout?.url ? "Next: complete payment in Stripe to activate your first month of service." : "Stripe checkout is not configured in this environment; you can still sign in to CRM.",
+      "",
+      "— VEX",
+    ].join("\n"),
   });
 
   return res.status(201).json({
-    data: { ...created, billingStatus: "PENDING", checkout },
+    data: {
+      ...created,
+      billingStatus: "PENDING",
+      checkout,
+      pilotSubdomain: pilotSubdomainForResponse,
+      demoAppraisalUrl: `${(process.env.PUBLIC_WEB_URL || "http://localhost:3000").replace(/\/$/, "")}/appraisal?tenantId=${encodeURIComponent(created.tenantId)}`,
+    },
     error: null,
   });
 });

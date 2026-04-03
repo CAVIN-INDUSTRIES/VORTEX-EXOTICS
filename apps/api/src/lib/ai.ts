@@ -28,6 +28,7 @@ export class DealerInsightsService {
     const input = insightsInputSchema.parse(inputRaw);
     if (!canInfer(input.tenantId)) {
       const fallback = insightsOutputSchema.parse({
+        version: "vex-ai-v1.1",
         model: input.model,
         score: 50,
         explanation: { reason: "daily_inference_limit_reached" },
@@ -45,6 +46,7 @@ export class DealerInsightsService {
     let output: InsightsOutput;
     if (input.model === "PredictiveValuationTrend") {
       output = insightsOutputSchema.parse({
+        version: "vex-ai-v1.1",
         model: input.model,
         trend: Math.max(-20, Math.min(20, usage / 25 - 5)),
         score: Math.max(20, Math.min(95, 60 + usage / 20)),
@@ -54,6 +56,7 @@ export class DealerInsightsService {
     } else if (input.model === "LeadScore") {
       const leads = await prisma.lead.count();
       output = insightsOutputSchema.parse({
+        version: "vex-ai-v1.1",
         model: input.model,
         score: Math.max(10, Math.min(99, 40 + leads * 3)),
         explanation: { leads, anonymizedVin: vinSafe((input.payload as { vin?: string }).vin) },
@@ -61,6 +64,7 @@ export class DealerInsightsService {
       });
     } else {
       output = insightsOutputSchema.parse({
+        version: "vex-ai-v1.1",
         model: input.model,
         score: Math.max(5, Math.min(95, 70 - usage / 30)),
         explanation: { churnRiskBand: usage < 10 ? "high" : usage < 50 ? "medium" : "low", usage },

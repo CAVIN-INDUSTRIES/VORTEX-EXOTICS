@@ -9,7 +9,11 @@ import { createAppraisalSchema, type AppraisalValuateResponse } from "@vex/share
 import { useAuth } from "@/contexts/AuthContext";
 import { createAppraisalRecord, getCustomers, getCurrentTenantBilling, getInventory, valuateAppraisal } from "@/lib/api";
 
+const VAL_DRAFT_PREFIX = "vex_crm_appraisal_val_draft";
 
+function valuationDraftKey(tenantId: string) {
+  return `${VAL_DRAFT_PREFIX}_${tenantId}`;
+}
 
 type ValuationForm = {
   vin?: string;
@@ -86,6 +90,43 @@ function NewAppraisalPageInner() {
   });
 
   useEffect(() => {
+    if (!tenantId) return;
+    try {
+      const raw = localStorage.getItem(valuationDraftKey(tenantId));
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<ValuationForm>;
+      setValForm((prev) => ({
+        ...prev,
+        ...parsed,
+        vin: typeof parsed.vin === "string" ? parsed.vin : prev.vin,
+        make: typeof parsed.make === "string" ? parsed.make : prev.make,
+        model: typeof parsed.model === "string" ? parsed.model : prev.model,
+        year: typeof parsed.year === "number" && !Number.isNaN(parsed.year) ? parsed.year : prev.year,
+        mileage: typeof parsed.mileage === "number" && !Number.isNaN(parsed.mileage) ? parsed.mileage : prev.mileage,
+        condition:
+          parsed.condition === "excellent" || parsed.condition === "good" || parsed.condition === "fair" || parsed.condition === "poor"
+            ? parsed.condition
+            : prev.condition,
+        zipCode: typeof parsed.zipCode === "string" ? parsed.zipCode.slice(0, 5) : prev.zipCode,
+      }));
+    } catch {
+      /* ignore corrupt draft */
+    }
+  }, [tenantId]);
+
+  useEffect(() => {
+    if (!tenantId) return;
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(valuationDraftKey(tenantId), JSON.stringify(valForm));
+      } catch {
+        /* quota / private mode */
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [valForm, tenantId]);
+
+  useEffect(() => {
     if (!token) return;
     Promise.all([
       getInventory(token).then((r) => {
@@ -128,6 +169,11 @@ function NewAppraisalPageInner() {
       });
       if (valuation && valuation.appraisalId && valuation.appraisalId === created.id) {
         // no-op
+      }
+      try {
+        if (tenantId) localStorage.removeItem(valuationDraftKey(tenantId));
+      } catch {
+        /* ignore */
       }
       window.location.href = `/appraisals/${created.id}`;
     } catch (e) {

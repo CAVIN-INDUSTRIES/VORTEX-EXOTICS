@@ -5,6 +5,7 @@ import { requireAuth } from "../middleware/auth.js";
 import { requireRole } from "../middleware/requireRole.js";
 import { prisma } from "../lib/tenant.js";
 import { getRedis } from "../lib/redis.js";
+import { getPilotSeedNetworkMetrics } from "../lib/pilotMetrics.js";
 
 export const capitalRouter: Router = Router();
 
@@ -28,6 +29,7 @@ async function getRaisePackage(tenantId: string) {
   ]);
   const active = Boolean(tenantRow?.stripeSubscriptionStatus && tenantRow.stripeSubscriptionStatus !== "CANCELED");
   const mrr = tenantRow && active ? monthlyAmountForTier(tenantRow.billingTier) : 0;
+  const pilotNetwork = await getPilotSeedNetworkMetrics();
   const pkg = {
     generatedAt: new Date().toISOString(),
     tenantCount: 1,
@@ -39,6 +41,7 @@ async function getRaisePackage(tenantId: string) {
       "Usage telemetry and billing hooks are tenant-isolated",
       "Investor links contain only this dealer's aggregates",
     ],
+    pilotNetwork,
   };
   return RaisePackageSchema.parse(pkg);
 }
@@ -103,7 +106,9 @@ capitalRouter.get("/investor/:token", async (req, res) => {
   if (!payload) return res.status(404).json({ code: "NOT_FOUND", message: "Investor link not found or expired" });
   const parsed = RaisePackageSchema.safeParse(payload);
   if (!parsed.success) return res.status(500).json({ code: "INTERNAL", message: "Invalid investor package" });
-  return res.json({ data: parsed.data, error: null });
+  const pilotNetwork = await getPilotSeedNetworkMetrics();
+  const merged = { ...parsed.data, pilotNetwork };
+  return res.json({ data: RaisePackageSchema.parse(merged), error: null });
 });
 
 capitalRouter.get("/series-a/data-room", requireAuth, requireRole("ADMIN", "GROUP_ADMIN"), async (req, res) => {

@@ -5,7 +5,9 @@ import {
   DealerProgramHero,
   MarketplaceSubletTeaser,
   PaymentOrchestrationBar,
+  PlatformEnginesSection,
 } from "@/components/landing";
+import { fetchPlatformEnginesPublic } from "@/lib/api";
 import { ScrollStorySection } from "@/components/ScrollStorySection";
 import { AmbientIdentityModule } from "@/components/AmbientIdentityModule";
 import { PrestigeMarquee } from "@/components/PrestigeMarquee";
@@ -16,7 +18,9 @@ import { PremiumServices } from "@/components/PremiumServices";
 import { TestDriveStrip } from "@/components/TestDriveStrip";
 import { TrustStrip } from "@/components/TrustStrip";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const platformEngines = await fetchPlatformEnginesPublic();
+
   return (
     <>
       <Header />
@@ -24,6 +28,7 @@ export default function HomePage() {
       <main id="main-content" className="home-main home-landing" aria-label="Vortex Exotic Exchange home">
         <DealerProgramHero />
         <AutonomousAgentsShowcase />
+        <PlatformEnginesSection initial={platformEngines} />
         <MarketplaceSubletTeaser />
         <PaymentOrchestrationBar />
         <ScrollStorySection />

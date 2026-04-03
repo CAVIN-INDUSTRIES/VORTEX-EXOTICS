@@ -17,7 +17,7 @@ growthRouter.post("/referrals/claim", requireAuth, requireAnyAuthenticatedRole()
 
   const claimHash = hashClaim(claimCode);
   const existing = await prisma.auditLog.findFirst({
-    where: { action: "REFERRAL_CLAIMED", entityId: claimHash },
+    where: { tenantId: req.tenantId, action: "REFERRAL_CLAIMED", entityId: claimHash },
   });
   if (existing) return res.json({ data: { ok: true, deduped: true }, error: null });
 

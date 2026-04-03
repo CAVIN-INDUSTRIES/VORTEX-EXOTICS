@@ -56,6 +56,7 @@ import { tekionWebhookRouter } from "./routes/integrations/webhooks/tekion.js";
 import { reynoldsInventoryRouter } from "./routes/integrations/reynolds-inventory.js";
 import { reynoldsWebhookRouter } from "./routes/integrations/webhooks/reynolds.js";
 import { erpRouter } from "./routes/erp.js";
+import { flagsRouter } from "./routes/flags.js";
 import { dealertrackFiRouter } from "./routes/integrations/dealertrack-fi.js";
 import { dealertrackWebhookRouter } from "./routes/integrations/webhooks/dealertrack.js";
 import { cdkDriveRouter } from "./routes/integrations/cdk-drive.js";
@@ -131,6 +132,7 @@ app.use((req, res, next) => {
     req.path.startsWith("/public/") ||
     req.path.startsWith("/onboard/") ||
     req.path.startsWith("/pilot/") ||
+    (req.path === "/dealer/pilots" && req.method === "GET") ||
     req.path.startsWith("/stripe/webhook") ||
     req.path.startsWith("/integrations/webhooks/fortellis") ||
     req.path.startsWith("/integrations/webhooks/tekion") ||
@@ -183,6 +185,7 @@ app.use("/integrations/webhooks/dealertrack", dealertrackWebhookRouter);
 app.use("/integrations/cdk-drive", cdkDriveRouter);
 app.use("/integrations/webhooks/cdk-neuron", cdkNeuronWebhookRouter);
 app.use("/erp", erpRouter);
+app.use("/flags", flagsRouter);
 app.use("/analytics", analyticsRouter);
 app.use("/admin", adminRouter);
 app.use("/referrals", referralRouter);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { listAppraisals } from "@/lib/api";
-import type { AppraisalOutput } from "@vex/shared";
+import { type AppraisalOutput, isCrmPortalRole } from "@vex/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
@@ -57,11 +57,11 @@ export function AppraisalsClient() {
       </main>
     );
   }
-  if (!role || (role !== "STAFF" && role !== "ADMIN" && role !== "GROUP_ADMIN")) {
+  if (!role || !isCrmPortalRole(role)) {
     return (
       <main style={{ padding: "1.5rem", maxWidth: "1200px", margin: "0 auto" }}>
         <h1>Forbidden</h1>
-        <p style={{ color: "var(--text-muted)" }}>Staff or admin role required to view appraisals.</p>
+        <p style={{ color: "var(--text-muted)" }}>Staff, admin, or group admin role required to view appraisals.</p>
       </main>
     );
   }

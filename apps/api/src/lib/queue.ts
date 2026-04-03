@@ -282,6 +282,24 @@ export async function enqueuePartnerPayout(data: {
   await q.add("partner-payout-run", data, { jobId: `partner-payout:${data.tenantId}:${data.idempotencyKey}` });
 }
 
+/** Dealer DMS-style automation: chains to valuation warm, analytics rollup, or iteration backlog depending on workflow type. */
+export async function enqueueAutonomousWorkflow(data: {
+  tenantId: string;
+  id: string;
+  workflowType: string;
+  enabled: boolean;
+  maxParallelRuns: number;
+  tenantDailyCostCapUsd: number;
+  correlationId: string;
+}): Promise<boolean> {
+  const q = getQueue();
+  if (!q) return false;
+  await q.add("autonomous-workflow", data, {
+    jobId: `autonomous:${data.tenantId}:${data.id}:${data.workflowType}`,
+  });
+  return true;
+}
+
 let workerInstance: Worker | null = null;
 
 async function processJob(job: Job): Promise<void> {
@@ -874,6 +892,32 @@ async function processJob(job: Job): Promise<void> {
           },
         },
       });
+      return;
+    }
+    if (name === "autonomous-workflow") {
+      const workflowType = String(data.workflowType ?? "");
+      const correlationId = String(data.correlationId ?? "");
+      const wfId = String(data.id ?? "");
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "dealer.automation.dispatched",
+          payload: {
+            correlationId,
+            workflowType,
+            workflowId: wfId,
+            tenantDailyCostCapUsd: Number(data.tenantDailyCostCapUsd ?? 0),
+            schemaVersion: 1,
+          },
+        },
+      });
+      if (workflowType === "valuation_sweep") {
+        await enqueueValuationCacheWarm({ tenantId, cacheKeyHint: `autonomous:${correlationId}` });
+      } else if (workflowType === "lead_nurture") {
+        await enqueueAnalyticsRollup({ tenantId, window: "day" });
+      } else if (workflowType === "appraisal_marketplace_push") {
+        await enqueueIterationAnalysis({ tenantId });
+      }
       return;
     }
     throw new Error(`unknown job name: ${name}`);

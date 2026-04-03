@@ -29,6 +29,7 @@ export * from "./schemas/marketing.js";
 export * from "./schemas/partners.js";
 export * from "./schemas/seriesA.js";
 export * from "./schemas/autonomous.js";
+export * from "./schemas/flags.js";
 export * from "./schemas/forecasting.js";
 export * from "./schemas/governance.js";
 export * from "./types/user.js";

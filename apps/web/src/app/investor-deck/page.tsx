@@ -7,6 +7,8 @@ type PilotNet = {
   activePilots: number;
   totalPilotAppraisals: number;
   firstBillingEvents: number;
+  publicIntakeToday?: number;
+  closedDealsAcrossPilots?: number;
   generatedAt: string;
 };
 
@@ -71,7 +73,13 @@ export default function InvestorDeckPage() {
             Updated {new Date(pilot.generatedAt).toLocaleString()}
             {livePilot ? " · live endpoint" : " · embedded in investor package"}
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(140px,1fr))", gap: "0.75rem" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(132px, 1fr))",
+              gap: "0.75rem",
+            }}
+          >
             <div style={{ background: "#10141f", borderRadius: 8, padding: "1rem" }}>
               <div style={{ opacity: 0.8, fontSize: "0.85rem" }}>Active pilots</div>
               <div style={{ fontSize: "1.4rem", fontWeight: 700 }}>{pilot.activePilots}</div>
@@ -83,6 +91,14 @@ export default function InvestorDeckPage() {
             <div style={{ background: "#10141f", borderRadius: 8, padding: "1rem" }}>
               <div style={{ opacity: 0.8, fontSize: "0.85rem" }}>First billing events</div>
               <div style={{ fontSize: "1.4rem", fontWeight: 700 }}>{pilot.firstBillingEvents}</div>
+            </div>
+            <div style={{ background: "#10141f", borderRadius: 8, padding: "1rem" }}>
+              <div style={{ opacity: 0.8, fontSize: "0.85rem" }}>Public intake (UTC today)</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 700 }}>{pilot.publicIntakeToday ?? "—"}</div>
+            </div>
+            <div style={{ background: "#10141f", borderRadius: 8, padding: "1rem" }}>
+              <div style={{ opacity: 0.8, fontSize: "0.85rem" }}>Closed deals (pilots)</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 700 }}>{pilot.closedDealsAcrossPilots ?? "—"}</div>
             </div>
           </div>
         </section>

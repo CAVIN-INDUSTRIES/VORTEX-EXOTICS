@@ -538,6 +538,8 @@ export async function getInvestorPackageByToken(token: string): Promise<{
   highlights: string[];
   pilotNetwork?: {
     activePilots: number;
+    publicIntakeToday?: number;
+    closedDealsAcrossPilots?: number;
     totalPilotAppraisals: number;
     firstBillingEvents: number;
     generatedAt: string;
@@ -791,6 +793,7 @@ export async function getBillingUsage(token: string): Promise<{
     callsToday: number;
     projectedSpendEodUsd: number;
     projectedRemainingEodUsd: number;
+    publicIntakeToday?: number;
   };
   activity?: {
     appraisals: Array<{ id: string; status: string; updatedAt: string; value: number | null }>;

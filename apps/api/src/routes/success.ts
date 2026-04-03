@@ -22,6 +22,18 @@ successRouter.post("/feedback", requireAuth, requireAnyAuthenticatedRole(), vali
     },
   });
 
+  const tenantGs = await prisma.tenant.findFirst({
+    where: { id: req.tenantId },
+    select: { groupSettings: true },
+  });
+  const prevGs = (tenantGs?.groupSettings as Record<string, unknown> | null) ?? {};
+  await prisma.tenant.updateMany({
+    where: { id: req.tenantId },
+    data: {
+      groupSettings: { ...prevGs, pilotNpsSubmittedAt: new Date().toISOString() },
+    },
+  });
+
   await prisma.auditLog.create({
     data: {
       tenantId: req.tenantId,

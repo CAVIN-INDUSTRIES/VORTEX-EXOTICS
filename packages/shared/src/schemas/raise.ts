@@ -13,6 +13,8 @@ export const RaisePackageSchema = z.object({
       activePilots: z.number().int().nonnegative(),
       totalPilotAppraisals: z.number().int().nonnegative(),
       firstBillingEvents: z.number().int().nonnegative(),
+      publicIntakeToday: z.number().int().nonnegative().optional(),
+      closedDealsAcrossPilots: z.number().int().nonnegative().optional(),
       generatedAt: z.string(),
     })
     .optional(),

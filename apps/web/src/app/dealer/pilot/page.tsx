@@ -2,17 +2,18 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getBillingUsage, inviteFirstCustomer, submitPilotNps } from "@/lib/api";
 
-const POLL_MS = 30_000;
+const POLL_MS = 15_000;
 
 function qrDataUrlForLink(url: string): string {
   return `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(url)}`;
 }
 
 function DealerPilotDashboardInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { token, loading: authLoading } = useAuth();
   const [usage, setUsage] = useState<Awaited<ReturnType<typeof getBillingUsage>> | null>(null);
@@ -22,6 +23,7 @@ function DealerPilotDashboardInner() {
   const [msg, setMsg] = useState("");
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [postCheckout, setPostCheckout] = useState(false);
 
   const loadUsage = useCallback(async () => {
     if (!token) return;
@@ -45,13 +47,33 @@ function DealerPilotDashboardInner() {
   }, [token, loadUsage]);
 
   useEffect(() => {
-    if (searchParams.get("stripe") === "success") {
+    try {
+      if (sessionStorage.getItem("vex_pilot_post_checkout") === "1") {
+        setPostCheckout(true);
+      }
+    } catch {
+      // ignore
+    }
+    const stripe = searchParams.get("stripe");
+    if (stripe === "success") {
+      setPostCheckout(true);
+      try {
+        sessionStorage.setItem("vex_pilot_post_checkout", "1");
+      } catch {
+        // ignore
+      }
       setToast("Payment received — your pilot workspace is live.");
-      const t = setTimeout(() => setToast(null), 8000);
+      router.replace("/dealer/pilot", { scroll: false });
+      const t = setTimeout(() => setToast(null), 9000);
+      return () => clearTimeout(t);
+    }
+    if (stripe === "cancel") {
+      setToast("Checkout was cancelled — you can return to /pilot anytime to finish enrollment.");
+      const t = setTimeout(() => setToast(null), 10000);
       return () => clearTimeout(t);
     }
     return undefined;
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   async function invite() {
     if (!token) return setMsg("Login required");
@@ -83,6 +105,7 @@ function DealerPilotDashboardInner() {
       await submitPilotNps(token, { rating: nps, message: npsMessage || "Pilot feedback" });
       setMsg("Thanks — feedback recorded.");
       setNpsMessage("");
+      await loadUsage();
     } catch (e) {
       setMsg((e as Error).message);
     }
@@ -133,6 +156,53 @@ function DealerPilotDashboardInner() {
           {toast}
         </div>
       )}
+      {postCheckout && inviteUrl && (
+        <section
+          style={{
+            marginBottom: "1.25rem",
+            padding: "1.1rem 1.25rem",
+            borderRadius: 10,
+            border: "1px solid rgba(201,162,39,0.45)",
+            background: "linear-gradient(135deg, rgba(201,162,39,0.14) 0%, rgba(255,255,255,0.04) 100%)",
+          }}
+        >
+          <h2 style={{ fontSize: "1.05rem", margin: "0 0 0.5rem" }}>You are live — run your first appraisal</h2>
+          <p style={{ margin: "0 0 0.85rem", fontSize: "0.92rem", color: "var(--text-muted, #bbb)" }}>
+            Payment is on file. Open the branded intake flow (same link you will share with customers) or jump straight in below.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.65rem", alignItems: "center" }}>
+            <Link
+              href={inviteUrl}
+              style={{
+                display: "inline-block",
+                padding: "0.65rem 1.1rem",
+                borderRadius: 8,
+                background: "var(--accent, #c9a227)",
+                color: "#111",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Start first appraisal
+            </Link>
+            <button
+              type="button"
+              onClick={() => void copyInviteLink()}
+              disabled={!pilot?.inviteCustomerUrl}
+              style={{
+                padding: "0.55rem 0.9rem",
+                borderRadius: 8,
+                border: "1px solid rgba(255,255,255,0.25)",
+                background: "transparent",
+                color: "inherit",
+                cursor: pilot?.inviteCustomerUrl ? "pointer" : "not-allowed",
+              }}
+            >
+              {copied ? "Invite link copied" : "Copy invite link for customers"}
+            </button>
+          </div>
+        </section>
+      )}
       <h1 style={{ fontSize: "1.75rem", marginBottom: "0.35rem" }}>Dealer pilot dashboard</h1>
       <p style={{ color: "var(--text-muted, #888)", marginBottom: "1.25rem" }}>
         Live valuation spend vs the ${cap}/day guardrail, remaining budget projection, and your first-customer motion.
@@ -171,6 +241,7 @@ function DealerPilotDashboardInner() {
               </li>
             )}
             <li>Valuation calls today: {usage.valuation.callsToday}</li>
+            <li>Public appraisals today (intake): {usage.valuation.publicIntakeToday ?? 0}</li>
             <li>Appraisals (all time in workspace): {pilot?.appraisalCount ?? "—"}</li>
             <li>
               Usage this month: {usage.usageMonth.quantity} events · ${usage.usageMonth.amountUsd.toFixed(2)}
@@ -291,7 +362,7 @@ function DealerPilotDashboardInner() {
             borderRadius: 8,
           }}
         >
-          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Quick NPS (after your first closed appraisal)</h2>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Quick NPS (after your first deal-desk close)</h2>
           <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span>Score 0–10</span>
             <input type="number" min={0} max={10} value={nps} onChange={(e) => setNps(Number(e.target.value))} />
@@ -309,22 +380,24 @@ function DealerPilotDashboardInner() {
         </section>
       )}
 
-      <section style={{ marginTop: "1.25rem" }}>
-        <Link
-          href={inviteUrl || "/appraisal"}
-          style={{
-            display: "inline-block",
-            padding: "0.65rem 1rem",
-            borderRadius: 8,
-            background: "var(--accent, #c9a227)",
-            color: "#111",
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          First appraisal quick-start
-        </Link>
-      </section>
+      {!postCheckout && (
+        <section style={{ marginTop: "1.25rem" }}>
+          <Link
+            href={inviteUrl || "/appraisal"}
+            style={{
+              display: "inline-block",
+              padding: "0.65rem 1rem",
+              borderRadius: 8,
+              background: "var(--accent, #c9a227)",
+              color: "#111",
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
+          >
+            First appraisal quick-start
+          </Link>
+        </section>
+      )}
 
       {msg && (
         <p style={{ marginTop: "1rem", color: "var(--text-muted, #aaa)" }} role="status">

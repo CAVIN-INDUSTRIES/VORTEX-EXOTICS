@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { listErpOrders } from "@/lib/api";
@@ -24,6 +24,7 @@ export default function OrdersPage() {
     totalAmount: number | null;
     createdAt: string;
   }[];
+
   const closedDeals = items.filter((o) => o.status === "CONFIRMED" || o.status === "FULFILLED");
 
   return (
@@ -50,10 +51,14 @@ export default function OrdersPage() {
               <td>{o.id.slice(0, 8)}…</td>
               <td>INV-{o.id.slice(0, 8).toUpperCase()}</td>
               <td>{o.appraisalId.slice(0, 8)}…</td>
-              <td><VexTrustBadge>{o.status}</VexTrustBadge></td>
+              <td>
+                <VexTrustBadge>{o.status}</VexTrustBadge>
+              </td>
               <td>{o.totalAmount != null ? `$${o.totalAmount.toLocaleString("en-US")}` : "—"}</td>
               <td>{new Date(o.createdAt).toLocaleDateString()}</td>
-              <td><Link href={`/orders/${o.id}`}>View</Link></td>
+              <td>
+                <Link href={`/orders/${o.id}`}>View</Link>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -62,3 +67,4 @@ export default function OrdersPage() {
     </main>
   );
 }
+

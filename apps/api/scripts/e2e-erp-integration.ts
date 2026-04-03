@@ -47,7 +47,7 @@ async function main() {
   assert(created.invoice.invoiceNumber.startsWith("INV-"), "E2E FAILED: invoice number not generated");
   assert(Boolean(created.inventoryId), "E2E FAILED: inventory not linked");
 
-  const [usage, revenueEvent, invoices] = await Promise.all([
+  const [usage, revenueEvent, auditLog, invoiceIssuedEvent, invoices] = await Promise.all([
     systemPrisma.usageLog.findFirst({
       where: { tenantId: tenant.id, kind: "erp_order_create", meta: { path: ["appraisalId"], equals: appraisal.id } },
       orderBy: { createdAt: "desc" },
@@ -60,11 +60,31 @@ async function main() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    systemPrisma.auditLog.findFirst({
+      where: {
+        tenantId: tenant.id,
+        action: "ERP_ORDER_CREATE",
+        entity: "Order",
+        entityId: created.order.id,
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    systemPrisma.eventLog.findFirst({
+      where: {
+        tenantId: tenant.id,
+        type: "erp.invoice.issued",
+        payload: { path: ["orderId"], equals: created.order.id },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
     listErpInvoices(systemPrisma, tenant.id),
   ]);
 
   assert(Boolean(usage), "E2E FAILED: missing ERP usage billing event");
   assert(Boolean(revenueEvent), "E2E FAILED: missing ERP immutable RevenueEvent");
+  assert(Boolean(invoices.length), "E2E FAILED: invoice ledger missing order");
+  assert(Boolean(auditLog), "E2E FAILED: missing ERP audit log");
+  assert(Boolean(invoiceIssuedEvent), "E2E FAILED: missing ERP invoice-issued event");
   assert(invoices.some((i) => i.orderId === created.order.id), "E2E FAILED: invoice ledger missing order");
 
   await systemPrisma.order.deleteMany({ where: { tenantId: tenant.id } });

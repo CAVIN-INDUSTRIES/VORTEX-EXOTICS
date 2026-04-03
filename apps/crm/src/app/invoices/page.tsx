@@ -44,9 +44,13 @@ export default function InvoicesPage() {
           {items.map((invoice) => (
             <tr key={invoice.invoiceNumber}>
               <td>{invoice.invoiceNumber}</td>
-              <td><Link href={`/orders/${invoice.orderId}`}>{invoice.orderId.slice(0, 8)}…</Link></td>
+              <td>
+                <Link href={`/orders/${invoice.orderId}`}>{invoice.orderId.slice(0, 8)}…</Link>
+              </td>
               <td>{invoice.appraisalId.slice(0, 8)}…</td>
-              <td><VexTrustBadge>{invoice.status}</VexTrustBadge></td>
+              <td>
+                <VexTrustBadge>{invoice.status}</VexTrustBadge>
+              </td>
               <td>{invoice.amountUsd != null ? `$${invoice.amountUsd.toLocaleString("en-US")}` : "—"}</td>
               <td>{new Date(invoice.issuedAt).toLocaleString()}</td>
             </tr>
@@ -57,3 +61,4 @@ export default function InvoicesPage() {
     </main>
   );
 }
+

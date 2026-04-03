@@ -241,3 +241,6 @@ export async function listErpInvoices(prisma: PrismaClient, tenantId: string): P
   const orders = await listErpOrders(prisma, tenantId);
   return orders.map(toInvoice);
 }
+
+/** Alias for pilot docs / integrations that refer to `createOrderFromAppraisal`. */
+export const createOrderFromAppraisal = createErpOrderFromAppraisal;

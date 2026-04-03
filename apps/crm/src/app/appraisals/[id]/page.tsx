@@ -39,7 +39,9 @@ export default function AppraisalDetailPage() {
   const [customers, setCustomers] = useState<{ id: string; label: string }[]>([]);
   const [loadErr, setLoadErr] = useState<string | null>(null);
   const [submitErr, setSubmitErr] = useState<string | null>(null);
-  const [dealDeskStatus, setDealDeskStatus] = useState<"OPEN" | "ACCEPTED" | "REJECTED" | "NEGOTIATING" | "CLOSED">("OPEN");
+  const [dealDeskStatus, setDealDeskStatus] = useState<
+    "OPEN" | "ACCEPTED" | "REJECTED" | "NEGOTIATING" | "CLOSED"
+  >("OPEN");
   const [dealDeskNote, setDealDeskNote] = useState("");
   const [dealDeskFeedback, setDealDeskFeedback] = useState<string | null>(null);
 
@@ -67,7 +69,12 @@ export default function AppraisalDetailPage() {
       }),
       getCurrentTenantBilling(token).then((b) => setTenantName((b as { name?: string }).name ?? "Dealer")),
       getInventory(token).then((r) => {
-        const items = (r as { items: Array<{ vehicleId: string; vehicle?: { make: string; model: string; year: number } }> }).items;
+        const items = (r as {
+          items: Array<{
+            vehicleId: string;
+            vehicle?: { make: string; model: string; year: number };
+          }>;
+        }).items;
         const map = new Map<string, string>();
         for (const it of items) {
           const v = it.vehicle;
@@ -116,7 +123,9 @@ export default function AppraisalDetailPage() {
     }
   };
 
-  const onDealDeskUpdate = async (nextStatus: "OPEN" | "ACCEPTED" | "REJECTED" | "NEGOTIATING" | "CLOSED" = dealDeskStatus) => {
+  const onDealDeskUpdate = async (
+    nextStatus: "OPEN" | "ACCEPTED" | "REJECTED" | "NEGOTIATING" | "CLOSED" = dealDeskStatus
+  ) => {
     if (!token || !id) return;
     setSubmitErr(null);
     setDealDeskFeedback(null);
@@ -129,9 +138,7 @@ export default function AppraisalDetailPage() {
       setAppraisal((prev) => (prev ? { ...prev, status: nextStatus.toLowerCase() } : prev));
       const hasCloseArtifacts = Boolean(response?.dealDesk?.orderId || response?.dealDesk?.inventoryId);
       setDealDeskFeedback(
-        hasCloseArtifacts
-          ? `Deal desk ${nextStatus}. Inventory and deal record created.`
-          : `Deal desk ${nextStatus}.`
+        hasCloseArtifacts ? `Deal desk ${nextStatus}. Inventory and deal record created.` : `Deal desk ${nextStatus}.`
       );
     } catch (e) {
       setSubmitErr(e instanceof Error ? e.message : "Deal desk update failed");
@@ -169,8 +176,18 @@ export default function AppraisalDetailPage() {
     }
   };
 
-  if (loadErr) return <main style={{ padding: "1.5rem" }}><p style={{ color: "#f66" }}>{loadErr}</p></main>;
-  if (!appraisal) return <main style={{ padding: "1.5rem" }}><p style={{ color: "var(--text-muted)" }}>Loading…</p></main>;
+  if (loadErr)
+    return (
+      <main style={{ padding: "1.5rem" }}>
+        <p style={{ color: "#f66" }}>{loadErr}</p>
+      </main>
+    );
+  if (!appraisal)
+    return (
+      <main style={{ padding: "1.5rem" }}>
+        <p style={{ color: "var(--text-muted)" }}>Loading…</p>
+      </main>
+    );
 
   return (
     <main style={{ padding: "1.5rem", maxWidth: "560px", margin: "0 auto" }}>
@@ -184,13 +201,31 @@ export default function AppraisalDetailPage() {
         <AppraisalPdfButton appraisal={appraisal} tenantName={tenantName} />
       </div>
 
-      <section style={{ marginBottom: "1rem", background: "var(--bg-card)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "0.8rem" }}>
+      <section
+        style={{
+          marginBottom: "1rem",
+          background: "var(--bg-card)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          borderRadius: 8,
+          padding: "0.8rem",
+        }}
+      >
         <h2 style={{ fontSize: "0.95rem", marginBottom: "0.35rem" }}>Valuation snapshot</h2>
         <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-          Source: {appraisal.valuationSource ?? "manual"} · Fetched: {appraisal.valuationFetchedAt ? new Date(appraisal.valuationFetchedAt).toLocaleString() : "—"}
+          Source: {appraisal.valuationSource ?? "manual"} · Fetched:{" "}
+          {appraisal.valuationFetchedAt ? new Date(appraisal.valuationFetchedAt).toLocaleString() : "—"}
         </p>
       </section>
-      <section style={{ marginBottom: "1rem", background: "var(--bg-card)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "0.8rem" }}>
+
+      <section
+        style={{
+          marginBottom: "1rem",
+          background: "var(--bg-card)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          borderRadius: 8,
+          padding: "0.8rem",
+        }}
+      >
         <h2 style={{ fontSize: "0.95rem", marginBottom: "0.35rem" }}>Deal Desk</h2>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <select value={dealDeskStatus} onChange={(e) => setDealDeskStatus(e.target.value as typeof dealDeskStatus)}>
@@ -236,7 +271,12 @@ export default function AppraisalDetailPage() {
           <span>Vehicle</span>
           <select
             {...register("vehicleId")}
-            style={{ padding: "0.5rem", background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{
+              padding: "0.5rem",
+              background: "var(--bg-card)",
+              color: "var(--text-primary)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
           >
             <option value="">— None —</option>
             {vehicles.map((v) => (
@@ -246,11 +286,17 @@ export default function AppraisalDetailPage() {
             ))}
           </select>
         </label>
+
         <label style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
           <span>Customer</span>
           <select
             {...register("customerId")}
-            style={{ padding: "0.5rem", background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{
+              padding: "0.5rem",
+              background: "var(--bg-card)",
+              color: "var(--text-primary)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
           >
             <option value="">— None —</option>
             {customers.map((c) => (
@@ -260,14 +306,34 @@ export default function AppraisalDetailPage() {
             ))}
           </select>
         </label>
+
         <label style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
           <span>Notes</span>
-          <textarea {...register("notes")} rows={4} style={{ padding: "0.5rem", background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.12)" }} />
+          <textarea
+            {...register("notes")}
+            rows={4}
+            style={{
+              padding: "0.5rem",
+              background: "var(--bg-card)",
+              color: "var(--text-primary)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
+          />
         </label>
+
         <label style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
           <span>Status</span>
-          <input {...register("status")} style={{ padding: "0.5rem", background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.12)" }} />
+          <input
+            {...register("status")}
+            style={{
+              padding: "0.5rem",
+              background: "var(--bg-card)",
+              color: "var(--text-primary)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
+          />
         </label>
+
         <label style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
           <span>Value (USD)</span>
           <input
@@ -276,14 +342,28 @@ export default function AppraisalDetailPage() {
             {...register("value", {
               setValueAs: (v) => (v === "" || v === null ? undefined : Number(v)),
             })}
-            style={{ padding: "0.5rem", background: "var(--bg-card)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{
+              padding: "0.5rem",
+              background: "var(--bg-card)",
+              color: "var(--text-primary)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
           />
         </label>
+
         {submitErr && <p style={{ color: "#f66" }}>{submitErr}</p>}
         <button
           type="submit"
           disabled={isSubmitting}
-          style={{ padding: "0.65rem", background: "var(--accent)", color: "#111", border: "none", borderRadius: "6px", fontWeight: 600, cursor: "pointer" }}
+          style={{
+            padding: "0.65rem",
+            background: "var(--accent)",
+            color: "#111",
+            border: "none",
+            borderRadius: "6px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
         >
           {isSubmitting ? "Saving…" : "Save changes"}
         </button>
@@ -292,10 +372,19 @@ export default function AppraisalDetailPage() {
       <button
         type="button"
         onClick={() => void onDelete()}
-        style={{ marginTop: "1.5rem", padding: "0.5rem 1rem", background: "transparent", border: "1px solid #f66", color: "#f66", borderRadius: "6px", cursor: "pointer" }}
+        style={{
+          marginTop: "1.5rem",
+          padding: "0.5rem 1rem",
+          background: "transparent",
+          border: "1px solid #f66",
+          color: "#f66",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
       >
         Delete appraisal
       </button>
     </main>
   );
 }
+

@@ -1,15 +1,32 @@
 import { z } from "zod";
 
-/** Public trade-in / marketing instant estimate (no auth). */
-export const quickAppraisalSchema = z.object({
-  make: z.string().min(1),
-  model: z.string().min(1),
-  year: z.number().int().min(1990).max(2030),
-  mileage: z.number().int().nonnegative(),
-  condition: z.string().optional(),
-});
+/** Public anonymous appraisal (no auth) — shared by web + API. */
+export const publicAppraisalSchema = z
+  .object({
+    vin: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z.string().regex(/^[A-HJ-NPR-Z0-9]{17}$/).optional()
+    ),
+    mileage: z.number().int().min(0).optional(),
+    condition: z.enum(["excellent", "good", "fair", "poor"]).optional(),
+    notes: z.string().max(2000).optional(),
+    images: z.array(z.string().url()).max(10).optional(),
+  })
+  .refine(
+    (d) =>
+      d.vin != null ||
+      d.mileage != null ||
+      d.condition != null ||
+      (d.notes != null && d.notes.trim().length > 0) ||
+      (d.images != null && d.images.length > 0),
+    { message: "Provide at least a VIN, mileage, condition, notes, or images" }
+  );
 
-export type QuickAppraisalInput = z.infer<typeof quickAppraisalSchema>;
+export type PublicAppraisalInput = z.infer<typeof publicAppraisalSchema>;
+
+/** @deprecated Use publicAppraisalSchema */
+export const quickAppraisalSchema = publicAppraisalSchema;
+export type QuickAppraisalInput = PublicAppraisalInput;
 
 /** Staff CRM create — optional links to inventory vehicle and customer. */
 export const createAppraisalSchema = z

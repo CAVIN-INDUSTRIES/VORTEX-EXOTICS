@@ -1,27 +1,56 @@
-import type { QuickAppraisalInput } from "@vex/shared";
-import { prisma, runWithTenant } from "./tenant.js";
-import { estimateFromQuickInput } from "./appraisalValuation.js";
+import type { PublicAppraisalInput } from "@vex/shared";
+import { prisma, runWithTenant, systemPrisma } from "./tenant.js";
 
-export async function createPublicQuickAppraisal(tenantId: string, input: QuickAppraisalInput) {
-  const estimatedValue = estimateFromQuickInput(input);
+export class PublicAppraisalDailyCapError extends Error {
+  override name = "PublicAppraisalDailyCapError";
+  code = "PUBLIC_APPRAISAL_DAILY_CAP" as const;
+}
+
+/** Stand-in for $5/day valuation budget: max submissions per tenant per UTC day (usage-metered). */
+async function assertPublicAppraisalDailyCap(tenantId: string) {
+  const max = Math.max(1, Number(process.env.PUBLIC_APPRAISAL_DAILY_MAX ?? 1000));
+  const start = new Date();
+  start.setUTCHours(0, 0, 0, 0);
+  const count = await systemPrisma.usageLog.count({
+    where: {
+      tenantId,
+      kind: "PUBLIC_APPRAISAL",
+      createdAt: { gte: start },
+    },
+  });
+  if (count >= max) {
+    throw new PublicAppraisalDailyCapError(
+      "Public appraisal daily limit reached for this tenant (guardrail). Try again tomorrow."
+    );
+  }
+}
+
+/**
+ * Anonymous public appraisal — tenant-scoped row, usage + audit + immutable revenue signal.
+ * Valuation fields left pending until external API is wired.
+ */
+export async function createPublicAppraisal(tenantId: string, input: PublicAppraisalInput) {
+  await assertPublicAppraisalDailyCap(tenantId);
+
   const notes = JSON.stringify({
-    make: input.make,
-    model: input.model,
-    year: input.year,
-    mileage: input.mileage,
+    vin: input.vin ?? null,
+    mileage: input.mileage ?? null,
     condition: input.condition ?? null,
-    source: "quick_estimate",
+    notes: input.notes ?? null,
+    images: input.images ?? null,
+    source: "public_quick_appraisal",
   });
 
   return runWithTenant(tenantId, async () => {
     const appraisal = await prisma.appraisal.create({
       data: {
         tenantId,
-        value: estimatedValue,
+        value: null,
         notes,
         status: "pending",
-        valuationSource: "fallback",
-        valuationFetchedAt: new Date(),
+        valuationSource: "pending",
+        valuationFetchedAt: null,
+        valuationData: null,
       },
     });
 
@@ -29,7 +58,7 @@ export async function createPublicQuickAppraisal(tenantId: string, input: QuickA
       prisma.usageLog.create({
         data: {
           tenantId,
-          kind: "APPRAISAL_CALL",
+          kind: "PUBLIC_APPRAISAL",
           quantity: 1,
           amountUsd: 0,
           meta: { source: "public_quick_appraisal", appraisalId: appraisal.id },
@@ -38,17 +67,31 @@ export async function createPublicQuickAppraisal(tenantId: string, input: QuickA
       prisma.eventLog.create({
         data: {
           tenantId,
-          type: "revenue.usage.appraisal_created",
+          type: "RevenueEvent",
           payload: {
             appraisalId: appraisal.id,
-            estimatedValue,
-            source: "public_quick_appraisal",
+            event: "public_appraisal_submitted",
+            amountUsd: 0,
           },
+        },
+      }),
+      prisma.auditLog.create({
+        data: {
+          tenantId,
+          actorId: null,
+          action: "PUBLIC_APPRAISAL_CREATED",
+          entity: "Appraisal",
+          entityId: appraisal.id,
+          payload: { source: "public" },
         },
       }),
     ]);
 
-    return { appraisal, estimatedValue };
+    return { appraisal };
   });
 }
 
+/** @deprecated Prefer createPublicAppraisal — kept for scripts/tests. */
+export async function createPublicQuickAppraisal(tenantId: string, input: PublicAppraisalInput) {
+  return createPublicAppraisal(tenantId, input);
+}

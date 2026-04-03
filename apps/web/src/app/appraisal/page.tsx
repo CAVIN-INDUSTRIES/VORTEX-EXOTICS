@@ -5,46 +5,56 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/Header";
 import { createAppraisal } from "@/lib/api";
-import { formatUsd } from "@/lib/formatCurrency";
 import styles from "./appraisal.module.css";
+
+const CONDITIONS = ["excellent", "good", "fair", "poor"] as const;
 
 function AppraisalForm() {
   const searchParams = useSearchParams();
   const tenantId = searchParams.get("tenantId");
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
+  const [vin, setVin] = useState("");
   const [mileage, setMileage] = useState("");
-  const [condition, setCondition] = useState("");
+  const [condition, setCondition] = useState<(typeof CONDITIONS)[number] | "">("");
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ id: string; estimatedValue: number } | null>(null);
+  const [result, setResult] = useState<{ id: string; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setResult(null);
-    const y = Number(year);
-    const m = Number(mileage);
-    if (!make.trim() || !model.trim() || !year || Number.isNaN(y) || !mileage || Number.isNaN(m)) {
-      setError("Please fill in make, model, year, and mileage.");
+    const m = mileage === "" ? undefined : Number(mileage);
+    if (mileage !== "" && Number.isNaN(Number(mileage))) {
+      setError("Mileage must be a number.");
       return;
     }
+    const vinTrim = vin.trim();
+    const hasVin = vinTrim.length === 17;
+    if (vinTrim.length > 0 && !hasVin) {
+      setError("VIN must be exactly 17 characters (letters and digits, no I/O/Q).");
+      return;
+    }
+    const hasNotes = notes.trim().length > 0;
+    if (!hasVin && m === undefined && !condition && !hasNotes) {
+      setError("Enter at least mileage and condition, a full VIN, or notes.");
+      return;
+    }
+
     setLoading(true);
     try {
       const data = await createAppraisal(
         {
-          make: make.trim(),
-          model: model.trim(),
-          year: y,
-          mileage: m,
-          condition: condition.trim() || undefined,
+          ...(hasVin ? { vin: vinTrim.toUpperCase() } : {}),
+          ...(m !== undefined && !Number.isNaN(m) ? { mileage: Math.max(0, Math.floor(m)) } : {}),
+          ...(condition ? { condition } : {}),
+          ...(hasNotes ? { notes: notes.trim() } : {}),
         },
         { tenantId }
       );
-      setResult({ id: data.id, estimatedValue: data.value ?? 0 });
+      setResult({ id: data.id, message: data.message });
     } catch {
-      setError("Failed to get appraisal.");
+      setError("Failed to submit appraisal.");
     } finally {
       setLoading(false);
     }
@@ -54,15 +64,20 @@ function AppraisalForm() {
     <>
       <Header />
       <main id="main-content" className={styles.main}>
-        <h1 className={styles.title}>Trade-in value</h1>
-        <p className={styles.subtitle}>Get an estimated value for your vehicle.</p>
+        <h1 className={styles.title}>Trade-in intake</h1>
+        <p className={styles.subtitle}>
+          Submit your vehicle for review. Your dealer will follow up shortly — no account required.
+        </p>
 
         {result ? (
           <div className={styles.result}>
-            <p className={styles.estimateLabel}>Estimated value</p>
-            <p className={styles.estimateValue}>{formatUsd(result.estimatedValue)}</p>
+            <p className={styles.estimateLabel}>Submitted</p>
+            <p className={styles.estimateValue} style={{ fontSize: "1.1rem" }}>
+              {result.message}
+            </p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Reference: {result.id}</p>
             <Link href={`/checkout?tradeInId=${result.id}`} className={styles.cta}>
-              Use as trade-in at checkout
+              Continue to checkout
             </Link>
             <Link href="/checkout" className={styles.ctaSecondary}>
               Back to checkout
@@ -71,38 +86,15 @@ function AppraisalForm() {
         ) : (
           <form onSubmit={handleSubmit} className={styles.form}>
             <label className={styles.label}>
-              Make
+              VIN (optional, 17 chars)
               <input
                 type="text"
-                value={make}
-                onChange={(e) => setMake(e.target.value)}
+                value={vin}
+                onChange={(e) => setVin(e.target.value.toUpperCase())}
                 className={styles.input}
-                placeholder="e.g. Ferrari"
-                required
-              />
-            </label>
-            <label className={styles.label}>
-              Model
-              <input
-                type="text"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className={styles.input}
-                placeholder="e.g. 488"
-                required
-              />
-            </label>
-            <label className={styles.label}>
-              Year
-              <input
-                type="number"
-                min={1990}
-                max={2030}
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className={styles.input}
-                placeholder="e.g. 2020"
-                required
+                placeholder="e.g. 1HGBH41JXMN109186"
+                maxLength={17}
+                autoComplete="off"
               />
             </label>
             <label className={styles.label}>
@@ -114,22 +106,37 @@ function AppraisalForm() {
                 onChange={(e) => setMileage(e.target.value)}
                 className={styles.input}
                 placeholder="e.g. 15000"
-                required
               />
             </label>
             <label className={styles.label}>
-              Condition (optional)
-              <input
-                type="text"
+              Condition
+              <select
                 value={condition}
-                onChange={(e) => setCondition(e.target.value)}
+                onChange={(e) => setCondition(e.target.value as (typeof CONDITIONS)[number] | "")}
                 className={styles.input}
-                placeholder="e.g. Excellent"
+              >
+                <option value="">— Select —</option>
+                {CONDITIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c.charAt(0).toUpperCase() + c.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.label}>
+              Notes (optional)
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className={styles.input}
+                rows={3}
+                maxLength={2000}
+                placeholder="Anything the dealer should know"
               />
             </label>
             {error && <p className={styles.error}>{error}</p>}
             <button type="submit" disabled={loading} className={styles.cta}>
-              {loading ? "Calculating…" : "Get estimate"}
+              {loading ? "Submitting…" : "Submit for review"}
             </button>
           </form>
         )}

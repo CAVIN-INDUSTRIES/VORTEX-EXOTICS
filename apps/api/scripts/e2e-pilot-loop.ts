@@ -25,10 +25,8 @@ async function main() {
   });
 
   const { appraisal } = await createPublicQuickAppraisal(tenantA.id, {
-    make: "McLaren",
-    model: "720S",
-    year: 2021,
     mileage: 3200,
+    condition: "good",
   });
   assert(appraisal.tenantId === tenantA.id, "E2E FAILED: public appraisal not tenant-scoped");
 

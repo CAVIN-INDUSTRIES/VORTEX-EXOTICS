@@ -1,58 +1,50 @@
 /**
- * Public quick appraisal — pilot entry: creates a tenant-scoped Appraisal + usage telemetry (no JWT).
- * Flow continues in CRM: /appraisals → deal desk Accept/Reject/Close → Order + usage + RevenueEvent.
+ * Public quick appraisal — pilot entry: tenant-scoped Appraisal + usage + audit (no JWT).
+ * Tenant resolution runs in middleware (query → host → env); validated against DB.
  */
 import { Request, Response } from "express";
-import type { QuickAppraisalInput } from "@vex/shared";
-import { prisma, runWithTenant, findTenantByCustomDomain, normalizeHost } from "../lib/tenant.js";
+import { prisma, runWithTenant } from "../lib/tenant.js";
 import { mapAppraisalToOutput } from "../lib/appraisalMapper.js";
-import { createPublicQuickAppraisal } from "../lib/appraisalService.js";
+import { createPublicAppraisal, PublicAppraisalDailyCapError } from "../lib/appraisalService.js";
 
-async function resolvePublicTenantId(req: Request): Promise<string | null> {
-  const q = req.query.tenantId;
-  if (typeof q === "string" && q.trim()) return q.trim();
-  const forwarded = req.get("x-forwarded-host");
-  const host = forwarded ? normalizeHost(forwarded) : req.get("host") ? normalizeHost(req.get("host")!) : "";
-  if (host) {
-    const t = await findTenantByCustomDomain(host);
-    if (t) return t.id;
-  }
-  const env = process.env.PUBLIC_APPRAISAL_TENANT_ID;
-  return env?.trim() || null;
-}
-
-/** POST /public/quick-appraisal — unauthenticated instant estimate for marketing / checkout trade-in. */
+/** POST /public/quick-appraisal */
 export async function postQuickAppraisal(req: Request, res: Response) {
-  const tenantId = await resolvePublicTenantId(req);
+  const tenantId = req.publicAppraisalTenantId;
   if (!tenantId) {
-    return res.status(400).json({
-      code: "BAD_REQUEST",
-      message: "Could not resolve tenant (set PUBLIC_APPRAISAL_TENANT_ID or use a mapped custom domain / ?tenantId=)",
-    });
+    return res.status(500).json({ code: "INTERNAL", message: "Missing resolved tenant" });
   }
 
-  const body = req.body as QuickAppraisalInput;
-  const { appraisal, estimatedValue } = await createPublicQuickAppraisal(tenantId, body);
+  try {
+    const { appraisal } = await createPublicAppraisal(tenantId, req.body);
 
-  return res.status(201).json({
-    data: {
-      ...mapAppraisalToOutput(appraisal),
-      estimatedValue,
-    },
-    error: null,
-  });
+    return res.status(201).json({
+      data: {
+        id: appraisal.id,
+        status: "pending",
+        estimatedValue: null,
+        message: "Appraisal submitted. Dealer will review shortly.",
+      },
+      error: null,
+    });
+  } catch (e) {
+    if (e instanceof PublicAppraisalDailyCapError) {
+      return res.status(429).json({
+        code: "RATE_LIMITED",
+        message: e.message,
+      });
+    }
+    throw e;
+  }
 }
 
 /** GET /public/quick-appraisal/:id — read trade-in for checkout (scoped by tenant resolution). */
 export async function getQuickAppraisal(req: Request, res: Response) {
-  const { id } = req.params;
-  const tenantId = await resolvePublicTenantId(req);
+  const tenantId = req.publicAppraisalTenantId;
   if (!tenantId) {
-    return res.status(400).json({
-      code: "BAD_REQUEST",
-      message: "Could not resolve tenant (set PUBLIC_APPRAISAL_TENANT_ID or ?tenantId=)",
-    });
+    return res.status(500).json({ code: "INTERNAL", message: "Missing resolved tenant" });
   }
+
+  const { id } = req.params;
 
   const appraisal = await runWithTenant(tenantId, () =>
     prisma.appraisal.findFirst({

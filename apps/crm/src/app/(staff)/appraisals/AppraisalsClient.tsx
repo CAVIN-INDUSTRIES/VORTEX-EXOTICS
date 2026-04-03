@@ -11,8 +11,17 @@ function vehicleLabel(a: AppraisalOutput) {
   if (a.vehicle) return `${a.vehicle.year} ${a.vehicle.make} ${a.vehicle.model}`;
   if (a.notes) {
     try {
-      const j = JSON.parse(a.notes) as { make?: string; model?: string; year?: number };
+      const j = JSON.parse(a.notes) as {
+        make?: string;
+        model?: string;
+        year?: number;
+        vin?: string;
+        mileage?: number;
+        source?: string;
+      };
+      if (j.source === "public_quick_appraisal" && j.vin) return `VIN …${j.vin.slice(-6)}`;
       if (j.make && j.model) return `${j.year ?? ""} ${j.make} ${j.model}`.trim();
+      if (j.source === "public_quick_appraisal" && j.mileage != null) return `Public · ${j.mileage.toLocaleString()} mi`;
     } catch {
       return a.notes.slice(0, 48) + (a.notes.length > 48 ? "…" : "");
     }

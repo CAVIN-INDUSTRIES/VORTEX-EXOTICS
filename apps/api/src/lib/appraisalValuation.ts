@@ -1,10 +1,10 @@
-import type { QuickAppraisalInput } from "@vex/shared";
+type QuickEstimateInput = { year: number; mileage: number; make?: string; model?: string; basePrice?: number };
 
 /**
  * Rule-based estimate (v1). Swap for third-party valuation API using the same signature.
  * @see env VALUATION_PROVIDER / VALUATION_API_KEY for future integration
  */
-export function estimateFromQuickInput(input: QuickAppraisalInput & { basePrice?: number }): number {
+export function estimateFromQuickInput(input: QuickEstimateInput): number {
   const baseYear = new Date().getFullYear();
   const ageFactor = Math.max(0, baseYear - input.year);
   const mileageDepreciation = Math.min(0.3, (input.mileage / 150_000) * 0.3);

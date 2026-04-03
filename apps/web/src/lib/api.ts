@@ -184,11 +184,11 @@ export async function getFinancingCalculate(payload: FinancingCalculatePayload):
 }
 
 export interface CreateAppraisalPayload {
-  make: string;
-  model: string;
-  year: number;
-  mileage: number;
-  condition?: string;
+  vin?: string;
+  mileage?: number;
+  condition?: "excellent" | "good" | "fair" | "poor";
+  notes?: string;
+  images?: string[];
 }
 
 function publicAppraisalTenantQuery(): string {
@@ -201,11 +201,16 @@ function quickAppraisalQuery(tenantIdOverride?: string | null): string {
   return publicAppraisalTenantQuery();
 }
 
-/** Public instant estimate (no auth) — uses /public/quick-appraisal + tenant resolution. */
+/** Public appraisal (no auth) — POST /public/quick-appraisal + tenant resolution. */
 export async function createAppraisal(
   payload: CreateAppraisalPayload,
   opts?: { tenantId?: string | null }
-): Promise<{ id: string; value: number | null; notes: string | null }> {
+): Promise<{
+  id: string;
+  status: string;
+  estimatedValue: number | null;
+  message: string;
+}> {
   const res = await fetch(`${API_BASE}/public/quick-appraisal${quickAppraisalQuery(opts?.tenantId)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -217,9 +222,13 @@ export async function createAppraisal(
   } catch {
     throw new Error("Failed to parse appraisal response");
   }
-  if (!res.ok) throw new Error(errorMessageFromBody(body) ?? "Failed to get appraisal");
-  const data = unwrap<{ id: string; value: number | null; notes: string | null }>(body);
-  return data;
+  if (!res.ok) throw new Error(errorMessageFromBody(body) ?? "Failed to submit appraisal");
+  return unwrap(body) as {
+    id: string;
+    status: string;
+    estimatedValue: number | null;
+    message: string;
+  };
 }
 
 export async function getAppraisal(

@@ -58,8 +58,8 @@ jobs:
       - name: Install Playwright (Chromium) for web E2E
         run: pnpm --filter @vex/web exec playwright install --with-deps chromium
 
-      - name: Prisma migrate deploy (service Postgres)
-        run: pnpm --filter @vex/api run db:generate && pnpm --filter @vex/api exec prisma migrate deploy
+      - name: Prisma db push (service Postgres — CI E2E schema)
+        run: pnpm --filter @vex/api run db:generate && pnpm --filter @vex/api exec prisma db push --skip-generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex
           DIRECT_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex

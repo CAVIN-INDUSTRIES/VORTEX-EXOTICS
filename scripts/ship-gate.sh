@@ -33,8 +33,12 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
   exit 1
 fi
 
-echo "==> Migrate deploy"
-( cd apps/api && pnpm exec prisma migrate deploy )
+if [[ "${CI:-}" == "true" ]]; then
+  echo "==> CI: skip prisma migrate deploy (schema synced via workflow db push before Turbo; ledger migrations are not fresh-DB safe)"
+else
+  echo "==> Migrate deploy"
+  ( cd apps/api && pnpm exec prisma migrate deploy )
+fi
 
 export JWT_SECRET="${JWT_SECRET:-local-ship-gate-only}"
 export SKIP_VALUATION_ENV_CHECK="${SKIP_VALUATION_ENV_CHECK:-1}"

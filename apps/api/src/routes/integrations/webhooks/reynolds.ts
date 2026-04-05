@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { verifyReynoldsWebhookSignature } from "../../../lib/reynolds.js";
-import { enqueueReynoldsInventorySync } from "../../../lib/queue.js";
+import {
+  enqueueReynoldsInventorySync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../../lib/queue.js";
 import { systemPrisma } from "../../../lib/tenant.js";
 
 export const reynoldsWebhookRouter: Router = Router();
@@ -53,6 +58,9 @@ reynoldsWebhookRouter.post("/", async (req, res) => {
   });
   const duplicate = Boolean(existing);
   if (!duplicate) {
+    if (eventType.includes("inventory") && !isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
+    }
     if (eventType.includes("inventory")) {
       await enqueueReynoldsInventorySync({
         tenantId,

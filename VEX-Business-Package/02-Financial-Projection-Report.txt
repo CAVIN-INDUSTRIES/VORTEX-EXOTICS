@@ -1,0 +1,203 @@
+================================================================================
+  VEX — FINANCIAL PROJECTION REPORT
+  April 2026 — written for finance AND for curious non-experts
+================================================================================
+
+WHAT THIS DOCUMENT IS (AND IS NOT)
+--------------------------------------------------------------------------------
+This report does three things:
+
+  1. Lists **subscription list prices** that are **actually coded** into the VEX
+     product today (so you can verify them in the live app or source file).
+
+  2. Explains, in plain language, **how the software computes a simple monthly
+     recurring revenue (MRR) snapshot** for certain investor-style screens —
+     and why that is **not** the same as full audited revenue.
+
+  3. Provides a **blank worksheet** so your **finance or accounting** team can
+     build real forecasts from **Stripe**, your general ledger, and contracts.
+
+This is **not** an audit, a securities filing, or a promise of future results.
+Older drafts of marketing packages sometimes showed invented “year 5 ARR” curves;
+**do not** treat those as facts. This file removes that guesswork from the
+written package.
+
+TERMS USED HERE
+--------------------------------------------------------------------------------
+  MRR (monthly recurring revenue)  The subscription dollars you would expect
+                                   per month from active software plans — a
+                                   common SaaS metric (SaaS = software sold as
+                                   a subscription).
+  ARR (annual recurring revenue)   Roughly MRR × 12 when people annualize.
+  Stripe                           Payment and billing platform; what customers
+                                   actually pay must match Stripe’s live prices
+                                   if those differ from internal list tables.
+  API                              The structured way the app publishes data
+                                   (for example “current plan prices”) to the
+                                   website and tools.
+  GAAP                             Generally accepted accounting principles —
+                                   the rules accountants use; product “MRR”
+                                   snapshots may not equal GAAP revenue without
+                                   adjustment.
+  Tenant                           One dealer organization’s isolated account
+                                   in the system.
+
+
+SECTION 1 — OFFICIAL LIST PRICES (FROM THE PRODUCT SOURCE CODE)
+--------------------------------------------------------------------------------
+The public plan table is defined in the backend at:
+
+  apps/api/src/routes/pricing.ts   (look for the PLANS list)
+
+As of this writing, the **coded** monthly and yearly **list** prices are:
+
+  Tier (code name)   Shown name      Monthly (USD)   Yearly (USD)
+  -----------------  --------------  --------------  --------------
+  STARTER            Starter         $49             $470
+  PRO                Pro             $149            $1,430
+  ENTERPRISE         Enterprise      $299            $2,870
+
+**Important:** If your **Stripe** dashboard uses different amounts (promotions,
+custom deals, regional pricing), **Stripe is authoritative** for what was
+actually charged. This table is “what the product’s default list says in code.”
+
+
+SECTION 2 — HOW MRR IS CALCULATED IN SOFTWARE (SINGLE DEALER SNAPSHOT)
+--------------------------------------------------------------------------------
+File: apps/api/src/routes/capital.ts
+
+In simple terms:
+
+  • Each subscription tier maps to a **monthly dollar amount**:
+      Pro → $149/mo, Enterprise → $299/mo, Starter → $49/mo by default.
+
+  • If that dealer account shows an **active** paid subscription in Stripe’s
+    status (not canceled), the system records that dollar amount as **mrr**
+    for certain **capital / investor** style responses.
+
+  • If there is no active subscription, **mrr is zero** in that snapshot.
+
+**Why finance still matters:** Real revenue recognition can include discounts,
+refunds, taxes, timing of invoices, and contract wording. Treat this **mrr**
+field as a **product indicator**, then reconcile to **Stripe reports** and your
+**books**.
+
+
+SECTION 3 — LIVE DATA YOU CAN REQUEST FROM THE RUNNING PRODUCT
+--------------------------------------------------------------------------------
+These are **technical endpoints** (URLs on your API) — your engineering or ops
+team can help you call them. Listed here so finance knows **where truth lives**.
+
+  • **Current list prices** — public; no login required on typical setups.
+      GET /pricing/plans
+
+  • **Raise package (per logged-in dealer admin)** — includes mrr and usage
+    summaries scoped to that dealer’s account.
+      GET /capital/package   (requires admin authentication)
+
+  • **Time-limited investor link** — creates a token a reader can use briefly.
+      POST /capital/investor-link
+      GET /capital/investor/:token
+
+  • **Pilot network rollups** — counts computed from the database, defined in:
+      apps/api/src/lib/pilotMetrics.ts
+
+**Pilot-style metrics (plain English):**
+
+  activePilots
+    How many dealer accounts are flagged as having completed pilot onboarding.
+
+  totalPilotAppraisals
+    Appraisal records tied to those pilot dealers.
+
+  firstBillingEvents
+    How many pilot dealers have a Stripe customer record on file (a billing
+    readiness signal — not the same as total lifetime cash).
+
+  publicIntakeToday / publicQuickAppraisalSubmissionsLifetime
+    Counts of public appraisal form usage from usage logs.
+
+  closedDealsAcrossPilots
+    Orders marked confirmed or fulfilled for pilot dealers.
+
+  generatedAt
+    Timestamp showing when the rollup was computed.
+
+**Company-wide MRR:** If your deployment includes an admin MRR dashboard or
+**GET /admin/mrr**, use **production exports** from there for totals — not this
+static file.
+
+
+SECTION 4 — DEMO / PLACEHOLDER VALUES (DO NOT QUOTE AS REAL FINANCIALS)
+--------------------------------------------------------------------------------
+Some API responses include **hard-coded example numbers** so screens and demos
+work before final data exists. Examples in **capital.ts** include:
+
+  • A sample **monthly burn** dollar figure inside a “Series A data room” helper.
+  • A sample **month-over-month growth** heuristic derived from usage vs MRR.
+  • A placeholder **churn percentage** on an investor-style “live” route.
+  • Default **valuation** and **raise amount** inputs on a term-sheet simulator.
+
+These are **scaffolding**. They are **not** your company’s financial statements
+unless leadership deliberately replaces them with audited inputs.
+
+
+SECTION 5 — INTERNAL PLANNING DOCS VS THE LIVE PRICE LIST
+--------------------------------------------------------------------------------
+Long internal specs (markdown files under docs/plans/) sometimes mention
+**illustrative** prices for storytelling — for example a future “premium tier”
+price that was never shipped.
+
+**Rule of thumb:** For customers, investors doing diligence, or legal documents,
+use **GET /pricing/plans**, **Stripe**, or your **signed price book** — not a
+planning memo.
+
+
+SECTION 6 — PROJECTION WORKSHEET (FINANCE COMPLETES — NO FAKE NUMBERS HERE)
+--------------------------------------------------------------------------------
+Export from Stripe and your accounting system, then fill in:
+
+  A. Baseline subscription MRR (today)
+     _______________________ USD/month   Source: _______________________
+
+  B. Active paying accounts (define what “paying” means for you)
+     _______________________               Source: _______________________
+
+  C. Average revenue per account (ARPA) — monthly
+     _______________________ USD/month     (often A divided by B)
+
+  D. Non-subscription revenue (fees, services, usage) — trailing twelve months
+     _______________________ USD          Source: _______________________
+
+  E. Churn and expansion (your definitions, last twelve months)
+     Gross churn __________%    Net revenue retention (NRR) __________%
+     Source: _______________
+
+  F. How you will forecast
+     [ ] Bottom-up from pipeline   [ ] Top-down from market size   [ ] Other: _______
+
+  G. Scenario outputs (attach your spreadsheet)
+     Year 1 ARR __________   Year 2 ARR __________   ...
+
+Sign-off:
+
+  Prepared by: _______________________  Date: __________
+  Title: _____________________________
+
+
+SECTION 7 — PRODUCT “CINEMATIC” GOALS VS FINANCIAL LINE ITEMS
+--------------------------------------------------------------------------------
+Internal product memos may describe hoped-for improvements to engagement (time on
+site, configuration depth, checkout clicks). Those are **product experiments**
+until measured. They are **not** substitutes for the worksheet in Section 6.
+
+
+SECTION 8 — CLOSING
+--------------------------------------------------------------------------------
+This file is a **bridge**: it connects everyday understanding to where numbers
+live in code and infrastructure. Your CFO, controller, or FP&A owner should
+own forward-looking projections and external disclosure.
+
+================================================================================
+  VEX Financial Projection Report  |  April 2026
+================================================================================

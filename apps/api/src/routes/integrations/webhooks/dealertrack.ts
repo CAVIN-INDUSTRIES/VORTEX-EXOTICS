@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { verifyDealertrackWebhookSignature } from "../../../lib/dealertrack.js";
-import { enqueueDealertrackCreditAppSync } from "../../../lib/queue.js";
+import {
+  enqueueDealertrackCreditAppSync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../../lib/queue.js";
 import { systemPrisma } from "../../../lib/tenant.js";
 
 export const dealertrackWebhookRouter: Router = Router();
@@ -53,6 +58,12 @@ dealertrackWebhookRouter.post("/", async (req, res) => {
   });
   const duplicate = Boolean(existing);
   if (!duplicate) {
+    if (
+      (eventType.includes("credit") || eventType.includes("deal-jacket")) &&
+      !isQueueConfigured()
+    ) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
+    }
     if (eventType.includes("credit") || eventType.includes("deal-jacket")) {
       await enqueueDealertrackCreditAppSync({
         tenantId,

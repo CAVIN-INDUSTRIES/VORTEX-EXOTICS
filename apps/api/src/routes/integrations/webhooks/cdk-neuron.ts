@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { verifyFortellisWebhookSignature } from "../../../lib/fortellis.js";
-import { enqueueCdkInventorySync } from "../../../lib/queue.js";
+import {
+  enqueueCdkInventorySync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../../lib/queue.js";
 import { systemPrisma } from "../../../lib/tenant.js";
 
 export const cdkNeuronWebhookRouter: Router = Router();
@@ -53,6 +58,12 @@ cdkNeuronWebhookRouter.post("/", async (req, res) => {
   });
   const duplicate = Boolean(existing);
   if (!duplicate) {
+    if (
+      (eventType.includes("inventory") || eventType.includes("trade-in")) &&
+      !isQueueConfigured()
+    ) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
+    }
     if (eventType.includes("inventory") || eventType.includes("trade-in")) {
       await enqueueCdkInventorySync({
         tenantId,

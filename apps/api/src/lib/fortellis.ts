@@ -22,6 +22,11 @@ const FORTELLIS_TOKEN_TTL_SEC = 60 * 60;
 
 let cachedToken: FortellisAccessToken | null = null;
 
+/** Clears in-memory OAuth cache (integration tests only). */
+export function resetFortellisOAuthCacheForTests(): void {
+  cachedToken = null;
+}
+
 function requiredEnv(name: string): string {
   const value = process.env[name];
   if (!value) {

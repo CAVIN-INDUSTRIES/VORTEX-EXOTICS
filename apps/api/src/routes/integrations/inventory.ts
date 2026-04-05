@@ -3,7 +3,13 @@ import { z } from "zod";
 import { requireAuth } from "../../middleware/auth.js";
 import { requireRole } from "../../middleware/requireRole.js";
 import { validateBody } from "../../middleware/validate.js";
-import { enqueueFortellisInventorySync, enqueueFortellisAppraisalPush } from "../../lib/queue.js";
+import {
+  enqueueFortellisAppraisalPush,
+  enqueueFortellisInventorySync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../lib/queue.js";
 import { prisma } from "../../lib/tenant.js";
 
 export const integrationsInventoryRouter: Router = Router();
@@ -27,6 +33,9 @@ integrationsInventoryRouter.post(
   async (req, res) => {
     if (!req.tenantId) {
       return res.status(401).json({ code: "UNAUTHORIZED", message: "Tenant context missing" });
+    }
+    if (!isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
     }
     const body = req.body as z.infer<typeof inventorySyncSchema>;
     const externalId = body.externalId ?? body.vin ?? `inventory-${Date.now()}`;
@@ -64,6 +73,9 @@ integrationsInventoryRouter.post(
   async (req, res) => {
     if (!req.tenantId) {
       return res.status(401).json({ code: "UNAUTHORIZED", message: "Tenant context missing" });
+    }
+    if (!isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
     }
     const body = req.body as z.infer<typeof appraisalPushSchema>;
     await prisma.integrationLog.create({

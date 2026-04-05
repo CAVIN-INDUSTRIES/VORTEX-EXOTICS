@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { verifyTekionWebhookSignature } from "../../../lib/tekion.js";
-import { enqueueTekionInventorySync } from "../../../lib/queue.js";
+import {
+  enqueueTekionInventorySync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../../lib/queue.js";
 import { systemPrisma } from "../../../lib/tenant.js";
 
 export const tekionWebhookRouter: Router = Router();
@@ -52,6 +57,9 @@ tekionWebhookRouter.post("/", async (req, res) => {
   });
   const duplicate = Boolean(existing);
   if (!duplicate) {
+    if (eventType.includes("inventory") && !isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
+    }
     if (eventType.includes("inventory")) {
       await enqueueTekionInventorySync({
         tenantId,

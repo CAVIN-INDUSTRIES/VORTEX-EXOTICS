@@ -1,0 +1,138 @@
+================================================================================
+  STRATEGIC BUSINESS ADVISOR REPORT — VEX
+  April 2026 — independent advisory tone, readable by non-specialists
+================================================================================
+
+DISCLAIMER
+--------------------------------------------------------------------------------
+This memo reads like outside strategic advice. It is **not** legal, tax, or
+personal investment advice. Financial conclusions should come from **Stripe**,
+your **accounting records**, and the **code-backed price list** described in
+**02-Financial-Projection-Report.txt** — not from slide graphics alone.
+
+
+1. WHAT WE ARE REVIEWING
+--------------------------------------------------------------------------------
+We assess **VEX (Vortex Exotic Exchange)** as a **luxury- and exotic-car-focused**
+software platform: a premium **public website** experience plus **dealer
+dashboard** tools (CRM, inventory, deals, appraisals) on one **secure, separated-
+by-dealer** technical foundation, with **subscription billing** via **Stripe**.
+
+
+2. STRATEGIC ASSESSMENT
+--------------------------------------------------------------------------------
+
+STRENGTHS (WHY THE STORY RESONATES)
+  • **Clear niche:** High-end dealers often suffer “flat” websites that feel
+    like mass-market classifieds. VEX leans into **emotion, craft, and continuity**
+    between marketing and the showroom.
+
+  • **One system narrative:** Selling “one product” is easier than stitching five
+    vendors — especially for independent boutiques and smaller groups that lack
+    large IT teams.
+
+  • **Natural upsell path:** The live product already exposes **three public
+    tiers** (Starter / Pro / Enterprise) at **listed** monthly and yearly
+    prices. As dealers grow, they can **move up tiers** for more capability —
+    a classic “land and expand” software motion.
+
+CONCERNS (WHAT OUTSIDERS WILL SCRUTINIZE)
+  • **Prove the experience lift:** If marketing claims that richer visuals
+    “convert better,” **measure it** with fair tests — don’t rely on gut feel
+    alone when speaking with sophisticated investors.
+
+  • **Stay humble on giant competitors:** The largest automotive retail platforms
+    have enormous scale in listings, data, and operations. VEX should claim what
+    it can defend — **luxury digital depth** — without implying overnight parity
+    on every enterprise feature those giants offer.
+
+  • **Revenue concentration:** Early-stage companies often depend on a handful of
+    paying customers. Make **contracts**, **expansion paths**, and **reference
+    stories** explicit so concentration is managed, not hidden.
+
+BOTTOM LINE
+  The direction is **coherent and differentiated** for the segment. Winning will
+  depend on **execution**, **measured outcomes**, and **clean financial hygiene**.
+
+
+3. HOW TO TALK TO DIFFERENT AUDIENCES (WITHOUT BUZZWORD SOUP)
+--------------------------------------------------------------------------------
+
+  Audience              Simple message that still sounds professional
+  --------------------  --------------------------------------------------------
+  Dealer owner          “Your website can finally feel as premium as your
+                        inventory — and your team runs deals from one dashboard.”
+  Investor              “Recurring software revenue with clear tiers; separation
+                        between dealers reduces data risk; upsell as dealers grow.”
+  Technology partner    “Documented APIs; each dealer’s data stays isolated; you
+                        integrate without owning our whole roadmap.”
+
+Avoid claiming **market share**, **liquidity**, or **national scale** you cannot
+document.
+
+
+4. FINANCIAL DISCIPLINE (PRACTICAL CHECKLIST)
+--------------------------------------------------------------------------------
+  • Treat **apps/api/src/routes/pricing.ts** as the **default list price**
+    reference in code until leadership publishes a change.
+
+  • Treat **capital route MRR** as a **software snapshot**, not automatic **GAAP
+    revenue** — accountants reconcile to invoices and contracts.
+
+  • Before diligence, **remove or relabel** demo placeholders (sample churn,
+    sample valuations) on investor-facing routes — or say clearly “illustration
+    only.”
+
+  • Build **forecasts** in finance-owned spreadsheets or models; file 02’s
+    worksheet is intentionally **empty** so nobody confuses this package with a
+    finished forecast.
+
+
+5. RISK OVERVIEW
+--------------------------------------------------------------------------------
+
+  Risk (plain English)              How serious     What to do first
+  --------------------------------  --------------  ---------------------------
+  Pilots quit after trial           High            Paid pilots, success plans,
+                                                    clear success criteria.
+  Too dependent on one leader       Medium          Document systems; hire
+                                                    commercial and product roles.
+  Vehicle valuation API cost/rules  Medium          Spending caps; clean logs;
+                                                    legal review by region.
+  Slow phones / old laptops         Medium          Offer lighter “fallback” web
+                                                    experience; performance budgets.
+  Data leaks between dealers        Critical        Security review before
+                                                    large enterprise deals.
+
+
+6. NINETY-DAY PRIORITIES (ACTION-ORIENTED)
+--------------------------------------------------------------------------------
+  1. **Measure the funnel** — from first website visit through quote or deposit —
+     and run **one** disciplined test (for example A/B or cohort) on a material
+     page or flow.
+
+  2. **Close paying customers** at real **Stripe** prices; capture permission to
+     tell their story (case study / logo) where appropriate.
+
+  3. **Prepare enterprise-ready answers** — security FAQ, data handling, and a
+     simple “how we separate dealers” explainer for IT buyers.
+
+  4. **Reconcile the slide deck** — every dollar on **VEX-Pitch-Deck.pptx**
+     should trace to finance-approved sources; remove orphan numbers.
+
+  5. **One pricing map** — marketing names ↔ Stripe products ↔ accounting codes.
+
+  6. **Keep public language consistent** with approved phrases (vault, unified
+     luxury experience, etc.) and keep engineering-only details internal.
+
+
+7. CONCLUSION
+--------------------------------------------------------------------------------
+VEX can credibly pursue the **luxury digital layer** if it pairs strong product
+craft with **honest metrics** and **disciplined** competitive positioning. Treat
+financial storytelling as **earned** through billing data, not assumed through
+decks alone.
+
+================================================================================
+  Strategic Business Advisor Report  |  VEX  |  April 2026
+================================================================================

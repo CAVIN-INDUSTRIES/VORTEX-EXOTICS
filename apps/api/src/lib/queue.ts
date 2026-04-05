@@ -14,6 +14,15 @@ import { dealertrackRequest } from "./dealertrack.js";
 const QUEUE_NAME = "vex-main";
 const pilotAnalyticsService = new PilotAnalyticsService();
 
+/** Standard API error `code` when BullMQ cannot enqueue (no `REDIS_URL`). */
+export const QUEUE_UNAVAILABLE_CODE = "QUEUE_UNAVAILABLE" as const;
+export const QUEUE_UNAVAILABLE_MESSAGE =
+  "Async job queue is not configured. Set REDIS_URL to enable BullMQ workers and queued integration jobs.";
+
+export function isQueueConfigured(): boolean {
+  return Boolean(process.env.REDIS_URL?.trim());
+}
+
 function newConnection(): Redis | null {
   const url = process.env.REDIS_URL;
   if (!url) return null;
@@ -306,10 +315,10 @@ export async function enqueueDealOrchestration(data: {
   appraisalId: string;
   requestedByUserId?: string;
   correlationId?: string;
-}): Promise<string | null> {
+}): Promise<{ correlationId: string; queued: boolean }> {
   const q = getQueue();
   const correlationId = data.correlationId ?? globalThis.crypto.randomUUID();
-  if (!q) return correlationId;
+  if (!q) return { correlationId, queued: false };
   await q.add(
     "deal-orchestration",
     {
@@ -320,7 +329,7 @@ export async function enqueueDealOrchestration(data: {
     },
     { jobId: `deal:${data.tenantId}:${data.appraisalId}:${correlationId}` }
   );
-  return correlationId;
+  return { correlationId, queued: true };
 }
 
 /** Apex Studio — queue 360° spin export (stub worker logs until render pipeline ships). */
@@ -1012,6 +1021,11 @@ async function processJob(job: Job): Promise<void> {
     }
     throw new Error(`unknown job name: ${name}`);
   });
+}
+
+/** Runs one job through the same handler as BullMQ workers (integration tests; no Redis). */
+export async function runQueuedJobHandlerForTests(input: { name: string; data: Record<string, unknown> }): Promise<void> {
+  await processJob({ name: input.name, data: input.data } as Job);
 }
 
 /**

@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { consumeFortellisWebhookIdempotent, verifyFortellisWebhookSignature } from "../../../lib/fortellis.js";
-import { enqueueFortellisInventorySync } from "../../../lib/queue.js";
+import {
+  enqueueFortellisInventorySync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../../lib/queue.js";
 
 export const fortellisWebhookRouter: Router = Router();
 
@@ -37,6 +42,10 @@ fortellisWebhookRouter.post("/", async (req, res) => {
   const payload = body.payload ?? {};
   if (!tenantId || !externalId) {
     return res.status(400).json({ code: "BAD_REQUEST", message: "Missing tenantId or eventId" });
+  }
+
+  if (eventType.includes("inventory") && !isQueueConfigured()) {
+    return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
   }
 
   const result = await consumeFortellisWebhookIdempotent(

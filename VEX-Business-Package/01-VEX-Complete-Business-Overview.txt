@@ -1,0 +1,210 @@
+================================================================================
+  VEX — COMPLETE BUSINESS OVERVIEW
+  Vortex Exotic Exchange (VEX)  |  April 2026
+  Written for a general audience; specialists can dig into file 02 for numbers.
+================================================================================
+
+TERMS USED IN THIS DOCUMENT (QUICK GLOSSARY)
+--------------------------------------------------------------------------------
+  CRM              Customer relationship management — software dealers use to
+                   track shoppers, vehicles, deals, and follow-ups.
+  Subscription     Customers pay a recurring fee (monthly or yearly) to use the
+                   platform — similar to Netflix, but for dealer software.
+  Stripe           A widely used payment and billing platform; VEX integrates
+                   with it for checkout and subscriptions.
+  API              Application programming interface — a secure, structured way
+                   for the website, dealer tools, and other systems to talk to
+                   the same backend data without mixing one dealer with another.
+  Multi-tenant     Each dealer’s data is separated logically so one account
+                   cannot see another’s private information.
+  Pilot program    Early partners who go live on the platform under a defined
+                   onboarding and verification process.
+
+EXECUTIVE SNAPSHOT (PLAIN ENGLISH)
+--------------------------------------------------------------------------------
+**VEX (Vortex Exotic Exchange)** is building a **single, luxury-focused digital
+system** for high-end car dealers and their buyers:
+
+  • **Buyer-facing side:** A premium website experience — rich visuals, optional
+    3D configuration (“build your car” online), and a marketplace feel suited to
+    exotic and luxury inventory rather than a generic used-car template.
+
+  • **Dealer-facing side:** A unified **dashboard** (CRM) where staff manage
+    inventory, customer conversations, appraisals, trade-ins, and deal progress
+    in one place instead of juggling disconnected tools.
+
+  • **Under the hood:** One **secure technical foundation** (multi-tenant API)
+    with **Stripe**-ready billing, so growth can scale without reinventing
+    payments each time.
+
+**Brand line (approved marketing language):**
+  “One obsidian vault. One glass cockpit. One breathtaking digital-twin
+   experience. The domain that draws global attention like no other.”
+
+  In everyday terms: the public site should feel like a **private, high-end
+  showroom**; the dealer tools should feel like a **single glass cockpit** for
+  running the business; the experience should feel as polished as the cars.
+
+HOW VEX MAKES MONEY (FACTUAL TODAY)
+--------------------------------------------------------------------------------
+VEX sells **software subscriptions** in three public tiers today, with list
+prices **coded into the live product**:
+
+  Tier (technical name)   Customer-facing name   Monthly (USD)   Yearly (USD)
+  ----------------------  --------------------   -------------   ------------
+  STARTER                 Starter                $49             $470
+  PRO                     Pro                    $149            $1,430
+  ENTERPRISE              Enterprise             $299            $2,870
+
+Full detail and definitions live in **02-Financial-Projection-Report.txt**.
+
+**Marketing names** in internal roadmaps (for example “Vortex,” “Apex,”
+“Quantum”) describe **story and positioning** for sales and product. Finance
+should maintain one clear map: **marketing name → actual Stripe price → how
+revenue is recognized on the books.** Do not treat a slide or brainstorm price
+as official unless it matches the live catalog or a signed contract.
+
+FORWARD-LOOKING FINANCIALS (FORECASTS)
+--------------------------------------------------------------------------------
+This overview **does not** include multi-year revenue or profit projections.
+Those forecasts belong in a **finance-controlled model** built from real
+subscriptions, payment history, and pipeline — not from static text files.
+File 02 explains where **live metrics** can be read from the product and
+includes a **blank worksheet** for finance to complete.
+
+
+1. THE PROBLEM AND THE OPPORTUNITY
+--------------------------------------------------------------------------------
+  Challenge                         What it means in practice
+  --------------------------------  ------------------------------------------
+  Mass-market tools optimize        Big retail auto stacks are built for
+  volume, not emotion               volume and efficiency — not the “desire”
+                                    and trust luxury buyers expect online.
+  Fragmented dealer software        Staff copy data between systems; deals
+                                    slow down; the brand feels inconsistent.
+  Weak handoff from web to desk     A shopper configures or inquires online,
+                                    but the showroom never gets a clean story.
+
+**Opportunity:** Own the **luxury and exotic** slice with one coherent product
+— stunning public presence **and** serious dealer operations — instead of a
+patchwork of generic sites and bolt-on tools.
+
+
+2. WHAT THE PRODUCT INCLUDES (LAYMAN’S TOUR)
+--------------------------------------------------------------------------------
+**For car shoppers (public website)**
+  • A **cinematic** first impression — dark, premium “vault” styling, strong
+    visuals, smooth motion where hardware allows (with sensible fallbacks for
+    accessibility and older devices).
+  • **3D configuration** where deployed — pick finishes and options in the
+    browser, closer to a digital twin of the car than a flat brochure.
+  • **Apex Studio**-style experiences (where rolled out) for flagship builds.
+  • **Marketplace-style** browsing — vehicle detail pages, paths to financing
+    interest, and contact with the dealer.
+
+**For dealership staff (internal tools)**
+  • **CRM / “glass cockpit”** — pipeline, customers, vehicles, orders.
+  • **Appraisals and trade-ins** — including public lead forms where enabled,
+    plus valuation providers and sensible fallbacks (subject to compliance).
+  • **Financing and shipping** — user flows and partner hooks, configured per
+    deployment.
+
+**Platform and trust**
+  • **Separation between dealers** (multi-tenant) and **role-based access**
+    (who can see or change what).
+  • **Stripe** subscriptions, checkout patterns, and webhooks (automated
+    billing events) implemented in line with product standards.
+  • **Pilot onboarding** — branded domains, checklists, and verification so
+    go-live is repeatable, not improvised.
+
+
+3. PRICING NAMES: WHAT CUSTOMERS SEE VS WHAT TEAMS SAY INTERNALLY
+--------------------------------------------------------------------------------
+**In the product today:** STARTER / PRO / ENTERPRISE at the dollar amounts above.
+
+**In strategy documents:** Names like Vortex / Apex / Quantum describe **growth
+and enterprise** storylines. That helps marketing and product speak with one
+voice — but **the official price list** is whatever leadership publishes in
+**Stripe** and what the **pricing API** returns.
+
+
+4. HOW THE BUSINESS REINFORCES ITSELF (QUALITATIVE “FLYWHEEL”)
+--------------------------------------------------------------------------------
+
+    [ Impressive public experience ]
+                  |
+                  v
+    [ Shoppers engage — configure, save, inquire ]
+                  |
+                  v
+    [ Leads land in the dealer dashboard ]
+                  |
+                  v
+    [ Staff close deals with fewer handoff breaks ]
+                  |
+                  v
+    [ Revenue funds better product and onboarding ]
+                  |
+                  v
+    (cycle continues)
+
+
+5. NUMBERS YOU CAN TREAT AS “REAL” (WHEN EXPORTED FROM THE LIVE SYSTEM)
+--------------------------------------------------------------------------------
+When pulled from **production** (the live deployed product), the following are
+grounded in code and data — not invented in this text file:
+
+  • **Published list prices** — exposed as “plans” the app can show publicly.
+  • **Per-dealer MRR snapshot** — a simplified “if this account is on an active
+    subscription, what tier price does that imply per month?” view for investor
+    or capital workflows (not the same as full accounting revenue).
+  • **Pilot network statistics** — counts derived from the database, such as
+    how many pilot dealers are onboarded, appraisal activity, and closed orders
+    under defined rules.
+
+Anything not exported from those systems on a given date is **not certified**
+in this package.
+
+
+6. COMPETITION (BIG PICTURE, NO JARGON)
+--------------------------------------------------------------------------------
+The largest automotive retail technology companies are built for **national
+scale** and deep operational plumbing (inventory networks, auctions, mass-market
+listings). VEX does **not** claim to replace that entire world overnight.
+
+VEX’s wedge is **depth and emotion for luxury and exotic retail** — a unified,
+premium digital layer for buyers and staff — rather than winning on sheer
+corporate breadth.
+
+
+7. GO-TO-MARKET (HOW VEX SELLS AND ONBOARDS)
+--------------------------------------------------------------------------------
+Focus on **luxury and exotic** dealers, **white-label** domains where appropriate,
+and **verified** launch checklists. Demos should tell one story: **same brand,
+same system** — from the public hero experience through configuration into the
+dealer dashboard.
+
+
+8. RISKS (SUMMARY) AND HOW WE MITIGATE
+--------------------------------------------------------------------------------
+  Risk                              Plain-English mitigation
+  --------------------------------  ------------------------------------------
+  Pilots do not convert to paid     Clear commercial terms; concierge support;
+                                    success playbooks tied to outcomes.
+  Heavy visuals on weak devices     Graceful fallback experience; accessibility
+                                    options such as reduced motion.
+  Valuation and compliance          Spending caps, careful logging, legal review
+                                    by market.
+  Docs and live prices disagree     Single source of truth: published price
+                                    book + Stripe; API reflects customer truth.
+
+
+9. WHERE TO READ NEXT
+--------------------------------------------------------------------------------
+  02-Financial-Projection-Report.txt   Prices, MRR logic, live metrics, worksheet
+  03-Strategic-Business-Advisor-Report.txt   Strategy and 90-day style priorities
+  VEX-Pitch-Deck.pptx                  Slides — align with finance before sending
+
+================================================================================
+  VEX — Vortex Exotic Exchange  |  Complete Business Overview  |  April 2026
+================================================================================

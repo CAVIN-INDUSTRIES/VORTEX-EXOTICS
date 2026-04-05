@@ -3,7 +3,13 @@ import { z } from "zod";
 import { requireAuth } from "../../middleware/auth.js";
 import { requireRole } from "../../middleware/requireRole.js";
 import { validateBody } from "../../middleware/validate.js";
-import { enqueueDealertrackCreditAppSync, enqueueDealertrackFinanceQuoteSync } from "../../lib/queue.js";
+import {
+  enqueueDealertrackCreditAppSync,
+  enqueueDealertrackFinanceQuoteSync,
+  isQueueConfigured,
+  QUEUE_UNAVAILABLE_CODE,
+  QUEUE_UNAVAILABLE_MESSAGE,
+} from "../../lib/queue.js";
 import { prisma } from "../../lib/tenant.js";
 
 export const dealertrackFiRouter: Router = Router();
@@ -27,6 +33,9 @@ dealertrackFiRouter.post(
   async (req, res) => {
     if (!req.tenantId) {
       return res.status(401).json({ code: "UNAUTHORIZED", message: "Tenant context missing" });
+    }
+    if (!isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
     }
     const body = req.body as z.infer<typeof creditAppSyncSchema>;
     await prisma.integrationLog.create({
@@ -57,6 +66,9 @@ dealertrackFiRouter.post(
   async (req, res) => {
     if (!req.tenantId) {
       return res.status(401).json({ code: "UNAUTHORIZED", message: "Tenant context missing" });
+    }
+    if (!isQueueConfigured()) {
+      return res.status(503).json({ code: QUEUE_UNAVAILABLE_CODE, message: QUEUE_UNAVAILABLE_MESSAGE });
     }
     const body = req.body as z.infer<typeof financeQuoteSyncSchema>;
     await prisma.integrationLog.create({

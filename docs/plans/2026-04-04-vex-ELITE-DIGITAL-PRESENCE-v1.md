@@ -390,7 +390,7 @@ apps/crm
 
 ## 25. Documentation corpus — cross-links (policy)
 
-- **Single source of truth:** this file (**§0–§28**, **`VLR`** halt criteria, **Cox gap** §28) for **WebGL perf + 2026 luxury UX + revenue + competitive narrative**. Do not fork competing matrices in Slack or Notion without linking back.
+- **Single source of truth:** this file (**§0–§29**, **`VLR`** halt criteria, **Cox gap** §28, **local autonomy** §29) for **WebGL perf + 2026 luxury UX + revenue + competitive narrative**. Do not fork competing matrices in Slack or Notion without linking back.
 - **Entry points** (canonical one-liners already wired): `PROJECT_SPACE.md`, `AGENTS.md`, `README.md`, `docs/SHIP.md`, `docs/ENGINEERING_REALITY.md`, plus [Crown Jewel v2.0](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md), [v2 summary](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md), [Apex Studio `/build`](2026-04-05-vex-apex-studio-configurator-v1.0.md).
 - **Other markdown:** add a pointer **when you touch** a file for marketing, web perf, 3D, or pilot narrative — **no** repo-wide mechanical edit of every `.md` (noise + merge pain). Pure API/vendor memos stay lean unless the change affects customer-facing surfaces.
 - **Do not** duplicate §21–§25 into playbooks; **link** here for WebGL + luxury UX supremacy specs.
@@ -406,6 +406,7 @@ apps/crm
 | **Apex tier (~$499/mo illustrative)** | White-label **3D portals**, **AR-ready** embed path (export roadmap), **bespoke CRM** cockpit (glass + metric orbs), **custom domains** + SSL, valuation quota vs Pro. |
 | **Pilot** | **90 s** playbook (§18): Stripe → tenant → **private vault** first paint (`legacy` or `vortex` per flags) + CRM login; **AI personalization** teaser on `/portal` (roadmap) stays **consent + tenant-scoped**. |
 | **CI trust** | Green **`pnpm` + Turbo** workflows on `main` — ship narrative matches what automation proves (`build`, `quality:web`, API gates per repo). |
+| **Velocity (luxury vs fragmented stacks)** | **One monorepo** (`web` + `crm` + `api` + shared packages) + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than typical **multi-product** retail stacks (§28). **Iteration speed** is a real **engineering / GTM** lever for cinematic UX — not a substitute for Cox-scale **DMS** depth. **IDE:** Cursor **background agent** auto-allow (§29) cuts **local** wait friction only; it is **not** itself a shopper-facing moat. |
 
 ---
 
@@ -454,6 +455,21 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 
 - **Positioning line (external):** *“VEX is the unified luxury automotive OS: one cinematic customer vault, one dealer cockpit, one tenant-safe API — built for vehicles and buyers that Cox’s mass-market stack was never designed to romance.”*
 - **Internal rule:** Never claim **parity** with Cox on **DMS or auctions** until **named** integrations ship; **do** claim **differentiation** on **cinematic 3D**, **unified luxury UX**, and **tenant-isolated** trust **today**.
+
+---
+
+## 29. Local machine autonomy (Cursor — agent background, ~60s setup)
+
+**Purpose:** Long agent runs (`pnpm install`, `pnpm -w turbo run build`, `quality:web`, E2E) often trigger a **“Run in background / Unblock agent”** safety prompt. This section is the **onboarding shortcut** so developers stop fighting the IDE. **Exact menu strings vary by Cursor version** — use search in Settings if labels differ.
+
+1. **When the prompt appears:** Check **“Don’t ask again for this workspace”** (or equivalent), then confirm **Run in background** / **Unblock**.
+2. **Settings (recommended immediately after):** Open Settings (**macOS:** `Cmd + ,` · **Windows/Linux:** `Ctrl + ,`). Search **`background`** / **`agent`** and set agent **background execution** to **Always** (or your edition’s equivalent). Search **`auto run`** and keep **auto-run** permissive for trusted work (**“Run everything”** or team policy).
+3. **Workspace trust:** Close Cursor → reopen the **VEX** folder → choose **Trust** and, if offered, **always trust this workspace**.
+4. **Restart Cursor** once after changes.
+
+**Security note:** Only enable **always background** + **run everything** on **trusted** repos and machines (no third-party code you do not control).
+
+**Product note:** This is **developer ergonomics**. It does **not** replace **VLR** technical gates or change the **hero architecture** (**`DynamicHeroShell` `vortex`**, not R3F inside **`HeroCinematicLayer`** — see **VLR** §).
 
 ---
 

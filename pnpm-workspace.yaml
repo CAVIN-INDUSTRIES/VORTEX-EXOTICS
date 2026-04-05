@@ -1,3 +1,4 @@
+# Version pins for 3D stack: root package.json → `pnpm.overrides` (three, postprocessing, @react-three/postprocessing).
 packages:
   - "apps/*"
   - "packages/*"

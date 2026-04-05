@@ -2,6 +2,14 @@
 
 Luxury automotive marketplace: customer-facing site, build-your-own configurator, CRM, and full deal flow (inventory, financing, shipping, trade-in).
 
+## Run every command from the repo root
+
+**`pnpm`, `turbo`, and workspace filters only work after `cd` into this repository** (e.g. `~/Documents/vex-website`). Running from your home directory (`~`) causes `ERR_PNPM_NO_PKG_MANIFEST`, missing `package.json`, and cascading exit code 1/2 failures — not Prisma or 3D code.
+
+```bash
+cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
+```
+
 ## Start Here
 
 - **Project command center:** [PROJECT_SPACE.md](PROJECT_SPACE.md)
@@ -9,7 +17,17 @@ Luxury automotive marketplace: customer-facing site, build-your-own configurator
 ## Docs
 
 - **Design:** [docs/plans/2025-03-15-vex-luxury-marketplace-design.md](docs/plans/2025-03-15-vex-luxury-marketplace-design.md)
-- **Implementation plan:** [docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md](docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md)
+- **Implementation plan:** [docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md](docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md) (includes **Digital Presence v2 — Cinematic Layer**)
+- **Digital presence v2 (elite framework):** [docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md](docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md)
+- **Moat expansion (luxury vs legacy DMS giants):** [docs/plans/2026-04-05-vex-moat-expansion.md](docs/plans/2026-04-05-vex-moat-expansion.md)
+
+### Investor + cinematic surfaces
+
+- **Primary investor preview:** the **cinematic homepage** at `/` — full-viewport `VortexHeroScene` (`@vex/ui/3d`) + liquid-metal CTAs + tenant-tinted particles/iridescent paint; best “live product” demo for decks and pilots (run `pnpm dev:web`, `pnpm dev:web:cinematic`, or `pnpm --filter @vex/web run dev:moat` from repo root).
+- **Investor (lightweight):** [apps/web/src/app/investor/page.tsx](apps/web/src/app/investor/page.tsx) → `/investor` when deployed.
+- **Investor deck:** `/investor-deck`.
+- **Env toggles:** `apps/web/.env.local.example` — `NEXT_PUBLIC_CINEMATIC_HERO_V2`, `NEXT_PUBLIC_CINEMATIC_MODE` (see implementation plan).
+- **Pitch deck route:** `/pitch` is not in this tree yet; use `/investor-deck` or add a `pitch` route when the deck is promoted to production.
 - **Leads (SMS/email → CRM):** [docs/leads-webhooks.md](docs/leads-webhooks.md)
 - **Pilot white-label (custom domain, DNS):** [docs/pilot-white-label-dns.md](docs/pilot-white-label-dns.md)
 - **Shipping a pilot (overview):** [docs/SHIP.md](docs/SHIP.md)
@@ -23,7 +41,7 @@ Luxury automotive marketplace: customer-facing site, build-your-own configurator
 - **apps/web** — Next.js customer site (dark luxury theme)
 - **apps/crm** — Next.js CRM for staff
 - **packages/shared** — Shared TypeScript types and Zod schemas
-- **packages/ui** — Shared UI primitives for web + CRM (`@vex/ui`)
+- **packages/ui** — Shared UI primitives for web + CRM (`@vex/ui`); **3D** entry: `@vex/ui/3d` (`VortexHeroScene`, `CinematicCarViewer`, post stack)
 
 ## Fresh clone: full build verification
 
@@ -76,6 +94,7 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 
    - Optional: add the VEX logo (no background) as `apps/web/public/vex-logo.png` for the header.
    - Start: `pnpm dev:web` → [http://localhost:3000](http://localhost:3000)
+   - Cinematic tuning (stronger bloom / particles): `pnpm dev:web:cinematic` (root `package.json`)
 
 5. **CRM** (staff only)
 
@@ -163,6 +182,7 @@ Place your **VEX logo (no background)** at `apps/web/public/vex-logo.png`. The h
 - **Verification**: `pnpm --filter @vex/api run test:e2e`, `pnpm --filter @vex/api run load-test:scale`, `GET /metrics` (Prometheus).
 
 ## Investor sharing links
+- **Primary story asset:** production `/` — cinematic luxury hero + conversion funnel (position vs Dealertrack/Cox as the beautiful front-end layer).
 - Live MRR dashboard URL: `https://app.vex.example/admin` (replace with your production domain).
 - Pilot signup link: `https://app.vex.example/pilot` (replace with your production domain).
 - Live seed metrics dashboard URL: `https://app.vex.example/seed-metrics` (replace with your production domain).

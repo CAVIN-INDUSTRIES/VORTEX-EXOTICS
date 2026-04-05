@@ -8,6 +8,7 @@
   "scripts": {
     "dev:api": "pnpm --filter @vex/api dev",
     "dev:web": "pnpm --filter @vex/web dev",
+    "dev:web:cinematic": "NEXT_PUBLIC_CINEMATIC_MODE=true pnpm --filter @vex/web dev",
     "dev:crm": "pnpm --filter @vex/crm dev",
     "build": "turbo run build",
     "turbo:build": "turbo run build --filter=[HEAD^1]",
@@ -16,7 +17,11 @@
     "build:api": "pnpm --filter @vex/api build",
     "build:web": "pnpm --filter @vex/web build",
     "build:crm": "pnpm --filter @vex/crm build",
-    "quality:web": "pnpm --filter @vex/web run test:e2e && pnpm --filter @vex/web run test:a11y && pnpm --filter @vex/web run test:lighthouse",
+    "quality:web": "pnpm --filter @vex/web run test:e2e && pnpm --filter @vex/web run test:smoke && pnpm --filter @vex/web run test:lighthouse",
+    "cinematic:build": "turbo run cinematic:build",
+    "cinematic:hero": "turbo run cinematic:hero",
+    "moat:build": "turbo run moat:build",
+    "quality:3d": "turbo run quality:3d",
     "release:pilot-check": "pnpm -w turbo run build && pnpm --filter @vex/api run test:e2e",
     "ship:gate": "bash scripts/ship-gate.sh",
     "verify:ship": "bash scripts/verify-ship-local.sh",
@@ -31,6 +36,14 @@
   },
   "devDependencies": {
     "turbo": "^2.8.20"
+  },
+  "pnpm": {
+    "overrides": {
+      "@react-three/postprocessing": "2.16.3",
+      "postprocessing": "^6.39.0",
+      "@react-three/fiber": "^8.18.0",
+      "three": "^0.169.0"
+    }
   },
   "packageManager": "pnpm@9.15.9",
   "dependencies": {

@@ -300,6 +300,29 @@ export async function enqueueAutonomousWorkflow(data: {
   return true;
 }
 
+/** Luxury moat: valuation warm → PDF job → Stripe hook (stub) — tenant-scoped, idempotent job id. */
+export async function enqueueDealOrchestration(data: {
+  tenantId: string;
+  appraisalId: string;
+  requestedByUserId?: string;
+  correlationId?: string;
+}): Promise<string | null> {
+  const q = getQueue();
+  const correlationId = data.correlationId ?? globalThis.crypto.randomUUID();
+  if (!q) return correlationId;
+  await q.add(
+    "deal-orchestration",
+    {
+      tenantId: data.tenantId,
+      appraisalId: data.appraisalId,
+      requestedByUserId: data.requestedByUserId,
+      correlationId,
+    },
+    { jobId: `deal:${data.tenantId}:${data.appraisalId}:${correlationId}` }
+  );
+  return correlationId;
+}
+
 let workerInstance: Worker | null = null;
 
 async function processJob(job: Job): Promise<void> {
@@ -918,6 +941,40 @@ async function processJob(job: Job): Promise<void> {
       } else if (workflowType === "appraisal_marketplace_push") {
         await enqueueIterationAnalysis({ tenantId });
       }
+      return;
+    }
+    if (name === "deal-orchestration") {
+      const appraisalId = String(data.appraisalId ?? "");
+      const correlationId = String(data.correlationId ?? "");
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.deal_orchestration",
+          payload: {
+            appraisalId,
+            correlationId,
+            phases: ["valuation_cache_warm", "appraisal_pdf", "stripe_session_stub"],
+            note: "External valuation spend capped in ValuationService / POST /appraisals/valuate",
+          },
+        },
+      });
+      await enqueueValuationCacheWarm({ tenantId, cacheKeyHint: `appraisal:${appraisalId}` });
+      await enqueueAppraisalPdfGenerate({
+        tenantId,
+        appraisalId,
+        requestedByUserId: data.requestedByUserId != null ? String(data.requestedByUserId) : undefined,
+      });
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.deal_orchestration_stripe",
+          payload: {
+            appraisalId,
+            correlationId,
+            note: "Stripe Checkout session creation integrates with billing routes",
+          },
+        },
+      });
       return;
     }
     throw new Error(`unknown job name: ${name}`);

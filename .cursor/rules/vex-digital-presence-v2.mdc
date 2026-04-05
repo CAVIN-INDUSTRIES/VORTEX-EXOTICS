@@ -1,0 +1,14 @@
+---
+description: VEX Digital Presence v2 — elite luxury web/CRM visual standards
+globs: apps/web/**/*.{tsx,css},apps/crm/**/*.{tsx,css},packages/ui/**/*
+---
+
+# Digital presence v2 (guardrails)
+
+- **Tenant + theming:** Prefer CSS variables (`--text-*`, `--line`, `--vex-*`) for surfaces; avoid hard-coded grays that break white-label.
+- **3D:** Use `@vex/3d-configurator` `shouldUseWebGL()` / `useWebglEligible` patterns; always ship **static** or CSS fallbacks when WebGL or `prefers-reduced-motion` blocks heavy scenes.
+- **Motion:** Respect `prefers-reduced-motion`; do not rely on motion alone for critical CTAs.
+- **Performance:** Dynamic-import R3F entry points where possible; cap DPR; avoid duplicate full-screen canvases on one route.
+- **Quality bar:** After substantive `apps/web` UI changes, run `pnpm -w turbo run build` and `pnpm --filter @vex/web run quality:web` when touching marketing surfaces.
+
+Plan & tickets: `docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md`.

@@ -131,6 +131,40 @@
       "inputs": [
         "**/*.{ts,tsx,js,jsx}"
       ]
+    },
+    "cinematic:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "cinematic:hero": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "moat:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "quality:3d": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "cache": false
     }
   }
 }

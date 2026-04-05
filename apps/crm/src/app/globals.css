@@ -25,6 +25,8 @@ body {
 }
 
 body {
+  /* Cinematic void: subtle inset vignette + tenant radial accents (matches public site DNA) */
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.35);
   background:
     radial-gradient(circle at 10% 10%, rgba(97, 193, 255, 0.12), transparent 30%),
     radial-gradient(circle at 90% 0%, rgba(139, 125, 255, 0.12), transparent 36%),

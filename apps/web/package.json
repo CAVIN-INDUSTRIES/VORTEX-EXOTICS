@@ -5,16 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:cinematic": "NEXT_PUBLIC_CINEMATIC_MODE=true pnpm dev",
+    "dev:moat": "NEXT_PUBLIC_CINEMATIC_MODE=true pnpm dev",
     "build": "next build",
+    "cinematic:build": "next build",
+    "cinematic:hero": "next build",
+    "moat:build": "next build",
     "start": "next start -p 3000",
     "lint": "tsc --noEmit",
+    "quality:web": "pnpm run lint && pnpm run test:smoke",
+    "test:smoke": "playwright test tests/a11y.spec.ts tests/cinematic-moat.spec.ts",
+    "quality:3d": "pnpm run lint",
     "test:e2e": "playwright test",
     "test:a11y": "playwright test tests/a11y.spec.ts",
     "test:lighthouse": "lhci autorun --config=./lighthouserc.json"
   },
   "dependencies": {
-    "@react-three/drei": "^9.114.3",
-    "@react-three/fiber": "^8.17.10",
+    "@react-three/drei": "9.122.0",
+    "@react-three/fiber": "8.18.0",
     "@react-three/postprocessing": "2.16.3",
     "@stripe/react-stripe-js": "^6.0.0",
     "@stripe/stripe-js": "^9.0.0",
@@ -25,10 +33,10 @@
     "gsap": "^3.13.0",
     "lenis": "^1.3.13",
     "next": "^14.2.0",
-    "postprocessing": "^6.39.0",
+    "postprocessing": "6.39.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "three": "^0.169.0"
+    "three": "0.169.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

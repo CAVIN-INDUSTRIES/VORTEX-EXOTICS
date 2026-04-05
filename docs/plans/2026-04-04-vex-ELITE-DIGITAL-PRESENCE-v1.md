@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-04 (updated live snapshot)  
 **Branch:** `elite-digital-presence-v1` (from `cursor/pilot-appraisal-loop` @ `1e84177`)  
-**Status:** Active blueprint + **live partial implementation** (see §0). **Single source of truth — core narrative + VLR:** **§0–§28** (implementation, **Cox gap** §28, revenue §26–27, perf §21+). **Velocity / tooling:** **§29–§30**. **Crown Jewel expanded spec:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md); short checklist: [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail (§21+).
+**Status:** Active blueprint + **live partial implementation** (see §0). **Single source of truth (numbered corpus):** **§0–§29** — **VLR** halt, live snapshot (§0), perf + luxury UX (§21+), revenue + investor (§26–27), **Cox gap** (§28), **local machine autonomy** (§29). **§30** = **production-rate firepower** (CI / Turbo / doctrine — extends §29). **Crown Jewel expanded spec:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md); short checklist: [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail (§21+).
 
 **Reality check:** The items below describe the **target experience** plus **what is already shipped**. Shipping requires multiple sprints: 3D performance budgets, asset pipelines, a11y fallbacks, and load testing. Each phase must pass `pnpm -w turbo run build` and scoped quality gates.
 
@@ -46,7 +46,7 @@
 
 | Criterion | VLR note |
 |-----------|----------|
-| **This file** §0–§30 + **VLR** | Locked blueprint; component tree §23, perf §21, revenue §26–§27, Cox §28, autonomy §29, firepower §30 |
+| **This file** §0–§29 + **§30** + **VLR** | Locked blueprint through **§29** (autonomy); **§30** firepower addendum; component tree §23, perf §21, revenue §26–§27, Cox §28 |
 | **Cross-links** | `README.md`, `AGENTS.md`, `PROJECT_SPACE.md`, `docs/SHIP.md` → v1 plan; other docs on touch (§25) |
 | Investor / deck / MRR preview routes | **Live + shareable** for pilot narrative |
 
@@ -390,10 +390,10 @@ apps/crm
 
 ## 25. Documentation corpus — cross-links (policy)
 
-- **Single source of truth:** this file (**§0–§30**, **`VLR`** halt criteria, **Cox gap** §28, **local autonomy** §29, **production-rate firepower** §30) for **WebGL perf + 2026 luxury UX + revenue + competitive narrative**. Do not fork competing matrices in Slack or Notion without linking back.
-- **Entry points** (canonical one-liners already wired): `PROJECT_SPACE.md`, `AGENTS.md`, `README.md`, `docs/SHIP.md`, `docs/ENGINEERING_REALITY.md`, plus [Crown Jewel v2.0](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md), [v2 summary](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md), [Apex Studio `/build`](2026-04-05-vex-apex-studio-configurator-v1.0.md).
+- **Single source of truth:** this file (**§0–§29** as the **complete** numbered blueprint: **`VLR`**, **WebGL perf + 2026 luxury UX**, **revenue / investor**, **Cox §28**, **local autonomy §29**) + **§30** (**production-rate firepower** — CI, Turbo, honest automation claims). Do not fork competing matrices in Slack or Notion without linking back.
+- **Entry points** (canonical one-liners already wired): `PROJECT_SPACE.md`, `AGENTS.md`, `README.md`, `docs/SHIP.md`, `docs/ENGINEERING_REALITY.md` → **§29** (zero-click IDE autonomy) + **§28** (Cox) + **§30** (firepower) as needed; plus [Crown Jewel v2.0](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md), [v2 summary](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md), [Apex Studio `/build`](2026-04-05-vex-apex-studio-configurator-v1.0.md).
 - **Other markdown:** add a pointer **when you touch** a file for marketing, web perf, 3D, or pilot narrative — **no** repo-wide mechanical edit of every `.md` (noise + merge pain). Pure API/vendor memos stay lean unless the change affects customer-facing surfaces.
-- **Do not** duplicate §21–§25 into playbooks; **link** here for WebGL + luxury UX supremacy specs.
+- **Do not** duplicate §21–§29 into playbooks; **link** here for WebGL + luxury UX supremacy specs (and **§30** for CI velocity doctrine).
 
 ---
 
@@ -402,11 +402,11 @@ apps/crm
 | Pillar | Tie to performance |
 |--------|---------------------|
 | **Conversion** | **60 fps immersive** hero (`vortex`) + configurator (**adaptive DPR**, particle LOD, texture mips, idle preload) → **hypothesis**: deeper scroll, higher **hero→configure** and **configure→/build** intent vs **legacy** — instrument PostHog/GA4; **no** published “×3” or fixed **% lift** without powered experiments (see README hypothesis ranges for illustrative **lab** targets only). |
-| **Provisioning** | **BullMQ** `tenant-3d-demo-seed` (§16): idempotent job seeds **branded 3D** demo assets + demo inventory; **phygital** handoff = live GLB + static fallback for email/social. |
-| **Apex tier (~$499/mo illustrative)** | **Complete luxury retail OS slice** for the exotic dealer: white-label **3D portals** + embeddable **vault** aesthetic, **AR-ready** export path (roadmap), **bespoke CRM** cockpit (glass + metric orbs), **custom domains** + SSL, higher valuation / API caps vs Pro — **positioning:** the **unified cinematic layer** Cox does not productize for HNW (see §28); **not** a DMS replacement claim until §28 P2 ships. |
-| **Pilot** | **90 s** playbook (§18): Stripe → tenant → **private vault** first paint (`legacy` or `vortex` per flags) + CRM login; **AI personalization** teaser on `/portal` (roadmap) stays **consent + tenant-scoped**. |
+| **Provisioning** | **BullMQ** `tenant-3d-demo-seed` (§16): idempotent job seeds **branded 3D** demo assets + demo inventory; **phygital** handoff = live GLB + static fallback for email/social. **Instant cinematic demo** = positioning target when job + worker are **proven** per env (§28.3, §30.2). |
+| **Apex tier (~$499/mo illustrative)** | **Full access to the single VEX luxury OS** (retail slice): white-label **3D portals** + embeddable **vault** aesthetic, **AR-ready** export path (roadmap), **bespoke CRM** cockpit (glass + metric orbs), **custom domains** + SSL, higher valuation / API caps vs Pro — **positioning:** the **unified cinematic layer** Cox does not productize for HNW (see §28); **not** a DMS replacement claim until §28 P2 ships. |
+| **Pilot** | **90 s** playbook (§18): Stripe → tenant → **private vault** first paint (`legacy` or `vortex` per flags) + CRM login — **emotional hook** Cox’s throughput stack does not optimize for; **AI personalization** teaser on `/portal` (roadmap) stays **consent + tenant-scoped**. |
 | **CI trust** | Green **`pnpm` + Turbo** workflows on `main` — ship narrative matches what automation proves (`build`, `quality:web`, API gates per repo). |
-| **Velocity (luxury vs fragmented stacks)** | **One monorepo** (`web` + `crm` + `api` + shared packages) + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than typical **multi-product** retail stacks (§28). **Production-rate firepower** (§30) stacks **CI**, **Turbo parallelism**, and **tooling autonomy** so small teams ship **cinematic** surfaces faster than **acquisition-siloed** incumbents can align UX — still **not** a substitute for Cox-scale **DMS** depth. **IDE:** Cursor **background** (§29) = **local** friction only. |
+| **Velocity (luxury vs fragmented stacks)** | **One monorepo** + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than **multi-product** retail stacks (§28). **Zero-friction production rate:** **§29** (per-machine **zero-click** agent / background runs) + **§30** (**CI + Turbo** parallelism) + **human + agent swarm** on the same blueprint → faster **cinematic** iteration in the **HNW** niche than siloed incumbents can align a coherent story — **not** Cox-scale **DMS** depth. |
 
 ---
 
@@ -464,15 +464,17 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 ### 28.4 One-solution → revenue engine v3 (competitive wording + Apex tier)
 
 - **Positioning line (external):** *“VEX is the unified luxury automotive OS: one cinematic customer vault, one dealer cockpit, one tenant-safe API — built for vehicles and buyers that Cox’s mass-market stack was never designed to romance.”*
-- **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1).
-- **Apex tier (~$499/mo illustrative):** **Full access to the single VEX luxury OS slice** — white-label **3D portals**, **tenant-scoped** API caps, **glass CRM** cockpit parity with marketing tokens, **custom domains** + SSL, priority **3D demo** provisioning when **`tenant-3d-demo-seed`** is live — framed as the **complete emotional + operational** layer Cox does **not** sell as one product to exotic dealers.
-- **90-second self-serve pilot playbook:** Stripe → tenant + CRM login → **first paint** is either **`vortex`** (WebGL vault) or **`legacy`** (CSS + optional video) — **zero** broken layout; lead copy emphasizes the **private vault** moment Cox’s throughput tools do not optimize for.
-- **Investor attention magnet:** The **obsidian vault hero** (scroll-linked **Apex** orchestration + formation particles + **lens-aware** post stack) is the **live** Series A visual — screen-record at **60 fps**, pair with **configure** + **/build** in the same session to show **one OS**, not a landing-page stunt.
+- **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1). **Production-rate firepower** compounds that: **§29** removes local IDE click-friction for long builds/tests; **§30** ties claims to **green CI + Turbo**; **swarm parallelism** (people + agents) runs against **one** spec — still **honest** vs backend breadth gaps.
+- **Apex tier (~$499/mo illustrative):** **Full access to the single VEX luxury OS** — white-label **3D portals**, **tenant-scoped** API caps, **glass CRM** cockpit parity with marketing tokens, **custom domains** + SSL, **instant cinematic demo provisioning** when **`tenant-3d-demo-seed`** is **live and audited** (until then, narrative = **target** — see §30.2).
+- **90-second self-serve pilot playbook:** Stripe → tenant + CRM login → **first paint** is either **`vortex`** (WebGL vault) or **`legacy`** (CSS + optional video) — **zero** broken layout; messaging leads with the **private hypercar vault** emotional hook Cox’s mass-market stack was not built to **romance**.
+- **Investor attention magnet:** The **obsidian vault hero** (**Lenis**-synced scroll context, **Apex** orchestration, formation particles, **violet–gold** post stack) is the **definitive live pitch asset** — screen-record at **60 fps** (target hardware), then **`NEXT_PUBLIC_ENABLE_HERO_WEBGL=0`** to prove **legacy** parity; pair with **configure** + **/build** in one session to show **one OS**, not a microsite.
 - **Internal rule:** Never claim **parity** with Cox on **DMS or auctions** until **named** integrations ship; **do** claim **differentiation** on **cinematic 3D**, **unified luxury UX**, and **tenant-isolated** trust **today**.
 
 ---
 
 ## 29. Local machine autonomy (Cursor — agent background, ~60s setup)
+
+**Canonical:** **Zero-click launchpad** for the swarm — each developer applies **§29 once per machine** (and per trusted workspace). There is **no** org-wide remote toggle that can substitute; **background agent runs** are **local IDE policy** only.
 
 **Purpose:** Long agent runs (`pnpm install`, `pnpm -w turbo run build`, `quality:web`, E2E) often trigger a **“Run in background / Unblock agent”** safety prompt. This section is the **onboarding shortcut** so developers stop fighting the IDE. **Exact menu strings vary by Cursor version** — use search in Settings if labels differ.
 
@@ -484,6 +486,8 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 **Security note:** Only enable **always background** + **run everything** on **trusted** repos and machines (no third-party code you do not control).
 
 **Product note:** This is **developer ergonomics**. It does **not** replace **VLR** technical gates or change the **hero architecture** (**`DynamicHeroShell` `vortex`**, not R3F inside **`HeroCinematicLayer`** — see **VLR** §).
+
+**Handoff:** After §29 is applied, pair with **§30** for **verifiable** velocity (CI green, Turbo, queue jobs) — never confuse **local friction removal** with **production readiness**.
 
 ---
 

@@ -23,5 +23,14 @@ export const IRIDESCENT_PAINT_LAYER = /* glsl */ `
   vec3 thinFilm = mix(thinFilmAnalytic, lutCol, clamp(uIridescenceLUTBlend, 0.0, 1.0));
   float iridFilm = pow(1.0 - cosTheta, 0.7);
   float thinFilmMix = clamp(uIridescenceStrength * iridFilm * 0.36, 0.0, 1.0);
-  outgoingLight += diffuseColor.rgb * thinFilm * thinFilmMix;
+  /* Belcour/Barla-style cosine hue modulation on top of analytic phases (engagement + view variance). */
+  float belcourIrid = 0.5 + 0.5 * cos(
+    cosTheta * 3.14159265359 * (0.85 + uIridescenceStrength)
+    + uCinematicTime * 0.8
+    + uMouseInfluence.x * 1.75
+    + uMouseInfluence.y * 1.1
+  );
+  vec3 belcourShift = vec3(belcourIrid, belcourIrid * 0.96, belcourIrid * 0.93);
+  vec3 thinFilmV43 = mix(thinFilm, thinFilm * belcourShift, 0.22);
+  outgoingLight += diffuseColor.rgb * thinFilmV43 * thinFilmMix;
 `;

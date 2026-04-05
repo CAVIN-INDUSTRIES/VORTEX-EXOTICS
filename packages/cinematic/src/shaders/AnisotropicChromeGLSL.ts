@@ -16,6 +16,11 @@ export const ANISOTROPIC_CHROME_LAYER = /* glsl */ `
   float nvA = max(dot(nA, viewDirA), 0.0);
   float fresA = pow(1.0 - nvA, 0.42);
   float ani = uAnisotropicChrome * uAnisotropyStrength;
+  vec3 lightDirA = normalize(vec3(0.35, 0.88, 0.42));
+  vec3 halfAL = normalize(lightDirA + viewDirA);
+  float tDotL = abs(dot(tA, lightDirA));
+  float tSpec = pow(max(dot(nA, halfAL), 0.0), 28.0) * tDotL;
+  outgoingLight += vec3(0.1 * tSpec * ani);
   outgoingLight += vec3(0.16 * fresA * stretch * rim * ani);
   outgoingLight += vec3(0.045 * sin(uCinematicTime * 0.4 + along * 14.0) * ani);
 `;

@@ -23,14 +23,31 @@ cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
 - **Shader moat (GLSL + WebGPU roadmap):** [docs/plans/2026-04-05-vex-shader-moat-expansion.md](docs/plans/2026-04-05-vex-shader-moat-expansion.md)
 - **Site generation v3 (WebGPU strategy):** [docs/plans/2026-04-05-vex-website-generation-v3.md](docs/plans/2026-04-05-vex-website-generation-v3.md)
 
-### v4.2 — Full advanced GLSL Apex integration
+### v4.2 — Full advanced GLSL Apex integration + quality gate fixed
 
 - **Live stack:** Thin-film analytic + **256×1 spectral LUT** (`uIridescenceLUT` / `iridescenceLUTBlend`), 3D flake fbm, clear-coat dual lobe + refraction term, anisotropic chrome; **mouse** uniform on hero + configurator; **Apex** scroll/god-rays/particles unchanged; **primary CTA** optional burst pulse while hovered (Apex).
-- **Configure:** All uniforms on glass sliders; **exploded** mode enables **pointer raycast** mesh highlight (`ExplodedRaycastHighlight` in `@vex/ui/3d`).
+- **Configure:** All uniforms on glass sliders; **exploded** mode enables **pointer raycast** mesh highlight (`ExplodedRaycastHighlight` in `@vex/ui/3d`). **Smoke contract:** `<button data-save-garage="1">`, `<button data-exploded-view>Exploded view</button>` — no longer clipped by outer `overflow: hidden` on `/configure`.
+- **KPI targets (hypothesis):** hero dwell +75%; configurator depth 5.5×; CTA→Stripe 3.2×; white-label velocity 8×; **Cinematic Apex GLSL Ultra** tier — see [v4.2 narrative](docs/internal/vex-cinematic-investor-narrative-v4.2.md).
 - **Hero entry:** dynamic import via `ApexHeroScene.tsx` (re-export of `VortexHeroScene`).
 - **Dev:** `pnpm dev:apex-v42` — `NEXT_PUBLIC_CINEMATIC_SHADERS_V3=true` (full shader path). For **Apex + Mode + particles**, use `pnpm dev:glsl-apex`.
-- **Build:** `pnpm glsl:apex-v42` (Turbo task).
-- **Docs:** [docs/plans/2026-04-05-vex-cinematic-apex-v4.md](docs/plans/2026-04-05-vex-cinematic-apex-v4.md) (v4.2 section) · [internal v4.2 narrative](docs/internal/vex-cinematic-investor-narrative-v4.2.md).
+- **Build:** `pnpm glsl:apex-v42` or `pnpm cinematic:apex-v42` (Turbo tasks → `@vex/web` next build).
+- **Docs:** [docs/plans/2026-04-05-vex-cinematic-apex-v4.md](docs/plans/2026-04-05-vex-cinematic-apex-v4.md) (v4.2 + quality gate section) · [internal v4.2 narrative](docs/internal/vex-cinematic-investor-narrative-v4.2.md).
+
+### v4.4 — The engagement electrification layer (tenant uniforms + hero ramp)
+
+- **White-label engine:** `@vex/shared` **`tenantCinematicUniformPatch`** + **`TenantCinematic3d`** (adds optional **`environmentMapURL`**) → **`CinematicCarViewer`** (`environmentPreset` / HDR) + **`VortexHeroBrand`** (`cinematicUniforms`, **`environmentMapURL`**). Demo map: `resolveTenantCinematic3d` in `apps/web/src/lib/tenantConfigureAssets.ts`.
+- **Hero:** Particle **VEX** vortex (formation on load), **Apex** scroll → god-rays / bloom / speed streaks, **LiquidMetalCTA** burst; **rim light** intensity follows scroll boost + pointer. **Lenis** + GSAP remain in app shell (`CinematicMotionProvider` / hero orchestration).
+- **KPI targets (hypothesis):** hero dwell **+85%**; configurator **6.5×**; CTA → Stripe **3.8×**; white-label velocity **10×** vs legacy DMS; **Cinematic Apex GLSL Ultra** tier — **custom flake textures**, **iridescence presets**, **dealer-specific HDRIs**, **compute-particle showroom floors** (roadmap); investor framing: [v4.2 narrative](docs/internal/vex-cinematic-investor-narrative-v4.2.md).
+- **Dev / build:** **`pnpm dev:apex-v44`** · **`pnpm cinematic:apex-v44`** / **`pnpm glsl:apex-v44`** (Turbo → `@vex/web` next build).
+- **Docs:** [docs/plans/2026-04-05-vex-cinematic-apex-v4.md](docs/plans/2026-04-05-vex-cinematic-apex-v4.md) — **“Full engagement electrification layer (v4.4)”**.
+
+### v4.3 — Advanced GLSL techniques (visual moat) + quality gate + configure CTA hooks
+
+- **Shader suite:** **Belcour/Barla-style** cosine hue modulation on thin-film output; **diamond `pow(·,12)`** flake sparkle + **time/mouse twinkle**; **tangent × light** anisotropic spec on chrome; **fbm micro-perturbation** on clear-coat / env blend — see `@vex/cinematic` `IridescentPaintGLSL`, `MetallicFlakeLayer`, `AnisotropicChromeGLSL`, `MultiLayerClearCoat`, composed in `iridescentCarPaint.ts`.
+- **Quality gate + configure:** **`[data-save-garage="1"]`** (`Save to My Garage`) and **`[data-exploded-view]`** (`Exploded View`) use **`glassmorphic`**, **`magnetic-cta`**, and CSS-module sizing (Tailwind-equivalent `px-8 py-4` / `px-6 py-3`); **`CinematicCarViewer`** `paintMode="cinematicLuxury"` + **`explodedInteractive`**. **`pnpm --filter @vex/web run quality:web`** must pass.
+- **Mouse → shaders:** `CinematicMouseUniform` lerps R3F pointer into **`uMouseInfluence`** on the car root (hero + configurator) for iridescence + flake motion.
+- **KPI targets (locked hypothesis):** hero dwell **+80%**; configurator engagement **6×**; magnetic CTA → Stripe session **3.5×**; white-label dealer velocity **9×** vs legacy DMS; **Cinematic Apex GLSL Ultra** — custom **flake textures**, **iridescence presets**, **dealer HDRIs** (roadmap); investor framing extends [v4.2 narrative](docs/internal/vex-cinematic-investor-narrative-v4.2.md).
+- **Docs:** [docs/plans/2026-04-05-vex-cinematic-apex-v4.md](docs/plans/2026-04-05-vex-cinematic-apex-v4.md) — **v4.3** + **“Quality gate resolution + full advanced GLSL activation”**.
 
 ### Advanced GLSL shader exploration — the visual moat
 

@@ -47,10 +47,9 @@ export default function ConfigureTenantPage({ params }: { params: { tenantSlug: 
           <div
             style={{
               marginTop: "2rem",
-              height: "min(55vh, 520px)",
               borderRadius: "16px",
-              overflow: "hidden",
               border: "1px solid var(--line)",
+              overflow: "visible",
             }}
           >
             <ConfigureExperienceClient tenantSlug={tenantSlug} />

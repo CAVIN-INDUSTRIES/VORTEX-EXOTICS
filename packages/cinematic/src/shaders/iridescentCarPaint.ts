@@ -1,3 +1,16 @@
+/**
+ * Cinematic luxury paint — `onBeforeCompile` injection for `MeshPhysicalMaterial`.
+ *
+ * **v4.4 (Engagement electrification):** same modular stack; `uMouseInfluence` (lerped R3F pointer) +
+ * `uCinematicTime` drive all active layers on hero + `/configure`; tenant uniforms merge via
+ * `@vex/shared` `tenantCinematicUniformPatch` + optional `environmentMapURL` on `CinematicCarViewer`.
+ *
+ * **v4.3 (Advanced GLSL — visual moat):** composed layers include Belcour/Barla-style cosine
+ * hue modulation on thin-film phases, 3D fbm flake + diamond `pow(·,12)` twinkle, tangent-light
+ * anisotropic chrome, and clear-coat with fbm micro-perturbation + dual Fresnel. Uniforms:
+ * `uCinematicTime`, `uFlakeDensity`, `uIridescenceStrength`, `uIridescenceAngle`, `uClearCoatIntensity`,
+ * `uClearCoatRefraction`, `uAnisotropicChrome`, `uAnisotropyStrength`, `uMouseInfluence`, `uIridescenceLUT*`.
+ */
 import * as THREE from "three";
 import { ANISOTROPIC_CHROME_LAYER } from "./AnisotropicChromeGLSL.js";
 import { IRIDESCENT_PAINT_LAYER } from "./IridescentPaintGLSL.js";

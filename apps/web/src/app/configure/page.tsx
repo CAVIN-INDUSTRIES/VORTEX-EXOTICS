@@ -28,7 +28,14 @@ export default function ConfigurePage() {
             Open full build flow →
           </Link>
         </p>
-        <div style={{ marginTop: "2rem", height: "min(55vh, 520px)", borderRadius: "16px", overflow: "hidden", border: "1px solid var(--line)" }}>
+        <div
+          style={{
+            marginTop: "2rem",
+            borderRadius: "16px",
+            border: "1px solid var(--line)",
+            overflow: "visible",
+          }}
+        >
           <ConfigureExperienceClient />
         </div>
       </div>

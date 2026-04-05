@@ -10,5 +10,7 @@ test("hero exposes Apex data attribute for smoke + analytics hooks", async ({ pa
 test("configure route has garage-save CTA and exploded toggle", async ({ page }) => {
   await page.goto("/configure");
   await expect(page.locator('[data-save-garage="1"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: /exploded view/i })).toBeVisible();
+  const exploded = page.locator("button[data-exploded-view]");
+  await expect(exploded).toBeVisible();
+  await expect(exploded).toHaveText(/exploded view/i);
 });

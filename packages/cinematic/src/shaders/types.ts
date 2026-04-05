@@ -1,4 +1,7 @@
-/** Live uniforms for hero / configurator / tenant JSON → runtime. */
+/**
+ * Live uniforms for hero / configurator / tenant JSON → runtime.
+ * Shared `uCinematicTime` is driven by `CinematicPaintTimeTicker` (not listed here).
+ */
 export type CinematicPaintUniforms = {
   flakeDensity: number;
   iridescenceStrength: number;

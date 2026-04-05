@@ -69,4 +69,8 @@ export const METALLIC_FLAKE_LAYER = /* glsl */ `
   float glint = pow(flakeNdotH, 112.0) * (0.45 + 0.55 * f3) * uFlakeDensity;
   outgoingLight += vec3(sparkle * (0.32 + 0.68 * flakeNdotL));
   outgoingLight += vec3(glint * 0.85);
+  /* Diamond-like mid-exponent sparkle + time twinkle (cursor + ticker engagement). */
+  float diamondSparkle = pow(clamp(f, 0.0, 1.0), 12.0) * flakeNdotL * uFlakeDensity;
+  float twinkle = 0.5 + 0.5 * sin(uCinematicTime * 2.2 + f3 * 22.0 + dot(uMouseInfluence, vec2(3.1, 2.4)));
+  outgoingLight += vec3(diamondSparkle * twinkle * 0.38);
 `;

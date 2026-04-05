@@ -149,8 +149,8 @@ export default function VortexHeroScene() {
         <div className={styles.cockpit}>
           <p className={styles.cockpitTitle}>Live signals</p>
           <p className={styles.cockpitSubtitle}>Glass KPIs — same token system as CRM dashboards.</p>
-          <GlassKPI label="Configurator depth" value="↑ 5.5× target" hint="GLSL sliders + exploded raycast" accent="gold" />
-          <GlassKPI label="Hero dwell (v4.2)" value="+75% goal" hint="LUT + flake + Apex scroll" accent="emerald" />
+          <GlassKPI label="Configurator depth" value="↑ 6.5× target" hint="v4.4 tenant uniforms + raycast" accent="gold" />
+          <GlassKPI label="Hero dwell (v4.4)" value="+85% goal" hint="Apex vortex + god-rays + rim" accent="emerald" />
         </div>
       </div>
       <HeroScrollHint />

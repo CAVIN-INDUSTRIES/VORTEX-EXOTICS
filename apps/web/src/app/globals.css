@@ -163,3 +163,20 @@ a:focus:not(:focus-visible),
 button:focus:not(:focus-visible) {
   outline: none;
 }
+
+/* Configure / Cinematic — optional global hooks for smoke + investor demos */
+.glassmorphic {
+  backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--bg-elevated) 78%, transparent);
+}
+
+.magnetic-cta {
+  transition:
+    box-shadow 0.22s ease,
+    transform 0.22s ease,
+    filter 0.22s ease;
+}
+
+.magnetic-cta:hover {
+  filter: brightness(1.06);
+}

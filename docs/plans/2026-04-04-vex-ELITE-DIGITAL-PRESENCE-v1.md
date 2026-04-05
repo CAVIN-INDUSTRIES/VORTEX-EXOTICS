@@ -8,17 +8,64 @@
 
 ---
 
+## VLR — Vault Launch Ready (official shippable halt)
+
+**Owner halt command:** When every criterion your pilot **actually requires** in the four pillars below is **green on `main`**, declare: **“VAULT LAUNCH READY — PROJECT HALT. DEPLOY PREVIEW INITIATED.”**
+
+**Canonical hero architecture (do not reinterpret):** The **WebGL hypercar vault** is **`DynamicHeroShell` → `ApexHeroScene` / `VortexHeroScene`** when **`NEXT_PUBLIC_ENABLE_HERO_WEBGL=true`** and **`useHeroWebglDisplayMode()`** resolves **`vortex`**. **`HeroCinematicLayer` is video-only** (legacy path). Mounting a **second** R3F `<Canvas>` inside **`HeroCinematicLayer`** is **out of scope for VLR** — it **duplicates** the gate, **doubles** GPU cost, and **conflicts** with §21. Narrative “vault in HeroCinematicLayer” = **product language**; **code** stays as shipped.
+
+### Pillar 1 — Cinematic hero + configurator supremacy
+
+| Criterion | Where it lives | VLR note |
+|-----------|----------------|----------|
+| R3F vault + particles ≤512 + cinematic post | **`vortex`** path: `ApexHeroScene`, `ParticleVortex`, `VortexPostFXStack`, `useApexHeroOrchestration` | **Forward** `EffectComposer` today; **deferred + lens-flare** = roadmap unless profiling upgrades (§21) |
+| Legacy + a11y | **`DealerProgramHero`**, **`HeroCinematicLayer`**, static fallbacks | Pristine video + CSS sheen; reduced motion |
+| Configurator + flagship asset | **`ConfiguratorVehicleCanvas`**, **`/configure`**, **`/build`** (Apex Studio shell) | Real-time finish / material class swaps + pricing UX per product spec |
+| Lighthouse **`/`** ≥ **98** perf + a11y | **Stretch / lab** | **CI merge bar** remains **0.8** perf / **0.9** a11y (`lighthouserc.json`). **98+ with live WebGL** is **not** currently asserted in automation — treat as **post-tuning** or **static-first** hero experiment before claiming VLR on this row |
+| **60 fps** | Manual Chrome Performance + devices | Target, not CI-enforced |
+
+### Pillar 2 — Enterprise backend + CRM cockpit
+
+| Criterion | VLR note |
+|-----------|----------|
+| Tenant-scoped API + RBAC | Required for production pilot; verify with `ship:gate` + route audits (`AGENTS.md`) |
+| Stripe Checkout + **verified** webhooks | Idempotent handlers; no client-trusted prices |
+| BullMQ (PDF, 3D / demo asset jobs) | Queue specs in `@vex/shared`; workers wired per env |
+| CRM glass + appraisal → PDF | Parity with marketing void; pipeline live for pilot tenants |
+| **90 s** self-serve onboarding + branded 3D demo seed | Idempotent provision + audit (`§16` / revenue engine) |
+
+### Pillar 3 — CI/CD + operational excellence
+
+| Criterion | VLR note |
+|-----------|----------|
+| **`ci.yml`**, **`quality.yml`**, **`build-stability.yml`**, **`deploy-prod.yml`** | All **green** on **`main`** |
+| **`pnpm -w turbo run build`**, **`quality:web`**, API **E2E** | As defined in repo; DB-backed gates need `DATABASE_URL` / CI Postgres |
+| **Render / Vercel** (or chosen host) | Config files committed + **smoke** deploy verified |
+
+### Pillar 4 — Single source of truth + investor magnet
+
+| Criterion | VLR note |
+|-----------|----------|
+| **This file** §0–§27 + **VLR** | Locked blueprint; component tree §23, perf §21, revenue §26–§27 |
+| **Cross-links** | `README.md`, `AGENTS.md`, `PROJECT_SPACE.md`, `docs/SHIP.md` → v1 plan; other docs on touch (§25) |
+| Investor / deck / MRR preview routes | **Live + shareable** for pilot narrative |
+
+**Honest status:** The repo **does not** currently satisfy every stretch row (e.g. **Lighthouse 98** with **full WebGL hero**, **deferred** pipeline, **all** BullMQ + CRM cinematic items) **simultaneously**. Use this section as the **checklist**; issue **VLR** only when **your** required rows are objectively green.
+
+---
+
 ## 0. Live implementation snapshot (apps/web + packages)
 
 | Area | What is live now |
 |------|------------------|
+| **`DynamicHeroShell`** | **`legacy`** → `DealerProgramHero`; **`vortex`** → `ApexHeroScene` / R3F vault (**`NEXT_PUBLIC_ENABLE_HERO_WEBGL`** + eligibility). Single Canvas — **not** inside `HeroCinematicLayer`. |
 | **`HeroCinematicLayer`** | Optional **MP4/WebM** background when `NEXT_PUBLIC_HERO_VIDEO_URL` is set; **off** when `prefers-reduced-motion: reduce` or URL unset. **Not** WebGL. |
 | **`DealerProgramHero`** | Full hero: ambient + overlay + vignette + **CSS vault sheen** (violet/gold blur, GPU `transform`, respects reduced motion) + headline shimmer (reduced motion disables). |
-| **`@vex/3d-configurator`** | `shouldUseWebGL()`, **`VEX_WEBGL_PERF`** targets, async **`probeWebGPU()`** + **`useWebglEligible`** (respects **`NEXT_PUBLIC_ENABLE_HERO_WEBGL`**) on **`ConfiguratorVehicleCanvas`** / **`InventoryVehicleViewer`** → static finish-aware fallback when WebGL or motion policy blocks 3D. |
+| **`@vex/3d-configurator`** | `shouldUseWebGL()`, **`VEX_WEBGL_PERF`**, **`resolveConfiguratorMaxDpr`**, **`scheduleDeferredModelWarmup`**, **`probeWebGPU()`** + **`useWebglEligible`** on **`ConfiguratorVehicleCanvas`** / **`InventoryVehicleViewer`** → static finish-aware fallback when blocked. |
 | **Design tokens** | `globals.css`: `--bg-elevated`, `--accent-violet*`, radii, shadows; body layered gradient; header/footer glass pass (see recent `style:` commits). |
 | **CRM** | `Nav.module.css` glass nav; `globals.css` type smoothing + `main h1` baseline. |
 
-**Not live yet:** particle systems in R3F on the marketing hero, scroll-synced post-FX on the **flat** hero layer, or 60 fps “locked” certification — measure with Chrome Performance + Lighthouse in CI when scheduled.
+**Still to certify for stretch VLR:** Lighthouse **98+** on **`/`** with **vortex** hero (vs current CI thresholds), **deferred** post + **lens-flare** pass, full **BullMQ** 3D seed automation for every tenant, **60 fps** sign-off on a defined device matrix — track in pillars above.
 
 ---
 
@@ -38,7 +85,7 @@
 app/layout.tsx (fonts, AmbientShell, TenantTheme, Footer)
 ├── Header
 ├── / (home)
-│   ├── DealerProgramHero (+ HeroCinematicLayer, WebGL optional layer)
+│   ├── HomeHero → DynamicHeroShell (vortex R3F **or** legacy DealerProgramHero + HeroCinematicLayer video)
 │   ├── AutonomousAgentsShowcase
 │   ├── PlatformEnginesSection
 │   ├── MarketplaceSubletTeaser
@@ -343,7 +390,7 @@ apps/crm
 
 ## 25. Documentation corpus — cross-links (policy)
 
-- **Single source of truth:** this file (**§21–§27**) for **WebGL perf + 2026 luxury UX + revenue narrative**. Do not fork competing matrices in Slack or Notion without linking back.
+- **Single source of truth:** this file (**§0–§27**, **`VLR`** halt criteria) for **WebGL perf + 2026 luxury UX + revenue narrative**. Do not fork competing matrices in Slack or Notion without linking back.
 - **Entry points** (canonical one-liners already wired): `PROJECT_SPACE.md`, `AGENTS.md`, `README.md`, `docs/SHIP.md`, `docs/ENGINEERING_REALITY.md`, plus [Crown Jewel v2.0](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md), [v2 summary](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md), [Apex Studio `/build`](2026-04-05-vex-apex-studio-configurator-v1.0.md).
 - **Other markdown:** add a pointer **when you touch** a file for marketing, web perf, 3D, or pilot narrative — **no** repo-wide mechanical edit of every `.md` (noise + merge pain). Pure API/vendor memos stay lean unless the change affects customer-facing surfaces.
 - **Do not** duplicate §21–§25 into playbooks; **link** here for WebGL + luxury UX supremacy specs.

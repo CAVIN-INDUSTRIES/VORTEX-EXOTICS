@@ -135,7 +135,7 @@
   font-size: clamp(1.02rem, 2vw, 1.22rem);
   font-weight: 400;
   font-style: italic;
-  color: rgba(168, 166, 161, 0.95);
+  color: var(--text-secondary);
   line-height: 1.7;
   letter-spacing: 0.012em;
   margin: 0 0 1.75rem;

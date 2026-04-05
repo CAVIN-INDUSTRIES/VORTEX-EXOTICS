@@ -94,6 +94,18 @@ export function resolveParticlePointBudget(): number {
   return Math.min(VEX_PARTICLE_LOD_BUDGETS.desktop, cap);
 }
 
+/**
+ * Secondary `Points` count for `VortexBurstParticles` (hero). With `resolveHeroVortexParticleDrawCount()`,
+ * primary + auxiliary never exceeds `VEX_WEBGL_PERF.targetMaxParticlePoints`.
+ */
+export const HERO_AUXILIARY_PARTICLE_POINTS = 128;
+
+/** `ParticleVortex` drawRange — reserves `HERO_AUXILIARY_PARTICLE_POINTS` for the burst spiral layer. */
+export function resolveHeroVortexParticleDrawCount(): number {
+  const room = VEX_WEBGL_PERF.targetMaxParticlePoints - HERO_AUXILIARY_PARTICLE_POINTS;
+  return Math.min(resolveParticlePointBudget(), room);
+}
+
 /** Sync probe: WebGL2 or WebGL1 context creation (client only). */
 export function shouldUseWebGL(): boolean {
   if (typeof window === "undefined") return true;

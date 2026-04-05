@@ -44,11 +44,13 @@ export function CinematicMotionProvider({ children }: { children: React.ReactNod
       ]);
 
       gsap.registerPlugin(ScrollTrigger);
-      lenis = new Lenis({
+      const instance = new Lenis({
         duration: 1.1,
         wheelMultiplier: 0.95,
         smoothWheel: true,
-      }) as LenisLike;
+      });
+      lenis = instance;
+      instance.on("scroll", ScrollTrigger.update);
 
       const loop = (time: number) => {
         lenis?.raf(time);

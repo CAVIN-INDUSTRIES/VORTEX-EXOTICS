@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-04 (updated live snapshot)  
 **Branch:** `elite-digital-presence-v1` (from `cursor/pilot-appraisal-loop` @ `1e84177`)  
-**Status:** Active blueprint + **live partial implementation** (see §0). **Crown Jewel expanded spec:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md); short checklist: [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail (§21+).
+**Status:** Active blueprint + **live partial implementation** (see §0). **Single source of truth — core narrative + VLR:** **§0–§28** (implementation, **Cox gap** §28, revenue §26–27, perf §21+). **Velocity / tooling:** **§29–§30**. **Crown Jewel expanded spec:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md); short checklist: [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail (§21+).
 
 **Reality check:** The items below describe the **target experience** plus **what is already shipped**. Shipping requires multiple sprints: 3D performance budgets, asset pipelines, a11y fallbacks, and load testing. Each phase must pass `pnpm -w turbo run build` and scoped quality gates.
 
@@ -18,7 +18,7 @@
 
 | Criterion | Where it lives | VLR note |
 |-----------|----------------|----------|
-| R3F vault + particles ≤512 + cinematic post | **`vortex`** path: `ApexHeroScene`, `ParticleVortex`, `VortexPostFXStack`, `useApexHeroOrchestration` | **Forward** `EffectComposer` today; **deferred + lens-flare** = roadmap unless profiling upgrades (§21) |
+| R3F vault + particles ≤512 + cinematic post | **`vortex`** path: `ApexHeroScene`, `ParticleVortex` + `VortexBurstParticles` (shared **512** cap via `@vex/3d-configurator`), `VortexPostFXStack`, `useApexHeroOrchestration` | **Forward** `EffectComposer` + **highlight-weighted bloom** + **violet–gold `LensFlare`**; **true MRT / `SelectiveBloom` deferred pass** = optional profiling upgrade (§21) |
 | Legacy + a11y | **`DealerProgramHero`**, **`HeroCinematicLayer`**, static fallbacks | Pristine video + CSS sheen; reduced motion |
 | Configurator + flagship asset | **`ConfiguratorVehicleCanvas`**, **`/configure`**, **`/build`** (Apex Studio shell) | Real-time finish / material class swaps + pricing UX per product spec |
 | Lighthouse **`/`** ≥ **98** perf + a11y | **Stretch / lab** | **CI merge bar** remains **0.8** perf / **0.9** a11y (`lighthouserc.json`). **98+ with live WebGL** is **not** currently asserted in automation — treat as **post-tuning** or **static-first** hero experiment before claiming VLR on this row |
@@ -46,7 +46,7 @@
 
 | Criterion | VLR note |
 |-----------|----------|
-| **This file** §0–§27 + **VLR** | Locked blueprint; component tree §23, perf §21, revenue §26–§27 |
+| **This file** §0–§30 + **VLR** | Locked blueprint; component tree §23, perf §21, revenue §26–§27, Cox §28, autonomy §29, firepower §30 |
 | **Cross-links** | `README.md`, `AGENTS.md`, `PROJECT_SPACE.md`, `docs/SHIP.md` → v1 plan; other docs on touch (§25) |
 | Investor / deck / MRR preview routes | **Live + shareable** for pilot narrative |
 
@@ -65,7 +65,7 @@
 | **Design tokens** | `globals.css`: `--bg-elevated`, `--accent-violet*`, radii, shadows; body layered gradient; header/footer glass pass (see recent `style:` commits). |
 | **CRM** | `Nav.module.css` glass nav; `globals.css` type smoothing + `main h1` baseline. |
 
-**Still to certify for stretch VLR:** Lighthouse **98+** on **`/`** with **vortex** hero (vs current CI thresholds), **deferred** post + **lens-flare** pass, full **BullMQ** 3D seed automation for every tenant, **60 fps** sign-off on a defined device matrix — track in pillars above.
+**Still to certify for stretch VLR:** Lighthouse **98+** on **`/`** with **vortex** hero (vs current CI thresholds), **MRT-selective** bloom if profiling demands it, full **BullMQ** 3D seed automation for every tenant, **60 fps** sign-off on a defined device matrix — track in pillars above.
 
 ---
 
@@ -451,9 +451,23 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 | **P1** | **AI co-pilot** (mood / layout hints) in configurator | **Consent + tenant caps** |
 | **P2** | **DMS** API hooks, **F&I + titling**, **service** scheduling, **wholesale** connector, **vAuto-style** velocity BI | Enterprise scale — **explicit** phase gates |
 
-### 28.4 One-solution → revenue engine (competitive wording)
+**P0/P1/P2 ↔ automation (production-rate firepower §30):**
+
+| Job / route (target names) | Tier | Intent |
+|----------------------------|------|--------|
+| **`tenant-3d-demo-seed`** | **P0** | Idempotent queue job: branded default **GLB / HDR / theme** payload for new tenant; **AuditLog** row per successful seed; retries safe. |
+| **`apex-studio-360-export`** (BullMQ handler + API trigger) | **P0** | Configurator / Apex Studio → packaged **turntable or glTF** export for sales + syndication handoff; tenant-scoped, capped cost. |
+| **Stripe webhook → enqueue seed** | **P0** | Paid checkout → **non-blocking** enqueue of `tenant-3d-demo-seed` (must not block 90s onboarding UX). |
+| **Valuation / PDF / analytics** jobs (existing roadmap) | **P1** | Keep **idempotent**; do not starve **P0** cinematic queues. |
+| **DMS / auction connectors** | **P2** | Only after §28 **internal rule** — named integration + compliance review. |
+
+### 28.4 One-solution → revenue engine v3 (competitive wording + Apex tier)
 
 - **Positioning line (external):** *“VEX is the unified luxury automotive OS: one cinematic customer vault, one dealer cockpit, one tenant-safe API — built for vehicles and buyers that Cox’s mass-market stack was never designed to romance.”*
+- **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1).
+- **Apex tier (~$499/mo illustrative):** **Full access to the single VEX luxury OS slice** — white-label **3D portals**, **tenant-scoped** API caps, **glass CRM** cockpit parity with marketing tokens, **custom domains** + SSL, priority **3D demo** provisioning when **`tenant-3d-demo-seed`** is live — framed as the **complete emotional + operational** layer Cox does **not** sell as one product to exotic dealers.
+- **90-second self-serve pilot playbook:** Stripe → tenant + CRM login → **first paint** is either **`vortex`** (WebGL vault) or **`legacy`** (CSS + optional video) — **zero** broken layout; lead copy emphasizes the **private vault** moment Cox’s throughput tools do not optimize for.
+- **Investor attention magnet:** The **obsidian vault hero** (scroll-linked **Apex** orchestration + formation particles + **lens-aware** post stack) is the **live** Series A visual — screen-record at **60 fps**, pair with **configure** + **/build** in the same session to show **one OS**, not a landing-page stunt.
 - **Internal rule:** Never claim **parity** with Cox on **DMS or auctions** until **named** integrations ship; **do** claim **differentiation** on **cinematic 3D**, **unified luxury UX**, and **tenant-isolated** trust **today**.
 
 ---

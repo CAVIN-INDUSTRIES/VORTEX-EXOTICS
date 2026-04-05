@@ -6,6 +6,7 @@ import { GlassKPI, LiquidMetalCTA, MagneticButton } from "@vex/ui";
 import { VortexHeroScene as VortexHeroWebGL, type VortexHeroBrand } from "@vex/ui/3d";
 import { useWebglEligible } from "@/hooks/useWebglEligible";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useReveal } from "@/hooks/useReveal";
 import { useApexHeroOrchestration } from "@/hooks/useApexHeroOrchestration";
 import { HeroScrollHint } from "@/components/HeroScrollHint";
 import { DEFAULT_PUBLIC_VEHICLE_GLB } from "@/lib/vehicle3d/defaults";
@@ -50,6 +51,7 @@ export default function VortexHeroScene() {
   const [brand, setBrand] = useState<VortexHeroBrand | undefined>(undefined);
   const [ctaHover, setCtaHover] = useState(false);
   const ctaPulseRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const shellRevealRef = useReveal<HTMLDivElement>();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -114,7 +116,7 @@ export default function VortexHeroScene() {
         <div className={styles.fallback} aria-hidden />
       )}
       <div className={styles.overlay} />
-      <div className={styles.shell} data-reveal>
+      <div ref={shellRevealRef} className={styles.shell} data-reveal>
         <div className={styles.copy}>
           <div className={styles.badgeRow}>
             <span className={styles.badge}>Vortex Exotic Exchange</span>

@@ -4,9 +4,9 @@ import type { MutableRefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { resolveParticlePointBudget } from "@vex/3d-configurator";
+import { resolveHeroVortexParticleDrawCount } from "@vex/3d-configurator";
 
-/** Buffer size = perf cap; `resolveParticlePointBudget()` + `setDrawRange` implement LOD. */
+/** Buffer size = perf cap; `resolveHeroVortexParticleDrawCount()` + `setDrawRange` implement LOD (see `HERO_AUXILIARY_PARTICLE_POINTS`). */
 const VEX_POINTS = 512;
 
 function fillVexClusters(target: Float32Array, n: number) {
@@ -81,7 +81,7 @@ export function ParticleVortex({
   useFrame((state) => {
     const pts = ref.current;
     if (!pts) return;
-    const n = resolveParticlePointBudget();
+    const n = resolveHeroVortexParticleDrawCount();
     geometry.setDrawRange(0, n);
     const attr = geometry.attributes.position;
     const pos = attr.array as Float32Array;

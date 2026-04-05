@@ -4,8 +4,9 @@ import type { MutableRefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { HERO_AUXILIARY_PARTICLE_POINTS } from "@vex/3d-configurator";
 
-const COUNT = 420;
+const COUNT = HERO_AUXILIARY_PARTICLE_POINTS;
 
 /** Spiral vortex particle field — pairs with hero lighting (stylized “VEX” energy). */
 export function VortexBurstParticles({

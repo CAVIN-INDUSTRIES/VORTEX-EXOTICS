@@ -3,13 +3,14 @@
 import type { MutableRefObject } from "react";
 import { useMemo } from "react";
 import type { Mesh } from "three";
-import { Vector2 } from "three";
+import { Color, Vector2, Vector3 } from "three";
 import {
   Bloom,
   ChromaticAberration,
   DepthOfField,
   EffectComposer,
   GodRays,
+  LensFlare,
   Noise,
   Vignette,
 } from "@react-three/postprocessing";
@@ -24,15 +25,23 @@ export type VortexPostFXStackProps = {
 };
 
 /**
- * Full cinematic stack: bloom, DOF, god rays, chroma, film grain, vignette.
- * Bloom intensity scales up in cinematic mode (local dev).
+ * Full cinematic stack: bloom (highlight-weighted), DOF, god rays, violet–gold lens flare, chroma, grain, vignette.
+ * True MRT deferred bloom = optional upgrade (SelectiveBloom + layer pass); this stack stays forward `EffectComposer`.
  */
 export function VortexPostFXStack({ cinematicMode = false, sunRef, apexBoost = 0 }: VortexPostFXStackProps) {
   const chroma = useMemo(() => new Vector2(0.0014, 0.0018), []);
+  const lensColor = useMemo(() => {
+    const c = new Color("#b388ff");
+    c.lerp(new Color("#d4af37"), 0.38);
+    return c;
+  }, []);
+  const lensPosition = useMemo(() => new Vector3(8, 6, -6), []);
   const ab = Math.min(1, Math.max(0, apexBoost));
-  const bloomIntensity = (cinematicMode ? 2.8 : 0.62) + ab * 0.55;
-  const bloomThreshold = cinematicMode ? 0.28 - ab * 0.04 : 0.48 - ab * 0.06;
+  const bloomIntensity = (cinematicMode ? 2.65 : 0.58) + ab * 0.52;
+  /** Higher threshold → bloom reads like an emissive pass (sun + car highlights), not a full-frame haze. */
+  const bloomThreshold = cinematicMode ? 0.52 - ab * 0.06 : 0.62 - ab * 0.08;
   const godWeight = (cinematicMode ? 0.9 : 0.55) + ab * 0.42;
+  const lensOpacity = (cinematicMode ? 0.26 : 0.14) + ab * 0.2;
 
   return (
     <EffectComposer multisampling={2} enableNormalPass depthBuffer>
@@ -56,6 +65,17 @@ export function VortexPostFXStack({ cinematicMode = false, sunRef, apexBoost = 0
         weight={godWeight}
         exposure={0.55 + ab * 0.12}
         blur
+      />
+      <LensFlare
+        opacity={lensOpacity}
+        colorGain={lensColor}
+        glareSize={0.42}
+        flareSize={0.55}
+        starBurst
+        anamorphic
+        secondaryGhosts
+        animated
+        position={lensPosition}
       />
       <ChromaticAberration offset={chroma} radialModulation={true} modulationOffset={0.42} />
       <Noise opacity={cinematicMode ? 0.1 : 0.075} />

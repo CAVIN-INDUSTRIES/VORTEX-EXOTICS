@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import "./home-landing.css";
 import {
   AutonomousAgentsShowcase,
-  DealerProgramHero,
+  HomeHero,
   MarketplaceSubletTeaser,
   PaymentOrchestrationBar,
   PlatformEnginesSection,
@@ -18,6 +18,7 @@ import { PremiumServices } from "@/components/PremiumServices";
 import { TestDriveStrip } from "@/components/TestDriveStrip";
 import { TrustStrip } from "@/components/TrustStrip";
 
+/** Marketing home: SSR-friendly shell; hero WebGL loads via `HomeHero` → `DynamicHeroShell` (no SSR on Canvas). */
 export default async function HomePage() {
   const platformEngines = await fetchPlatformEnginesPublic();
 
@@ -25,8 +26,8 @@ export default async function HomePage() {
     <>
       <Header />
       <AmbientIdentityModule />
-      <main id="main-content" className="home-main home-landing" aria-label="Vortex Exotic Exchange home">
-        <DealerProgramHero />
+      <main id="main-content" className="home-main home-landing" aria-label="Vex dealer platform home">
+        <HomeHero />
         <AutonomousAgentsShowcase />
         <PlatformEnginesSection initial={platformEngines} />
         <MarketplaceSubletTeaser />

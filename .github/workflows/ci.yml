@@ -42,7 +42,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 9.15.9
 
       - name: Setup Node + pnpm + Turbo cache
         uses: actions/setup-node@v4
@@ -58,11 +58,11 @@ jobs:
       - name: Install Playwright (Chromium) for web E2E
         run: pnpm --filter @vex/web exec playwright install --with-deps chromium
 
-      - name: Turbo Remote Cache
-        uses: turborepo/action@v2
-        with:
-          token: ${{ secrets.TURBO_TOKEN }}
-          team: ${{ secrets.TURBO_TEAM }}
+      - name: Prisma db push (service Postgres — CI E2E schema)
+        run: pnpm --filter @vex/api run db:generate && pnpm --filter @vex/api exec prisma db push --skip-generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex
+          DIRECT_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex
 
       - name: Run Turbo CI (affected-only + remote cache)
         run: pnpm -w turbo run build test:e2e ship:gate pilot:verify --filter=[HEAD^1] --concurrency=6

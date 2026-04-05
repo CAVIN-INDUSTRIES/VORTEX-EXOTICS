@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import styles from "./Nav.module.css";
 
 export function Nav() {
   const pathname = usePathname();
@@ -22,38 +23,22 @@ export function Nav() {
   ];
 
   return (
-    <header className="crm-nav">
-      <div
-        className="crm-shell"
-        style={{ marginTop: "0.75rem", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}
-      >
-        <nav style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-          <Link href="/dashboard" style={{ fontWeight: 800, color: "var(--text-primary)", letterSpacing: "0.03em" }}>
+    <header className={styles.nav}>
+      <div className={`crm-shell ${styles.inner}`}>
+        <nav className={styles.linkRow} aria-label="Primary">
+          <Link href="/dashboard" className={styles.brand}>
             VEX CRM
           </Link>
-          {links.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                color: pathname?.startsWith(href) ? "var(--text-primary)" : "var(--text-secondary)",
-                fontSize: "0.86rem",
-                border: pathname?.startsWith(href) ? "1px solid var(--line)" : "1px solid transparent",
-                background: pathname?.startsWith(href) ? "var(--accent-soft)" : "transparent",
-                borderRadius: "999px",
-                padding: "0.32rem 0.65rem",
-                fontWeight: pathname?.startsWith(href) ? 600 : 500,
-              }}
-            >
-              {label}
-            </Link>
-          ))}
+          {links.map(({ href, label }) => {
+            const active = pathname === href || (href !== "/dashboard" && pathname?.startsWith(href));
+            return (
+              <Link key={href} href={href} className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}>
+                {label}
+              </Link>
+            );
+          })}
         </nav>
-        <button
-          type="button"
-          onClick={logout}
-          style={{ background: "transparent", border: "1px solid var(--line)", borderRadius: "10px", color: "var(--text-muted)", fontSize: "0.86rem", padding: "0.4rem 0.7rem" }}
-        >
+        <button type="button" className={styles.signOut} onClick={logout}>
           Sign out
         </button>
       </div>

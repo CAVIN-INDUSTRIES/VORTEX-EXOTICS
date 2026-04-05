@@ -1,4 +1,6 @@
 :root {
+  /* v4.4 — marketing “cinematic void” anchor (web hero canvas ≈ #050508) for brand parity */
+  --cinematic-void-marketing: #050508;
   --bg-primary: #05070b;
   --bg-secondary: #090d14;
   --bg-card: rgba(16, 22, 32, 0.68);
@@ -25,13 +27,27 @@ body {
 }
 
 body {
+  /* Cinematic void: subtle inset vignette + tenant radial accents (matches public site DNA) */
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.35);
   background:
     radial-gradient(circle at 10% 10%, rgba(97, 193, 255, 0.12), transparent 30%),
     radial-gradient(circle at 90% 0%, rgba(139, 125, 255, 0.12), transparent 36%),
     linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 48%, #04060a 100%);
   color: var(--text-secondary);
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.45;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+main h1 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
 }
 
 a {
@@ -137,11 +153,3 @@ a:focus-visible {
   transform: translateY(-1px);
 }
 
-.crm-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(6, 10, 16, 0.84);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(12px);
-}

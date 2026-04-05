@@ -8,7 +8,7 @@ export function ScrollStorySection() {
   const revealRef = useReveal<HTMLDivElement>();
 
   return (
-    <section id="universe" className={styles.section} aria-labelledby="story-heading">
+    <section id="story-scroll" className={styles.section} aria-labelledby="story-heading">
       <div className={styles.grid} ref={revealRef} data-reveal>
         <p className={styles.chapter}>Chapter 01 / Arrival</p>
         <h2 id="story-heading" className={styles.title}>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { onboardPilotSelfServe, requestPilotEmailVerificationCode } from "@/lib/api";
 
 const BUSINESS_SIZES = [
@@ -24,7 +25,9 @@ const TIER_PRICING: Record<"STARTER" | "PRO", { monthly: number; yearly: number;
   PRO: { monthly: 2499, yearly: 24990, label: "Pro" },
 };
 
-export default function PilotPage() {
+function PilotPageInner() {
+  const searchParams = useSearchParams();
+  const stripeCancelled = searchParams.get("stripe") === "cancel";
   const [dealerName, setDealerName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -97,6 +100,22 @@ export default function PilotPage() {
         shareable appraisal link.
       </p>
 
+      {stripeCancelled && (
+        <div
+          role="status"
+          style={{
+            marginBottom: "1rem",
+            padding: "0.75rem 1rem",
+            borderRadius: 8,
+            background: "rgba(255,150,80,0.12)",
+            border: "1px solid rgba(255,150,80,0.35)",
+            color: "var(--text-primary, #eee)",
+          }}
+        >
+          Checkout was cancelled. Adjust your plan below and try again when you are ready.
+        </div>
+      )}
+
       <section
         style={{
           marginBottom: "1rem",
@@ -106,22 +125,53 @@ export default function PilotPage() {
           background: "rgba(255,255,255,0.03)",
         }}
       >
-        <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Pricing preview</h2>
-        <p style={{ fontSize: "0.9rem", color: "var(--text-muted, #aaa)", marginBottom: "0.5rem" }}>
-          First month is collected at checkout via Stripe (configure <code>STRIPE_PRICE_STARTER</code> /{" "}
-          <code>STRIPE_PRICE_PRO</code> to match these SKUs).
+        <h2 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Plans at a glance</h2>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-muted, #aaa)", marginBottom: "0.65rem" }}>
+          First period is collected at Stripe Checkout. Map env <code>STRIPE_PRICE_STARTER</code> /{" "}
+          <code>STRIPE_PRICE_PRO</code> to these amounts before production traffic.
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", fontSize: "0.92rem" }}>
-          <div>
-            <strong>Starter</strong>
-            <br />${TIER_PRICING.STARTER.monthly.toLocaleString()}
-            /mo · ${TIER_PRICING.STARTER.yearly.toLocaleString()}/yr
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "0.65rem",
+            fontSize: "0.88rem",
+            marginBottom: "0.65rem",
+          }}
+        >
+          <div
+            style={{
+              padding: "0.65rem",
+              borderRadius: 8,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(0,0,0,0.2)",
+            }}
+          >
+            <div style={{ fontWeight: 700, marginBottom: "0.35rem" }}>Starter — ${TIER_PRICING.STARTER.monthly.toLocaleString()}/mo</div>
+            <ul style={{ margin: 0, paddingLeft: "1.1rem", color: "var(--text-muted, #bbb)" }}>
+              <li>Core CRM + deal desk</li>
+              <li>Public appraisal intake + tenant routing</li>
+              <li>Pilot dashboard &amp; usage guardrails</li>
+            </ul>
           </div>
-          <div>
-            <strong>Pro</strong>
-            <br />${TIER_PRICING.PRO.monthly.toLocaleString()}
-            /mo · ${TIER_PRICING.PRO.yearly.toLocaleString()}/yr
+          <div
+            style={{
+              padding: "0.65rem",
+              borderRadius: 8,
+              border: "1px solid rgba(201,162,39,0.35)",
+              background: "rgba(201,162,39,0.06)",
+            }}
+          >
+            <div style={{ fontWeight: 700, marginBottom: "0.35rem" }}>Pro — ${TIER_PRICING.PRO.monthly.toLocaleString()}/mo</div>
+            <ul style={{ margin: 0, paddingLeft: "1.1rem", color: "var(--text-muted, #bbb)" }}>
+              <li>Everything in Starter</li>
+              <li>Higher throughput for multi-rooftop teams</li>
+              <li>Priority positioning for Cavin network pilots</li>
+            </ul>
           </div>
+        </div>
+        <div style={{ fontSize: "0.85rem", color: "var(--text-muted, #888)" }}>
+          Annual: ${TIER_PRICING.STARTER.yearly.toLocaleString()}/yr (Starter) · ${TIER_PRICING.PRO.yearly.toLocaleString()}/yr (Pro)
         </div>
       </section>
 
@@ -198,15 +248,37 @@ export default function PilotPage() {
           </select>
         </label>
 
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
-          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-            <span style={{ fontSize: "0.85rem", color: "var(--text-muted, #888)" }}>Plan</span>
-            <select value={tier} onChange={(e) => setTier(e.target.value as "STARTER" | "PRO")} style={inputStyle}>
-              <option value="STARTER">Starter</option>
-              <option value="PRO">Pro</option>
-            </select>
-          </label>
-          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <span style={{ fontSize: "0.85rem", color: "var(--text-muted, #888)" }}>Plan</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
+            {(["STARTER", "PRO"] as const).map((t) => {
+              const p = TIER_PRICING[t];
+              const selected = tier === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTier(t)}
+                  style={{
+                    textAlign: "left",
+                    padding: "0.85rem",
+                    borderRadius: 8,
+                    border: selected ? "2px solid var(--accent, #c9a227)" : "1px solid rgba(255,255,255,0.15)",
+                    background: selected ? "rgba(201,162,39,0.1)" : "rgba(255,255,255,0.03)",
+                    cursor: "pointer",
+                    color: "inherit",
+                  }}
+                >
+                  <div style={{ fontWeight: 700, marginBottom: "0.25rem" }}>{p.label}</div>
+                  <div style={{ fontSize: "0.82rem", color: "var(--text-muted, #aaa)", lineHeight: 1.4 }}>
+                    ${p.monthly.toLocaleString()}/mo
+                    <br />${p.yearly.toLocaleString()}/yr
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginTop: "0.35rem" }}>
             <span style={{ fontSize: "0.85rem", color: "var(--text-muted, #888)" }}>Billing interval</span>
             <select
               value={interval}
@@ -254,6 +326,20 @@ export default function PilotPage() {
         </Link>
       </p>
     </main>
+  );
+}
+
+export default function PilotPage() {
+  return (
+    <Suspense
+      fallback={
+        <main style={{ maxWidth: 560, margin: "0 auto", padding: "2rem 1rem" }}>
+          <p style={{ color: "var(--text-muted, #888)" }}>Loading…</p>
+        </main>
+      }
+    >
+      <PilotPageInner />
+    </Suspense>
   );
 }
 

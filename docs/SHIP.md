@@ -3,7 +3,8 @@
 **Ordered runbook:** [PILOT_SHIP.md](PILOT_SHIP.md) — execute those steps in sequence.  
 **Dealer-ready line (API live):** `PILOT_VERIFY_API_URL=… pnpm run pilot:verify`.
 
-This page is a short overview; **PILOT_SHIP.md** is the canonical checklist (including GitHub branch protection for `ci / build-and-api-e2e`).
+This page is a short overview; **PILOT_SHIP.md** is the canonical checklist (including GitHub branch protection for `ci / build-and-api-e2e`).  
+**Marketing WebGL + luxury UX budgets (non-blocking for pilot gate):** `docs/plans/2026-04-04-vex-ELITE-DIGITAL-PRESENCE-v1.md` §21+ · Crown Jewel spec `docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md` · **Apex Studio `/build`:** `docs/plans/2026-04-05-vex-apex-studio-configurator-v1.0.md`.
 
 This is the minimum **operational** bar between “code exists” and “we can put a dealer on it.” Engineering ships **process + proof**; GTM ships **dealers**.
 
@@ -49,11 +50,13 @@ That runs Prisma generate, full monorepo build, `migrate deploy`, and the apprai
 
 ## 6. Related commands
 
-| Command | Purpose |
-|--------|---------|
-| `pnpm run ship:gate` | Local mirror of CI ship bar (needs `DATABASE_URL`) |
-| `pnpm run pilot:verify` | **Deployed API** smoke: set `PILOT_VERIFY_API_URL` (and optional `PILOT_VERIFY_BRANDING_DOMAIN`) |
-| `pnpm run release:pilot-check` | Turbo build + tenant E2E (`test:e2e`, needs `DATABASE_URL`) |
-| `pnpm -w turbo run build` | Compile only — insufficient alone for pilot |
+
+| Command                        | Purpose                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `pnpm run ship:gate`           | Local mirror of CI ship bar (needs `DATABASE_URL`)                                               |
+| `pnpm run pilot:verify`        | **Deployed API** smoke: set `PILOT_VERIFY_API_URL` (and optional `PILOT_VERIFY_BRANDING_DOMAIN`) |
+| `pnpm run release:pilot-check` | Turbo build + tenant E2E (`test:e2e`, needs `DATABASE_URL`)                                      |
+| `pnpm -w turbo run build`      | Compile only — insufficient alone for pilot                                                      |
+
 
 Stale “no tenant / no Stripe” memos: see [ENGINEERING_REALITY.md](ENGINEERING_REALITY.md).

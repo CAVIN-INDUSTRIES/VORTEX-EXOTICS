@@ -1,0 +1,50 @@
+name: Web quality
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "packages/ui/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+      - "turbo.json"
+      - ".github/workflows/quality.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-quality:
+    name: quality:web + quality:3d
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright (Chromium) for a11y
+        run: pnpm --filter @vex/web exec playwright install --with-deps chromium
+
+      - name: Build @vex/web dependency graph
+        run: pnpm -w turbo run build --filter=@vex/web
+
+      - name: quality:web
+        run: pnpm --filter @vex/web run quality:web
+
+      - name: quality:3d (after build graph)
+        run: pnpm turbo run quality:3d --filter=@vex/web

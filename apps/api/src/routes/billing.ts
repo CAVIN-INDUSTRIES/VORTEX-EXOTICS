@@ -24,7 +24,7 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
   dayStart.setHours(0, 0, 0, 0);
   const monthStart = new Date(dayStart.getFullYear(), dayStart.getMonth(), 1);
 
-  const [todayValuation, monthUsage, overageUsd, appraisalCount, closedAppraisalCount, tenantRow, recentAppraisals, recentOrders, recentUsage] =
+  const [todayValuation, publicIntakeToday, monthUsage, overageUsd, appraisalCount, closedAppraisalCount, tenantRow, recentAppraisals, recentOrders, recentUsage] =
     await Promise.all([
       prisma.usageLog.aggregate({
         where: {
@@ -33,6 +33,13 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
           createdAt: { gte: dayStart },
         },
         _sum: { amountUsd: true, quantity: true },
+      }),
+      prisma.usageLog.count({
+        where: {
+          tenantId,
+          kind: "PUBLIC_APPRAISAL",
+          createdAt: { gte: dayStart },
+        },
       }),
       prisma.usageLog.aggregate({
         where: { tenantId, createdAt: { gte: monthStart } },
@@ -55,9 +62,9 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
         select: { id: true, status: true, updatedAt: true, value: true },
       }),
       prisma.order.findMany({
-        where: { tenantId, status: OrderStatus.FULFILLED },
+        where: { tenantId, status: { in: [OrderStatus.CONFIRMED, OrderStatus.FULFILLED] } },
         orderBy: { updatedAt: "desc" },
-        take: 5,
+        take: 8,
         select: { id: true, status: true, updatedAt: true, totalAmount: true },
       }),
       prisma.usageLog.findMany({
@@ -80,9 +87,10 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
   const projectedSpendEodUsd = Math.min(dailyCap, todayValuationUsd + burnRatePerHour * (msUntilMidnight / 3600000));
   const projectedRemainingEodUsd = Math.max(0, dailyCap - projectedSpendEodUsd);
 
-  const gs = tenantRow?.groupSettings as { pilotSubdomain?: string } | null;
+  const gs = tenantRow?.groupSettings as { pilotSubdomain?: string; pilotNpsSubmittedAt?: string } | null;
   const webBase = process.env.PUBLIC_WEB_URL || "http://localhost:3000";
   const inviteCustomerUrl = `${webBase.replace(/\/$/, "")}/appraisal?tenantId=${encodeURIComponent(tenantId)}`;
+  const npsAlreadySubmitted = Boolean(gs?.pilotNpsSubmittedAt);
 
   return res.json({
     data: {
@@ -91,7 +99,7 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
         pilotSubdomain: gs?.pilotSubdomain ?? null,
         appraisalCount,
         inviteCustomerUrl,
-        showNpsAfterFirstAppraisalClose: closedAppraisalCount >= 1,
+        showNpsAfterFirstAppraisalClose: closedAppraisalCount >= 1 && !npsAlreadySubmitted,
       },
       valuation: {
         dailyCapUsd: dailyCap,
@@ -100,6 +108,7 @@ billingRouter.get("/usage", requireAuth, requireRole("STAFF", "ADMIN", "GROUP_AD
         callsToday: Number(todayValuation._sum.quantity ?? 0),
         projectedSpendEodUsd,
         projectedRemainingEodUsd,
+        publicIntakeToday,
       },
       activity: {
         appraisals: recentAppraisals.map((a) => ({

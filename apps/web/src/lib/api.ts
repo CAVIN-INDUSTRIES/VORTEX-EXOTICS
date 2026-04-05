@@ -1,3 +1,5 @@
+import type { RaisePackage } from "@vex/shared";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 function authHeaders(token: string) {
@@ -529,20 +531,7 @@ export async function getRaisePackage(token: string): Promise<{
   return unwrap(await res.json());
 }
 
-export async function getInvestorPackageByToken(token: string): Promise<{
-  generatedAt: string;
-  tenantCount: number;
-  activeTenantCount: number;
-  mrr: number;
-  usageRevenueUsd: number;
-  highlights: string[];
-  pilotNetwork?: {
-    activePilots: number;
-    totalPilotAppraisals: number;
-    firstBillingEvents: number;
-    generatedAt: string;
-  };
-}> {
+export async function getInvestorPackageByToken(token: string): Promise<RaisePackage> {
   const res = await fetch(`${API_BASE}/capital/investor/${encodeURIComponent(token)}`);
   if (!res.ok) throw new Error("Investor link expired or invalid");
   return unwrap(await res.json());
@@ -791,6 +780,7 @@ export async function getBillingUsage(token: string): Promise<{
     callsToday: number;
     projectedSpendEodUsd: number;
     projectedRemainingEodUsd: number;
+    publicIntakeToday?: number;
   };
   activity?: {
     appraisals: Array<{ id: string; status: string; updatedAt: string; value: number | null }>;

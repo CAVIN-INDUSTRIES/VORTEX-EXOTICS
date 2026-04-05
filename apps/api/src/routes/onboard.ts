@@ -304,6 +304,9 @@ onboardRouter.post("/pilot", validateBody(PilotOnboardSchema), async (req, res) 
       "",
       `• CRM sign-in: ${crmBase.replace(/\/$/, "")}/login`,
       `  Use this email: ${body.email} and the password you chose during signup.`,
+      ...(pilotSubdomainForResponse
+        ? [`• Pilot subdomain slug: ${pilotSubdomainForResponse} (used for routing and branding)`]
+        : []),
       `• Customer quick-appraisal demo (shareable): ${demoAppraisalUrl}`,
       `• After Stripe checkout, open your live pilot dashboard: ${webBase.replace(/\/$/, "")}/dealer/pilot`,
       "",

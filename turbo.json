@@ -41,7 +41,9 @@
         "apps/**/postcss.config.*",
         "packages/**/tsconfig.json",
         "packages/shared/**",
-        "packages/ui/**"
+        "packages/ui/**",
+        "packages/cinematic/**",
+        "packages/3d-configurator/**"
       ],
       "env": [
         "NEXT_PUBLIC_API_URL",
@@ -130,6 +132,112 @@
       "inputs": [
         "**/*.{ts,tsx,js,jsx}"
       ]
+    },
+    "cinematic:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "cinematic:hero": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "moat:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "webgpu:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "glsl:build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "cinematic:apex": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "glsl:apex": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "glsl:apex-v42": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "glsl:apex-v44": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "cinematic:apex-v42": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "cinematic:apex-v44": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true
+    },
+    "quality:3d": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [],
+      "cache": false
     }
   }
 }

@@ -536,6 +536,109 @@
 
 ---
 
+## Digital Presence v2 — Cinematic Layer (2026)
+
+**Goal:** A single default marketing hero (`HomeHero` → `VortexHeroScene` from `@vex/ui/3d`) with PBR + post-processing, WebGL/reduced-motion fallbacks, and tenant-safe theming (CSS vars on UI; GLB URL from app config).
+
+### Performance budgets (marketing /)
+
+| Check | Target | Notes |
+|--------|--------|--------|
+| First-load JS | Keep hero code-split (`dynamic(..., { ssr: false })`) | R3F + drei load after shell |
+| DPR | Cap `1–1.75` in `VortexHeroScene` | Avoid retina 3× on hero |
+| Motion | `prefers-reduced-motion` → gradient fallback only | No canvas |
+| WebGL | `shouldUseWebGL()` / `useWebglEligible` | Match configurator policy |
+
+### 3D asset pipeline
+
+- Default public GLB: `apps/web/src/lib/vehicle3d/defaults.ts` (Khronos ToyCar) for demos.
+- Production: host tenant or catalog GLBs on CDN; pass `glbUrl` into `VortexHeroScene` / `CinematicCarViewer`.
+- LOD: add multiple `useGLTF` assets + `Detailed` (drei) when catalog provides LOD variants — not required for ToyCar demo.
+
+### Acceptance criteria
+
+- [ ] `pnpm -w turbo run build` green after UI/3D changes.
+- [ ] `pnpm --filter @vex/web run quality:web` and `pnpm turbo run quality:3d --filter=@vex/web` green on PRs (see `.github/workflows/quality.yml`).
+- [ ] Home `/` renders cinematic hero by default; `NEXT_PUBLIC_CINEMATIC_HERO_V2=0` restores legacy hero.
+- [ ] `NEXT_PUBLIC_CINEMATIC_MODE=true` (or `pnpm dev:web:cinematic`) increases bloom / particle intensity for local tuning only.
+
+**Related:** `docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md`, `@vex/ui` export `@vex/ui/3d`.
+
+---
+
+## Cinematic Hero v2 — Execution Checklist
+
+**Goal:** Default marketing hero uses `@vex/ui/3d` (`VortexHeroScene` Canvas + `EffectStack` / `VortexPostFXStack`, `ParticleVortex`, PBR GLB) behind `DynamicHeroShell` (`ssr: false`).
+
+### Asset list
+
+| Asset | Role |
+|--------|------|
+| Default GLB | `apps/web/src/lib/vehicle3d/defaults.ts` (ToyCar) — swap for tenant CDN in prod |
+| Hero shell CSS | `apps/web/src/components/cinematic-hero-v2/CinematicHeroV2.module.css` |
+| 3D primitives | `packages/ui/src/3d/` — `VortexHeroScene`, `CinematicCarViewer`, `EffectStack`, `ParticleVortex`, `SpeedStreaks`, `MouseFillLight` |
+
+### Performance budget
+
+- DPR capped in Canvas (`1–1.75`); dynamic import hero; WebGL + `prefers-reduced-motion` fallbacks.
+- Target: stable frame time on mid-range GPUs; profile with DevTools if adding more passes.
+
+### Tenant theming (white-label)
+
+- **2D:** CRM + web surfaces use CSS variables (`--text-*`, `--line`, `--accent-*`, tenant theme from `TenantThemeProvider`).
+- **3D:** Pass `glbUrl` into `VortexHeroScene` / `CinematicCarViewer`; swap `Environment` preset or HDRI when you add per-tenant env (e.g. `NEXT_PUBLIC_HERO_ENV_PRESET`).
+
+### Acceptance criteria
+
+- [ ] `pnpm -w turbo run build` exit 0.
+- [ ] `pnpm --filter @vex/web run quality:web` (lint + a11y) exit 0.
+- [ ] `NEXT_PUBLIC_CINEMATIC_MODE=true` + `pnpm --filter @vex/web run dev:cinematic` for bloom/particle tuning.
+- [ ] KPI alignment: hero dwell ↑40%, configurator engagement ↑3×, Stripe session start ↑2× (instrument post-release).
+
+---
+
+## Build Stability Gate — Directory & Workspace Enforcement
+
+**Ticket type:** Ops / developer experience — **must pass before** treating any build failure as a product bug.
+
+### Root cause (common)
+
+Most `ERR_PNPM_NO_PKG_MANIFEST`, workspace-root, and “partial” build successes come from **running commands outside the monorepo** (e.g. `$HOME` instead of `~/Documents/vex-website`). The repo is healthy when executed from the clone root.
+
+### Mandatory workflow
+
+1. `cd` to the repository root (directory that contains root `package.json` and `pnpm-workspace.yaml`).
+2. Run stabilization in order:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm --filter @vex/shared build
+pnpm --filter @vex/api run db:generate
+pnpm -w turbo run build
+pnpm --filter @vex/web run quality:web
+```
+
+3. Root `package.json` must keep **`pnpm.overrides`** inside the **`pnpm`** object (not a stray top-level `overrides` key) so pnpm applies 3D stack pins consistently.
+
+### CI / automation
+
+- `.github/workflows/build-stability.yml` asserts the workspace root before build steps.
+- `.github/workflows/quality.yml` runs web quality on PRs when `apps/web` / `packages/ui` change.
+
+### KPI mapping (post-green build)
+
+Tie new cinematic surfaces to measurable lifts (baseline vs release):
+
+| Surface | Metric | Target |
+|---------|--------|--------|
+| Hero | Dwell time on `/` | **+40%** vs baseline |
+| Configurator | Engagement (sessions with 3+ interactions) | **3×** vs baseline |
+| Checkout | Stripe Checkout session start rate | **2×** vs baseline |
+
+Instrumentation: tenant-scoped analytics events + existing Stripe/API paths — keep hero WebGL gated and fallbacks for `prefers-reduced-motion`.
+
+---
+
 ## Execution checklist
 
 - [ ] Phase 1: Monorepo, API, DB, auth

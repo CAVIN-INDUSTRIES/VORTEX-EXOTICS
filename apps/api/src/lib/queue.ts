@@ -300,6 +300,48 @@ export async function enqueueAutonomousWorkflow(data: {
   return true;
 }
 
+/** Luxury moat: valuation warm → PDF job → Stripe hook (stub) — tenant-scoped, idempotent job id. */
+export async function enqueueDealOrchestration(data: {
+  tenantId: string;
+  appraisalId: string;
+  requestedByUserId?: string;
+  correlationId?: string;
+}): Promise<string | null> {
+  const q = getQueue();
+  const correlationId = data.correlationId ?? globalThis.crypto.randomUUID();
+  if (!q) return correlationId;
+  await q.add(
+    "deal-orchestration",
+    {
+      tenantId: data.tenantId,
+      appraisalId: data.appraisalId,
+      requestedByUserId: data.requestedByUserId,
+      correlationId,
+    },
+    { jobId: `deal:${data.tenantId}:${data.appraisalId}:${correlationId}` }
+  );
+  return correlationId;
+}
+
+/** Apex Studio — queue 360° spin export (stub worker logs until render pipeline ships). */
+export async function enqueueApexStudio360Export(data: {
+  tenantId: string;
+  buildSnapshotId: string;
+  format?: "gif" | "mp4";
+}): Promise<void> {
+  const q = getQueue();
+  if (!q) return;
+  await q.add(
+    "apex-studio-360-export",
+    {
+      tenantId: data.tenantId,
+      buildSnapshotId: data.buildSnapshotId,
+      format: data.format ?? "mp4",
+    },
+    { jobId: `apex360:${data.tenantId}:${data.buildSnapshotId}` }
+  );
+}
+
 let workerInstance: Worker | null = null;
 
 async function processJob(job: Job): Promise<void> {
@@ -918,6 +960,54 @@ async function processJob(job: Job): Promise<void> {
       } else if (workflowType === "appraisal_marketplace_push") {
         await enqueueIterationAnalysis({ tenantId });
       }
+      return;
+    }
+    if (name === "deal-orchestration") {
+      const appraisalId = String(data.appraisalId ?? "");
+      const correlationId = String(data.correlationId ?? "");
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.deal_orchestration",
+          payload: {
+            appraisalId,
+            correlationId,
+            phases: ["valuation_cache_warm", "appraisal_pdf", "stripe_session_stub"],
+            note: "External valuation spend capped in ValuationService / POST /appraisals/valuate",
+          },
+        },
+      });
+      await enqueueValuationCacheWarm({ tenantId, cacheKeyHint: `appraisal:${appraisalId}` });
+      await enqueueAppraisalPdfGenerate({
+        tenantId,
+        appraisalId,
+        requestedByUserId: data.requestedByUserId != null ? String(data.requestedByUserId) : undefined,
+      });
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.deal_orchestration_stripe",
+          payload: {
+            appraisalId,
+            correlationId,
+            note: "Stripe Checkout session creation integrates with billing routes",
+          },
+        },
+      });
+      return;
+    }
+    if (name === "apex-studio-360-export") {
+      await prisma.eventLog.create({
+        data: {
+          tenantId,
+          type: "job.apex_studio_360_export",
+          payload: {
+            buildSnapshotId: String(data.buildSnapshotId ?? ""),
+            format: String(data.format ?? "mp4"),
+            note: "Stub — wire headless Three/ffmpeg exporter; idempotent job id per snapshot",
+          },
+        },
+      });
       return;
     }
     throw new Error(`unknown job name: ${name}`);

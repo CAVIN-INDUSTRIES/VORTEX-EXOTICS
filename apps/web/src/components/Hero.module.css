@@ -20,6 +20,7 @@
   z-index: 0;
   pointer-events: none;
   filter: saturate(1.05) contrast(1.05);
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), filter 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Single soft wash — avoids muddy stack with global ambient */

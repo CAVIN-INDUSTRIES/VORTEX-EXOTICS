@@ -79,7 +79,7 @@ export function ConfiguratorVehicleCanvas({
 
   useEffect(() => {
     let cancelled = false;
-    void probeWebGPU().then((ok) => {
+    void probeWebGPU().then((ok: boolean) => {
       if (!cancelled) setWebgpuCapable(ok);
     });
     return () => {

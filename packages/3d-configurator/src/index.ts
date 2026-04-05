@@ -34,6 +34,53 @@ export const VEX_PARTICLE_LOD_BUDGETS = {
   desktop: 512,
 } as const;
 
+/** Scroll / formation hooks (`useApexHeroOrchestration`) should stay on rAF — budget ≈16.7ms/frame at 60Hz. */
+export const VEX_TARGET_FPS = 60 as const;
+export const VEX_TARGET_FRAME_MS = 1000 / VEX_TARGET_FPS;
+
+export type ConfiguratorDprHints = {
+  reducedMotion?: boolean;
+  deviceMemory?: number;
+  hardwareConcurrency?: number;
+};
+
+/**
+ * Caps Canvas `dpr` for configurator + inventory viewers — ties to reduced motion + `deviceMemory` / core count.
+ * Import from `@vex/3d-configurator` so perf budget stays single-sourced with §21.
+ */
+export function resolveConfiguratorMaxDpr(hints?: ConfiguratorDprHints): number {
+  if (typeof window === "undefined") return 2;
+  const reduced =
+    hints?.reducedMotion ??
+    (typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (reduced) return 1.25;
+  type NavMem = Navigator & { deviceMemory?: number };
+  const nav: NavMem | null = typeof navigator !== "undefined" ? (navigator as NavMem) : null;
+  const memory = hints?.deviceMemory ?? nav?.deviceMemory ?? 8;
+  const cores =
+    hints?.hardwareConcurrency ??
+    (typeof navigator !== "undefined" ? navigator.hardwareConcurrency ?? 8 : 8);
+  const constrained = memory <= 4 || cores <= 4;
+  return constrained ? 1.5 : 2.2;
+}
+
+/**
+ * Defer GLB decode/preload off the critical path (idle → fallback `setTimeout`).
+ * **Roadmap:** move Draco/Meshopt decode to a dedicated worker; this stays main-thread but non-blocking for first paint.
+ */
+export function scheduleDeferredModelWarmup(task: () => void): void {
+  if (typeof window === "undefined") {
+    task();
+    return;
+  }
+  const ric = window.requestIdleCallback;
+  if (typeof ric === "function") {
+    ric(() => task(), { timeout: 2500 });
+    return;
+  }
+  window.setTimeout(task, 0);
+}
+
 /** Runtime particle budget for `ParticleVortex` (tab visibility + viewport width). SSR: full cap. */
 export function resolveParticlePointBudget(): number {
   const cap = VEX_WEBGL_PERF.targetMaxParticlePoints;

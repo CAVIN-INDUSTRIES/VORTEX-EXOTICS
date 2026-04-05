@@ -5,6 +5,7 @@
       "startServerCommand": "pnpm --filter @vex/web start",
       "url": [
         "http://127.0.0.1:3000/",
+        "http://127.0.0.1:3000/configure",
         "http://127.0.0.1:3000/inventory",
         "http://127.0.0.1:3000/build"
       ]

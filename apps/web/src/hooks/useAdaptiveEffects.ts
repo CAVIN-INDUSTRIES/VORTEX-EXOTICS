@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveConfiguratorMaxDpr } from "@vex/3d-configurator";
 import { useMemo } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
@@ -10,7 +11,7 @@ export function useAdaptiveEffects() {
 
   return useMemo(() => {
     if (typeof navigator === "undefined") {
-      return { allowHeavyFx: !reducedMotion, maxDpr: 2 };
+      return { allowHeavyFx: !reducedMotion, maxDpr: resolveConfiguratorMaxDpr({ reducedMotion }) };
     }
 
     const nav = navigator as NavigatorWithDeviceMemory;
@@ -20,7 +21,11 @@ export function useAdaptiveEffects() {
 
     return {
       allowHeavyFx: !constrained,
-      maxDpr: constrained ? 1.5 : 2.2,
+      maxDpr: resolveConfiguratorMaxDpr({
+        reducedMotion,
+        deviceMemory: memory,
+        hardwareConcurrency: cores,
+      }),
     };
   }, [reducedMotion]);
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useId, useState } from "react";
+import { scheduleDeferredModelWarmup } from "@vex/3d-configurator";
 import { Canvas } from "@react-three/fiber";
 import { Html, useProgress } from "@react-three/drei";
 import { VehicleScene, getCanvasCamera, type CameraPreset } from "@/components/configurator/VehicleScene";
@@ -9,6 +10,7 @@ import { preloadVehicleGltf } from "@/components/configurator/GltfVehicle";
 import { StaticVehicleFallback } from "@/components/configurator/StaticVehicleFallback";
 import { DEFAULT_PUBLIC_VEHICLE_GLB } from "@/lib/vehicle3d/defaults";
 import type { FinishId } from "@/components/configurator/vehicleFinish";
+import { useAdaptiveEffects } from "@/hooks/useAdaptiveEffects";
 import { useWebglEligible } from "@/hooks/useWebglEligible";
 import styles from "./InventoryVehicleViewer.module.css";
 import fallbackStyles from "@/components/configurator/StaticVehicleFallback.module.css";
@@ -41,6 +43,7 @@ function Loader() {
 export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Props) {
   const headingId = useId();
   const webglEligible = useWebglEligible();
+  const { maxDpr } = useAdaptiveEffects();
   const glb = modelGlbUrl?.trim() || DEFAULT_PUBLIC_VEHICLE_GLB;
   const isListingAsset = Boolean(modelGlbUrl?.trim());
   const cam = getCanvasCamera(false);
@@ -51,7 +54,7 @@ export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Prop
   }, []);
 
   useEffect(() => {
-    preloadVehicleGltf(glb);
+    scheduleDeferredModelWarmup(() => preloadVehicleGltf(glb));
   }, [glb]);
 
   return (
@@ -94,7 +97,7 @@ export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Prop
         ) : (
           <Canvas
             shadows
-            dpr={[1, 2.25]}
+            dpr={[1, maxDpr]}
             camera={{ position: cam.position, fov: cam.fov, near: 0.1, far: 120 }}
             gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
             onCreated={({ gl }) => configureVexRenderer(gl)}

@@ -399,7 +399,7 @@ apps/crm
 
 ## 26. WebGL supremacy → revenue engine v3 (one-pager)
 
-**One Solution → Revenue Engine v3:** one **tenant-safe** monorepo ships the **cinematic vault** (`vortex` + configure + `/build`) **and** the **GTM velocity stack** — **§29** (**zero-click** workspace autonomy), **§30** (**Turbo remote cache** + **`turbo.json`** graph + Resource Arsenal), plus **human + agent swarm** on this **§0–§30** spec. That combination is the **honest** luxury-segment **production-rate** edge vs **acquisition-siloed** mass-market stacks (**§28**); it is **not** a claim to Cox-scale **DMS / auction** breadth until **named** integrations exist.
+**One Solution → Revenue Engine v3:** one **tenant-safe** monorepo ships the **cinematic vault** (`vortex` + configure + `/build`) **and** the **GTM velocity stack** — **§29** (**zero-click** workspace autonomy), **§30** (**Turbo** cache warm-up + remote cache + **`turbo.json`** graph + **visual asset arsenal** folders + Resource Arsenal links), plus **human + agent swarm** on this **§0–§30** spec. That combination is the **honest** luxury-segment **production-rate** edge vs **acquisition-siloed** mass-market stacks (**§28**); it is **not** a claim to Cox-scale **DMS / auction** breadth until **named** integrations exist.
 
 | Pillar | Tie to performance |
 |--------|---------------------|
@@ -408,7 +408,7 @@ apps/crm
 | **Apex tier (~$499/mo illustrative)** | **Instant access to the full VEX luxury OS** (retail slice) with **cinematic demo provisioning** when **`tenant-3d-demo-seed`** is **live** (else **target** — §30.3): white-label **3D portals** + embeddable **vault** aesthetic, **AR-ready** export path (roadmap), **bespoke CRM** cockpit (glass + metric orbs), **custom domains** + SSL, higher valuation / API caps vs Pro — **positioning:** the **unified cinematic layer** Cox does not productize for HNW (see §28); **not** a DMS replacement claim until §28 P2 ships. |
 | **Pilot** | **90 s** playbook (§18): Stripe → tenant → **private vault** first paint (`legacy` or `vortex` per flags) + CRM login — **emotional hook** Cox’s throughput stack does not optimize for; **AI personalization** teaser on `/portal` (roadmap) stays **consent + tenant-scoped**. |
 | **CI trust** | Green **`pnpm` + Turbo** workflows on `main` — ship narrative matches what automation proves (`build`, `quality:web`, API gates per repo). **Turbo remote cache** (**§30**) needs **`TURBO_TOKEN` + `TURBO_TEAM`** and usually **remote-cache write** on the token/team role to **seed** shared artifacts; **read-only** tokens may still **hit** CI-populated cache but **not** upload local builds. Claim only what logs show. |
-| **Velocity (luxury vs fragmented stacks)** | **One monorepo** + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than **multi-product** retail stacks (§28). **Zero-friction production rate:** **§29** (**workspace** “don’t ask again” + **full Cursor quit/reopen** + background settings) + **§30** (**Resource Arsenal** — **`turbo.json` cache graph** + **remote cache** across devs + runners, GPU/perf tooling, 3D sources — plus **CI + doctrine**) + **human + agent swarm** on one blueprint → faster **cinematic** iteration in the **HNW** niche than siloed incumbents can align a coherent story — **not** Cox-scale **DMS** depth. |
+| **Velocity (luxury vs fragmented stacks)** | **One monorepo** + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than **multi-product** retail stacks (§28). **Zero-friction production rate:** **§29** (**workspace** “don’t ask again” + **full Cursor quit/reopen** + background settings) + **§30** (**Resource Arsenal** — **`turbo.json` cache graph** + **warm-up** commands + **remote cache** + visual tree `packages/3d-configurator/assets/`, GPU/perf tooling, external 3D links — plus **CI + doctrine**) + **human + agent swarm** on one blueprint → faster **cinematic** iteration in the **HNW** niche than siloed incumbents can align a coherent story — **not** Cox-scale **DMS** depth. |
 
 ---
 
@@ -465,7 +465,7 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 
 ### 28.4 One-solution → revenue engine v3 (competitive wording + Apex tier)
 
-- **Revenue Engine v3 (internal frame):** **one unified luxury OS** (web + CRM + API) **plus** **production-rate firepower** — **local autonomy** (**§29**), **Turbo remote cache + `turbo.json`** (**§30**, including **`TURBO_CACHE`** and **write-capable** tokens when seeding shared artifacts), and **swarm parallelism** on the **§0–§30** blueprint — is the **repeatable** way VEX **out-ships** fragmented retail conglomerates **in-segment** without pretending to **out-platform** Cox on **DMS / wholesale** depth.
+- **Revenue Engine v3 (internal frame):** **one unified luxury OS** (web + CRM + API) **plus** **production-rate firepower** — **local autonomy** (**§29**), **Turbo** warm-up + remote cache + **`turbo.json`** (**§30**, **`TURBO_CACHE`** + **write-capable** tokens when seeding shared artifacts), **visual asset arsenal** (`packages/3d-configurator/assets/**`), and **swarm parallelism** on the **§0–§30** blueprint — is the **repeatable** way VEX **out-ships** fragmented retail conglomerates **in-segment** without pretending to **out-platform** Cox on **DMS / wholesale** depth.
 - **Positioning line (external):** *“VEX is the unified luxury automotive OS: one cinematic customer vault, one dealer cockpit, one tenant-safe API — built for vehicles and buyers that Cox’s mass-market stack was never designed to romance.”*
 - **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1). **Production-rate firepower** compounds that: **§29** locks **workspace-scoped** background runs (**modal checkbox + full Cursor quit/reopen**); **§30** adds **Resource Arsenal** plus **Turbo remote cache** (**`TURBO_TOKEN` / `TURBO_TEAM`**, optional **`TURBO_CACHE=remote:rw`**, **write** role when seeding) on **local `.env.local` + GitHub Actions** and a **cache-aware `turbo.json`** (`build`, **`quality:web`**, **`cacheDir`**, safe **`globalPassThroughEnv`**) so **repeat builds / quality** amortize across **machines and CI** when auth and permissions allow — **~4–6s** is a **typical** cache-hit band, **not** a guarantee every run; **swarm parallelism** (people + agents) runs against **one** spec — still **honest** vs backend breadth gaps (verify with logs, not slogans).
 - **Apex tier (~$499/mo illustrative):** **Instant access to the full VEX luxury OS** with **cinematic demo provisioning** (when **`tenant-3d-demo-seed`** is **live and audited** — else **target**, see §30.4): white-label **3D portals**, **tenant-scoped** API caps, **glass CRM** cockpit parity with marketing tokens, **custom domains** + SSL.
@@ -504,6 +504,32 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 - **Turbo remote cache:** [Turbo](https://turbo.build) remote artifact cache — **local + CI** share hits once **`TURBO_TOKEN`** + **`TURBO_TEAM`** are set (see **zero-to-live steps** below). Typical effect: repeat **`pnpm -w turbo run build`** runs drop from **~20s → ~4–6s** when tasks are **cache hits** (hardware + graph dependent).
 - **GPU testing:** Prefer a machine with **discrete GPU** (NVIDIA / AMD) for **60 fps** validation of **`vortex`** + configure; iGPU = still valid for **fallback** and **a11y** paths.
 - **Asset pipeline (repo):** `packages/3d-configurator/assets/` — canonical home for **LOD**, **texture atlases**, and shared glTF-sidecar files; **large binaries** stay **out of plain git** or use **Git LFS** per team policy.
+
+**Visual asset arsenal (repo folders — output firepower, no secrets):**
+
+| Path | Intent |
+|------|--------|
+| **`packages/3d-configurator/assets/models/`** | Staged **glTF / GLB** (tenant flagship, LOD steps, sidecars) — prefer **Git LFS** or CDN for real binaries; keep **small** placeholders in git if needed. |
+| **`packages/3d-configurator/assets/hdri/`** | Staged **equirectangular HDR** for `VortexHeroBrand.environmentMapURL` / showroom — same LFS/CDN rule as models. |
+| **`apps/web/public/models/`** | Optional **self-hosted** hero or configurator GLB when you intentionally ship static bytes with **`apps/web`** (see `DEFAULT_PUBLIC_VEHICLE_GLB` comment in `apps/web/src/lib/vehicle3d/defaults.ts`; default demo uses **Khronos** CDN URL). |
+
+**Turbo cache warm-up (local or CI — populates `.turbo/cache` and remote when write-capable):**
+
+```bash
+# Full monorepo graph (7 packages) — primary warm-up
+pnpm -w turbo run build
+
+# Marketing + dependency packages only
+pnpm -w turbo run build --filter=@vex/web
+
+# Web quality (runs ^build first via turbo.json)
+pnpm exec turbo run quality:web --filter=@vex/web
+
+# Inspect hashes / cache flags without compiling
+pnpm -w turbo run build --dry-run=text
+```
+
+First run after a **clean** checkout or **lockfile** change is expected to be **cold**; **second** run (unchanged sources) should show **local** and/or **remote** cache hits per **§30** troubleshooting. **CI green on `main`** with a **write** token is the usual **team-wide** remote warm.
 
 **Turbo remote cache — zero-to-live (~3 min, no secrets in git):**
 

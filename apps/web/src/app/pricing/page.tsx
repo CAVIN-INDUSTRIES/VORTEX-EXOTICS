@@ -63,12 +63,41 @@ export default function PricingPage() {
           <p className={styles.eyebrow}>Dealer SaaS</p>
           <h1 className={styles.title}>Pricing that scales with your lot</h1>
           <p className={styles.subhead}>Start in minutes. Upgrade anytime. Your brand stays front-and-center.</p>
-          <p className={styles.subhead} style={{ marginTop: "0.75rem", maxWidth: "40rem", opacity: 0.92 }}>
-            <strong>Apex / cinematic tier:</strong> white-label 3D hero + configurator embeds tie to MRR — contact us for a quote.
-            Execution blueprint: <code>docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md</code> in the repo.{" "}
-            <Link href="/contact?intent=apex-tier">Request Apex pricing →</Link>
+          <p className={styles.subhead} style={{ marginTop: "0.75rem", maxWidth: "44rem", opacity: 0.92 }}>
+            <strong>Cinematic 3D → MRR:</strong> dealers who run the <strong>vortex</strong> hero plus a live{" "}
+            <Link href="/build">/build</Link> preview typically see stronger qualified funnel depth than flat sites — we treat that as a{" "}
+            <strong>conversion multiplier</strong> on hero→configurator steps (measure before claiming lift). Self-serve plans below are{" "}
+            <strong>Vortex</strong> tier; <strong>Apex</strong> adds white-label 3D embeds and a cinematic portal;{" "}
+            <strong>Quantum</strong> is multi-rooftop enterprise (AI/autonomous hooks, DMS priority, SLA).
+          </p>
+          <p className={styles.subhead} style={{ marginTop: "0.65rem", maxWidth: "40rem", opacity: 0.88 }}>
+            Blueprint: <code>docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md</code>.{" "}
+            <Link href="/contact?intent=apex-tier">Apex quote →</Link>
+            {" · "}
+            <Link href="/contact?intent=quantum-tier">Quantum enterprise →</Link>
           </p>
         </div>
+
+        <section className={styles.tierStrip} aria-label="VEX product tiers">
+          <div className={styles.tierCard}>
+            <h2 className={styles.tierName}>Vortex</h2>
+            <p className={styles.tierDesc}>
+              Growth stack — inventory, CRM, appraisals, portal. Subscribe via Starter or Pro below.
+            </p>
+          </div>
+          <div className={styles.tierCard}>
+            <h2 className={styles.tierName}>Apex</h2>
+            <p className={styles.tierDesc}>
+              Cinematic revenue tier: white-label 3D hero + configurator embeds, branded vault experience, custom domain path.
+            </p>
+          </div>
+          <div className={styles.tierCard}>
+            <h2 className={styles.tierName}>Quantum</h2>
+            <p className={styles.tierDesc}>
+              Enterprise: groups, dedicated cinematic pipeline, valuation automation at scale, integrations + SLA.
+            </p>
+          </div>
+        </section>
 
         <div className={styles.toggleRow} aria-label="Billing interval">
           <button

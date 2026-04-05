@@ -1,6 +1,7 @@
-# VEX Elite Digital Presence v2.0 — Master directive & execution
+# VEX Elite Digital Presence v2 — Summary roadmap
 
 **Date:** 2026-04-05  
+**Canonical expanded spec (wireframes, paths, Gantt, Quantum matrix):** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md)  
 **Status:** Active roadmap (builds on [v1 WebGL gate + §21–27](2026-04-04-vex-ELITE-DIGITAL-PRESENCE-v1.md) and [cinematic apex v4](2026-04-05-vex-cinematic-apex-v4.md)).  
 **Branch target:** `elite-digital-presence-v1` (merge to `main` per `docs/PILOT_SHIP.md`).
 

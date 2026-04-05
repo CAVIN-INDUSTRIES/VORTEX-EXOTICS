@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-04 (updated live snapshot)  
 **Branch:** `elite-digital-presence-v1` (from `cursor/pilot-appraisal-loop` @ `1e84177`)  
-**Status:** Active blueprint + **live partial implementation** (see §0). **Master phased roadmap:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail; v2 carries Gantt + tier narrative.
+**Status:** Active blueprint + **live partial implementation** (see §0). **Crown Jewel expanded spec:** [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md); short checklist: [2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md). This file remains the **WebGL gate + perf budget** detail (§21+).
 
 **Reality check:** The items below describe the **target experience** plus **what is already shipped**. Shipping requires multiple sprints: 3D performance budgets, asset pipelines, a11y fallbacks, and load testing. Each phase must pass `pnpm -w turbo run build` and scoped quality gates.
 

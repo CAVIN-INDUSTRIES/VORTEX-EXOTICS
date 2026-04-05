@@ -112,6 +112,56 @@ export function Luxury3DCard({
   );
 }
 
+/**
+ * Elite v2.0 — glass panel with violet–gold neon rim (marketing “NeonCard”).
+ * For KPI numbers prefer `GlassKPI`; use this for generic luxury content blocks.
+ */
+export function NeonCard({
+  children,
+  className,
+  style,
+}: {
+  children: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      className={className}
+      style={{
+        borderRadius: vexThemeTokens.radiusMd,
+        background: lux.surfaceGlassLuxury,
+        border: `1px solid rgba(160, 32, 240, 0.32)`,
+        boxShadow: `${lux.volumetricShadow}, 0 0 36px rgba(160, 32, 240, 0.14), ${lux.neonBloomGold}`,
+        backdropFilter: "blur(18px) saturate(1.15)",
+        padding: "1rem 1.1rem",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** Elite v2.0 — GTM name for `LiquidMetalCTA` (vortex-energy primary actions). */
+export function VortexButton({
+  children,
+  className,
+  strength,
+  onLiquidFlash,
+}: {
+  children: ReactNode;
+  className?: string;
+  strength?: number;
+  onLiquidFlash?: () => void;
+}) {
+  return (
+    <LiquidMetalCTA className={className} strength={strength} onLiquidFlash={onLiquidFlash}>
+      {children}
+    </LiquidMetalCTA>
+  );
+}
+
 /** Glass KPI tile with luxury border + optional emerald / gold bloom. */
 export function GlassKPI({
   label,

@@ -16,7 +16,8 @@ cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
 
 ## Docs
 
-- **Elite digital presence v2.0 (master directive — phases, Gantt, budgets):** [docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md)
+- **Elite digital presence v2.0 (Crown Jewel Protocol — full wireframes, paths, Gantt, Quantum tier):** [docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md)
+- **Elite v2 summary (quick checklist):** [docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md)
 - **Elite digital presence v1 + WebGL gate / §21+ (operational detail):** [docs/plans/2026-04-04-vex-ELITE-DIGITAL-PRESENCE-v1.md](docs/plans/2026-04-04-vex-ELITE-DIGITAL-PRESENCE-v1.md)
 - **Design:** [docs/plans/2025-03-15-vex-luxury-marketplace-design.md](docs/plans/2025-03-15-vex-luxury-marketplace-design.md)
 - **Implementation plan:** [docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md](docs/plans/2025-03-15-vex-luxury-marketplace-implementation.md) (includes **Digital Presence v2 — Cinematic Layer**)
@@ -79,7 +80,8 @@ cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
 
 ### Investor + cinematic surfaces
 
-- **Cinematic hero → conversion (hypothesis, measure before claiming):** Qualified traffic exposed to **vortex** hero (`DynamicHeroShell` → `ApexHeroScene`) + 3D configurator path is modeled for **15–40%** uplift vs flat baseline — instrument funnels first; see [elite v2 plan](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md#monetization-tiers-illustrative--product--gtm).
+- **Cinematic Hero Conversion Multiplier (hypothesis — measure before claiming):** Treat the **vortex** path (`DynamicHeroShell` → `ApexHeroScene` + `/build` 3D) as a **conversion multiplier** on **qualified** traffic: model **1.15–1.40×** improvement on hero→configurator steps vs a flat CSS-only baseline; **>1.40×** is a **stretch** target for controlled A/B only — not a public guarantee. Instrument PostHog/GA4 cohorts; see [Elite Digital Presence v2.0](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md#performance-budgets--acceptance-criteria).
+- **Cinematic hero → conversion (legacy bullet):** Same framing as v2 summary — [monetization + hypothesis table](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md#monetization-tiers-illustrative--product--gtm).
 - **Primary investor preview:** the **cinematic homepage** at `/` — full-viewport `VortexHeroScene` (`@vex/ui/3d`) + liquid-metal CTAs + tenant-tinted particles/iridescent paint; best “live product” demo for decks and pilots (run `pnpm dev:web`, `pnpm dev:web:cinematic`, or `pnpm --filter @vex/web run dev:moat` from repo root).
 - **Investor (lightweight):** [apps/web/src/app/investor/page.tsx](apps/web/src/app/investor/page.tsx) → `/investor` when deployed.
 - **Investor deck:** `/investor-deck`.
@@ -98,7 +100,7 @@ cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
 - **apps/web** — Next.js customer site (dark luxury theme)
 - **apps/crm** — Next.js CRM for staff
 - **packages/shared** — Shared TypeScript types and Zod schemas
-- **packages/ui** — Shared UI primitives for web + CRM (`@vex/ui`); **3D** entry: `@vex/ui/3d` (`VortexHeroScene`, `CinematicCarViewer`, post stack)
+- **packages/ui** — Shared UI primitives for web + CRM (`@vex/ui`); **elite** surfaces: `NeonCard`, `VortexButton` (alias of `LiquidMetalCTA`), `GlassKPI`, `Luxury3DCard`; **3D** entry: `@vex/ui/3d` (`VortexHeroScene`, `CinematicCarViewer`, post stack)
 - **packages/cinematic** — Luxury car shaders (`@vex/cinematic`) consumed by `@vex/ui` `HeroGltfCar`
 
 ## Fresh clone: full build verification

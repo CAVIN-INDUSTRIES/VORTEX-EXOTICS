@@ -11,6 +11,10 @@ dist
 .pnpm-store
 .cursor/worktrees.json
 
+# Local business / deck exports (do not commit)
+/VEX-Business-Package/
+/VEX-Business-Package.zip
+
 # Playwright / web E2E
 apps/web/test-results/
 apps/web/playwright-report/

@@ -6,6 +6,9 @@ on:
     paths:
       - "apps/web/**"
       - "packages/ui/**"
+      - "packages/shared/**"
+      - "packages/cinematic/**"
+      - "packages/3d-configurator/**"
       - "pnpm-lock.yaml"
       - "package.json"
       - "turbo.json"
@@ -19,6 +22,9 @@ jobs:
   web-quality:
     name: quality:web + quality:3d
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,11 +46,8 @@ jobs:
       - name: Install Playwright (Chromium) for a11y
         run: pnpm --filter @vex/web exec playwright install --with-deps chromium
 
-      - name: Build @vex/web dependency graph
-        run: pnpm -w turbo run build --filter=@vex/web
-
-      - name: quality:web
-        run: pnpm --filter @vex/web run quality:web
+      - name: quality:web (Turbo — cacheable; depends on ^build)
+        run: pnpm exec turbo run quality:web --filter=@vex/web
 
       - name: quality:3d (after build graph)
         run: pnpm turbo run quality:3d --filter=@vex/web

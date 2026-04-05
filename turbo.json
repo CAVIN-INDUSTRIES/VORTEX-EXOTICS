@@ -21,10 +21,15 @@
     "VALUATION_*",
     "STRIPE_*",
     "INTERNAL_PILOT_METRICS_KEY",
-    "INTERNAL_API_URL"
+    "INTERNAL_API_URL",
+    "TURBO_TOKEN",
+    "TURBO_TEAM",
+    "TURBO_REMOTE_ONLY"
   ],
+  "cacheDir": ".turbo/cache",
   "tasks": {
     "build": {
+      "cache": true,
       "dependsOn": [
         "^build"
       ],
@@ -50,6 +55,7 @@
         "NEXT_PUBLIC_SITE_URL",
         "NEXT_PUBLIC_WEB_URL",
         "NEXT_PUBLIC_HERO_VIDEO_URL",
+        "NEXT_PUBLIC_ENABLE_HERO_WEBGL",
         "VALUATION_*",
         "STRIPE_SECRET_KEY"
       ]
@@ -131,6 +137,29 @@
       "outputs": [],
       "inputs": [
         "**/*.{ts,tsx,js,jsx}"
+      ]
+    },
+    "quality:web": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [],
+      "cache": true,
+      "inputs": [
+        "apps/web/**/*.{ts,tsx,js,jsx,mjs,cjs,json}",
+        "apps/web/tests/**",
+        "apps/web/playwright.config.*",
+        "packages/shared/**",
+        "packages/ui/**",
+        "packages/cinematic/**",
+        "packages/3d-configurator/**"
+      ],
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_WEB_URL",
+        "NEXT_PUBLIC_HERO_VIDEO_URL",
+        "NEXT_PUBLIC_ENABLE_HERO_WEBGL"
       ]
     },
     "cinematic:build": {

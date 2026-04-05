@@ -406,7 +406,7 @@ apps/crm
 | **Apex tier (~$499/mo illustrative)** | **Instant access to the full VEX luxury OS** (retail slice) with **cinematic demo provisioning** when **`tenant-3d-demo-seed`** is **live** (else **target** — §30.3): white-label **3D portals** + embeddable **vault** aesthetic, **AR-ready** export path (roadmap), **bespoke CRM** cockpit (glass + metric orbs), **custom domains** + SSL, higher valuation / API caps vs Pro — **positioning:** the **unified cinematic layer** Cox does not productize for HNW (see §28); **not** a DMS replacement claim until §28 P2 ships. |
 | **Pilot** | **90 s** playbook (§18): Stripe → tenant → **private vault** first paint (`legacy` or `vortex` per flags) + CRM login — **emotional hook** Cox’s throughput stack does not optimize for; **AI personalization** teaser on `/portal` (roadmap) stays **consent + tenant-scoped**. |
 | **CI trust** | Green **`pnpm` + Turbo** workflows on `main` — ship narrative matches what automation proves (`build`, `quality:web`, API gates per repo). **Turbo remote cache** (**§30**) on **`TURBO_TOKEN` + `TURBO_TEAM`** speeds **repeat** CI + local builds; claim only what logs show. |
-| **Velocity (luxury vs fragmented stacks)** | **One monorepo** + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than **multi-product** retail stacks (§28). **Zero-friction production rate:** **§29** (**workspace** “don’t ask again” + **full Cursor quit/reopen** + background settings) + **§30** (**Resource Arsenal** — **Turbo remote cache** across devs + runners, GPU/perf tooling, 3D sources — plus **CI + doctrine**) + **human + agent swarm** on one blueprint → faster **cinematic** iteration in the **HNW** niche than siloed incumbents can align a coherent story — **not** Cox-scale **DMS** depth. |
+| **Velocity (luxury vs fragmented stacks)** | **One monorepo** + **shared tokens** + **Zod contracts** → fewer cross-vendor handoffs than **multi-product** retail stacks (§28). **Zero-friction production rate:** **§29** (**workspace** “don’t ask again” + **full Cursor quit/reopen** + background settings) + **§30** (**Resource Arsenal** — **`turbo.json` cache graph** + **remote cache** across devs + runners, GPU/perf tooling, 3D sources — plus **CI + doctrine**) + **human + agent swarm** on one blueprint → faster **cinematic** iteration in the **HNW** niche than siloed incumbents can align a coherent story — **not** Cox-scale **DMS** depth. |
 
 ---
 
@@ -464,7 +464,7 @@ Cox-scale operators combine **Dealertrack-class DMS**, **VinSolutions-class CRM*
 ### 28.4 One-solution → revenue engine v3 (competitive wording + Apex tier)
 
 - **Positioning line (external):** *“VEX is the unified luxury automotive OS: one cinematic customer vault, one dealer cockpit, one tenant-safe API — built for vehicles and buyers that Cox’s mass-market stack was never designed to romance.”*
-- **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1). **Production-rate firepower** compounds that: **§29** locks **workspace-scoped** background runs (**modal checkbox + full Cursor quit/reopen**); **§30** adds **Resource Arsenal** plus **Turbo remote cache** (**`TURBO_TOKEN` / `TURBO_TEAM`** on **local `.env.local` + GitHub Actions**) so **repeat builds** amortize across **machines and CI**; **swarm parallelism** (people + agents) runs against **one** spec — still **honest** vs backend breadth gaps (verify with logs, not slogans).
+- **Speed advantage (luxury segment):** **One monorepo** + **single design language** + **cinematic-first** roadmap means VEX can **ship** obsidian-vault UX and **digital-twin** surfaces faster than **acquisition-siloed** incumbents can align a **coherent** HNW story — **not** faster at Cox-scale **DMS** depth (§28.1). **Production-rate firepower** compounds that: **§29** locks **workspace-scoped** background runs (**modal checkbox + full Cursor quit/reopen**); **§30** adds **Resource Arsenal** plus **Turbo remote cache** (**`TURBO_TOKEN` / `TURBO_TEAM`** on **local `.env.local` + GitHub Actions**) and a **cache-aware `turbo.json`** (`build`, **`quality:web`**, **`cacheDir`**, safe **`globalPassThroughEnv`**) so **repeat builds / quality** amortize across **machines and CI**; **swarm parallelism** (people + agents) runs against **one** spec — still **honest** vs backend breadth gaps (verify with logs, not slogans).
 - **Apex tier (~$499/mo illustrative):** **Instant access to the full VEX luxury OS** with **cinematic demo provisioning** (when **`tenant-3d-demo-seed`** is **live and audited** — else **target**, see §30.4): white-label **3D portals**, **tenant-scoped** API caps, **glass CRM** cockpit parity with marketing tokens, **custom domains** + SSL.
 - **90-second self-serve pilot playbook:** Stripe → tenant + CRM login → **first paint** is either **`vortex`** (WebGL vault) or **`legacy`** (CSS + optional video) — **zero** broken layout; messaging leads with the **private hypercar vault** emotional hook Cox’s mass-market stack was not built to **romance**.
 - **Investor attention magnet:** The **obsidian vault hero** (**Lenis**-synced scroll context, **Apex** orchestration, formation particles, **violet–gold** post stack) is the **definitive live pitch asset** — screen-record at **60 fps** (target hardware), then **`NEXT_PUBLIC_ENABLE_HERO_WEBGL=0`** to prove **legacy** parity; pair with **configure** + **/build** in one session to show **one OS**, not a microsite.
@@ -516,6 +516,27 @@ echo 'TURBO_TEAM=your_team_slug_here' >> .env.local
 4. **GitHub Actions:** **Settings → Secrets and variables → Actions** → add repository secrets **`TURBO_TOKEN`** and **`TURBO_TEAM`** (same values as Turbo dashboard).
 5. **Verify:** run **`pnpm -w turbo run build`** twice; the second run should show **remote cache** usage and **must not** print **`Remote caching disabled`** (if it still does, secrets are missing or typo’d).
 
+**Turbo cache optimization (committed `turbo.json` + workflows):**
+
+| Lever | What shipped | Why |
+|-------|----------------|-----|
+| **`cacheDir`** | `.turbo/cache` | Stable local cache path; aligns with Turbo defaults and docs. |
+| **`build`** | `cache: true` + **`NEXT_PUBLIC_ENABLE_HERO_WEBGL`** in `env` | Hero WebGL gate changes **invalidate** `@vex/web` build hashes correctly. |
+| **`quality:web`** | `dependsOn: ["^build"]`, `cache: true`, inputs = `apps/web` + **`tests/**`** + **`playwright.config.*`** + shared packages | Lets **`pnpm exec turbo run quality:web --filter=@vex/web`** participate in **remote cache** when secrets are set. |
+| **`globalPassThroughEnv`** | **`TURBO_TOKEN`**, **`TURBO_TEAM`**, **`TURBO_REMOTE_ONLY`** | CLI / remote features work **without** putting secrets in **`globalEnv`** (which would **poison** the global hash on token rotation). |
+
+**Do not (cache thrash / false misses):**
+
+- Add `**/.env*` to **`globalDependencies`** — local env drift would **bust** remote cache for everyone.
+- Add **`TURBO_TOKEN`** to **`globalEnv`** — rotating the token **invalidates** all cached tasks.
+
+**Optional (local / CI only — not committed):**
+
+- **`TURBO_REMOTE_ONLY=true`** — debug **remote** hits; can slow **cold** runs when local cache is ignored.
+- **`turbo prune --scope=@vex/web`** — smaller **Docker** / deploy checkouts; see [Turbo prune](https://turbo.build/repo/docs/handbook/deploying-with-docker#the-solution-prune).
+
+**CI:** `.github/workflows/quality.yml` runs **`pnpm exec turbo run quality:web --filter=@vex/web`** so the **same** Turbo graph (deps **`^build`** + smoke) can **hit** remote cache when **`TURBO_*`** secrets exist.
+
 ### 30.1 Strategic frame (doctrine — speed vs Cox)
 
 **Strategic frame:** VEX chooses a **different battlefield** than Cox Automotive’s **mass-market throughput** stack (§28). **Firepower** here means **shipping speed** and **UX coherence** in the **luxury / exotic** niche — not headcount parity. **§30** pairs **live tooling** (above) with **verifiable** levers below — never substitute links for **tenant isolation** or **RBAC** truth.
@@ -532,7 +553,7 @@ echo 'TURBO_TEAM=your_team_slug_here' >> .env.local
 ### 30.3 Technical levers (check these, don’t mythologize)
 
 - **`pnpm@9.15.9`** pinned in workflows — **true** when YAML matches `package.json` `packageManager`.
-- **Turbo remote cache:** CI logs **`Remote caching disabled`** when **`TURBO_TOKEN` / `TURBO_TEAM`** are unset. Follow **§30** “zero-to-live” steps: **GitHub Actions secrets** + **local `.env.local`**; repeat **`pnpm -w turbo run build`** to confirm cache hits.
+- **Turbo remote cache + `turbo.json`:** CI logs **`Remote caching disabled`** when **`TURBO_TOKEN` / `TURBO_TEAM`** are unset. Follow **§30** “zero-to-live” + **cache optimization** table: **GitHub Actions secrets** + **local `.env.local`**; **`quality:web`** runs via **`turbo run … --filter=@vex/web`** in **`quality.yml`** for graph-level caching.
 - **Parallelism:** `turbo run … --concurrency=N` (and default parallel package builds) — already how the monorepo runs.
 - **`quality:web` + Lighthouse:** Run on **qualifying** PR paths (see **`quality.yml`**); **`lighthouserc.json`** enforces **≥0.8** perf / **≥0.9** a11y — **not** 98+ until product + config say so (**VLR**).
 - **“Every tenant instantly gets branded 3D”:** **Roadmap / job design** (`tenant-3d-demo-seed`, **`apex-studio-360-export`**) — claim **live** only after **idempotent** worker + audit path is **proven** in staging.

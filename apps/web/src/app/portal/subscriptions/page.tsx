@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { createBillingPortalSession, createTierCheckoutSession, getCurrentTenantBilling, getPricingPlans } from "@/lib/api";
 import styles from "./subscriptions.module.css";
@@ -68,17 +67,12 @@ export default function PortalSubscriptionsPage() {
 
   if (authLoading || !user) {
     return (
-      <>
-        <Header />
-        <main id="main-content" className={styles.main}><p className={styles.loading}>Loading…</p></main>
-      </>
+      <main id="main-content" className={styles.main}><p className={styles.loading}>Loading…</p></main>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main}>
+    <main id="main-content" className={styles.main}>
         <Link href="/portal" className={styles.back}>← Portal</Link>
         <h1 className={styles.title}>Subscriptions</h1>
 
@@ -120,6 +114,5 @@ export default function PortalSubscriptionsPage() {
           </>
         )}
       </main>
-    </>
   );
 }

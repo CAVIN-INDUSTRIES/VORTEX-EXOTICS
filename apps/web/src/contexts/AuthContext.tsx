@@ -6,6 +6,10 @@ import { getPublicApiBase } from "@/lib/apiBase";
 const API_BASE = getPublicApiBase();
 const TOKEN_KEY = "vex_token";
 const REFRESH_KEY = "vex_refresh";
+const PUBLIC_AUTH_UNAVAILABLE_MESSAGE =
+  "Registration is temporarily unavailable while the production connection is being confirmed. Please try again shortly or contact concierge.";
+const PUBLIC_LOGIN_UNAVAILABLE_MESSAGE =
+  "Sign-in is temporarily unavailable while the production connection is being confirmed. Please try again shortly or contact concierge.";
 
 export interface User {
   id: string;
@@ -30,7 +34,20 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function ensureApiBase(action: "login" | "register" | "session") {
+  if (!API_BASE) {
+    if (action === "register") {
+      throw new Error(PUBLIC_AUTH_UNAVAILABLE_MESSAGE);
+    }
+    if (action === "login") {
+      throw new Error(PUBLIC_LOGIN_UNAVAILABLE_MESSAGE);
+    }
+    throw new Error("Authentication session is unavailable while the production connection is being confirmed.");
+  }
+}
+
 async function refreshSession(refreshToken: string): Promise<{ token: string; refreshToken: string } | null> {
+  ensureApiBase("session");
   const res = await fetch(`${API_BASE}/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -69,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = useCallback(
     async (t: string) => {
+      ensureApiBase("session");
       let res = await fetch(`${API_BASE}/auth/me`, {
         headers: { Authorization: `Bearer ${t}` },
       });
@@ -107,11 +125,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      ensureApiBase("login");
+      let res: Response;
+      try {
+        res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+      } catch {
+        throw new Error(PUBLIC_LOGIN_UNAVAILABLE_MESSAGE);
+      }
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error((err as { message?: string }).message || "Login failed");
@@ -125,11 +149,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = useCallback(
     async (email: string, password: string, name?: string) => {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
+      ensureApiBase("register");
+      let res: Response;
+      try {
+        res = await fetch(`${API_BASE}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
+      } catch {
+        throw new Error(PUBLIC_AUTH_UNAVAILABLE_MESSAGE);
+      }
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error((err as { message?: string }).message || "Registration failed");
@@ -143,7 +173,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     const t = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
-    if (t) {
+    if (t && API_BASE) {
       void fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
         headers: { Authorization: `Bearer ${t}` },

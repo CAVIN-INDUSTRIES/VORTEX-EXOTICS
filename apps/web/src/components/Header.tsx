@@ -40,12 +40,12 @@ export function Header() {
       <div className="shell pb-3">
         <div className="luxury-nav-bar flex items-center justify-between gap-4 px-3 py-3 sm:px-4">
         <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
-          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#f1d38a]/24 bg-white/[0.06] text-xs font-semibold tracking-[0.2em] text-[#f1d38a] shadow-[0_0_48px_rgba(212,175,55,0.08)]">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#f1d38a]/24 bg-white/[0.06] text-[0.68rem] font-semibold tracking-[0.28em] text-[#f1d38a] shadow-[0_0_48px_rgba(212,175,55,0.08)]">
             VX
           </span>
           <span>
-            <span className="block text-xs uppercase tracking-[0.32em] text-[#f1d38a]">VEX Atelier</span>
-            <span className="block text-xs text-[#bcae97]">Private market luxury platform</span>
+            <span className="block font-[family-name:var(--font-montserrat)] text-[0.68rem] uppercase tracking-[0.38em] text-[#f1d38a]">VEX Atelier</span>
+            <span className="block font-[family-name:var(--font-display)] text-[1rem] italic tracking-[0.04em] text-[#d8ccb9]">Private automotive registry</span>
           </span>
         </Link>
 
@@ -56,7 +56,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-3 py-2 text-xs uppercase tracking-[0.16em] transition ${
+                className={`relative rounded-full px-3 py-2 font-[family-name:var(--font-montserrat)] text-[0.7rem] uppercase tracking-[0.24em] transition ${
                   active ? "bg-white/[0.07] text-[#fff8eb]" : "text-[#d6ccbd]/72 hover:bg-white/[0.04] hover:text-[#f1d38a]"
                 }`}
                 onClick={() => setMenuOpen(false)}

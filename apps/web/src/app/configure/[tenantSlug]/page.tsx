@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/Header";
 import { ConfigureExperienceClient } from "../ConfigureExperienceClient";
 
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,62}$/i;
@@ -18,9 +17,7 @@ export default function ConfigureTenantPage({ params }: { params: { tenantSlug: 
   if (!SLUG_RE.test(tenantSlug)) notFound();
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className="home-main home-landing" style={{ minHeight: "100vh" }}>
+    <main id="main-content" className="home-main home-landing" style={{ minHeight: "100vh" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "clamp(1.5rem, 4vw, 2.5rem)" }}>
           <p
             style={{
@@ -56,6 +53,5 @@ export default function ConfigureTenantPage({ params }: { params: { tenantSlug: 
           </div>
         </div>
       </main>
-    </>
   );
 }

@@ -1,6 +1,6 @@
 /**
- * Full-viewport atmosphere: mesh gradients, light orbs, sweep, grain, grid.
- * All layers pointer-events: none; sits under app content (z-index 0).
+ * Full-viewport atmosphere tuned toward a luxury showroom mood:
+ * specular lighting, metallic sweep, body-line curvature, carbon grain, soft fog.
  */
 
 .root {
@@ -15,26 +15,28 @@
 .layerDeep {
   position: absolute;
   inset: -5%;
-  background: radial-gradient(ellipse 100% 75% at 50% -18%, rgba(201, 169, 98, 0.11), transparent 55%),
-    radial-gradient(ellipse 55% 50% at 100% 15%, rgba(232, 204, 122, 0.06), transparent 52%),
-    radial-gradient(ellipse 45% 40% at 0% 85%, rgba(139, 141, 148, 0.06), transparent 48%),
-    linear-gradient(185deg, #070709 0%, #030304 42%, #020203 100%);
+  background:
+    radial-gradient(ellipse 110% 82% at 50% -24%, rgba(218, 188, 116, 0.12), transparent 54%),
+    radial-gradient(ellipse 65% 54% at 100% 14%, rgba(232, 204, 122, 0.08), transparent 54%),
+    radial-gradient(ellipse 54% 40% at 8% 84%, rgba(127, 132, 143, 0.08), transparent 52%),
+    radial-gradient(ellipse 88% 44% at 52% 104%, rgba(255, 255, 255, 0.035), transparent 58%),
+    linear-gradient(185deg, #09090b 0%, #040405 40%, #020203 100%);
 }
 
 .layerAurora {
   position: absolute;
   inset: -22%;
-  opacity: 0.35;
-  filter: blur(38px) saturate(1.1);
+  opacity: 0.28;
+  filter: blur(44px) saturate(1.05);
   background:
     conic-gradient(
-      from 170deg at 50% 40%,
-      rgba(201, 169, 98, 0.22),
-      rgba(232, 204, 122, 0.11) 18%,
-      transparent 33%,
-      rgba(139, 141, 148, 0.11) 50%,
-      transparent 70%,
-      rgba(201, 169, 98, 0.18) 88%,
+      from 162deg at 52% 40%,
+      rgba(201, 169, 98, 0.2),
+      rgba(232, 204, 122, 0.09) 16%,
+      transparent 32%,
+      rgba(139, 141, 148, 0.08) 50%,
+      transparent 71%,
+      rgba(201, 169, 98, 0.14) 88%,
       transparent 100%
     );
   transform-origin: 50% 50%;
@@ -61,16 +63,12 @@
 .layerMesh {
   position: absolute;
   inset: -15%;
-  opacity: 0.55;
-  background: conic-gradient(
-    from 220deg at 50% 45%,
-    rgba(201, 169, 98, 0.09),
-    transparent 32%,
-    rgba(232, 204, 122, 0.05),
-    transparent 58%,
-    rgba(90, 88, 82, 0.06)
-  );
-  filter: blur(72px);
+  opacity: 0.58;
+  background:
+    radial-gradient(ellipse 90% 48% at 50% 35%, rgba(255, 255, 255, 0.04), transparent 62%),
+    radial-gradient(ellipse 58% 22% at 56% 58%, rgba(201, 169, 98, 0.08), transparent 70%),
+    linear-gradient(125deg, transparent 20%, rgba(255, 255, 255, 0.025) 46%, transparent 61%);
+  filter: blur(86px);
   animation: ambientMeshDrift 28s ease-in-out infinite;
 }
 
@@ -93,14 +91,15 @@
 .layerSweep {
   position: absolute;
   inset: -30%;
-  opacity: 0.35;
+  opacity: 0.42;
   background: linear-gradient(
-    118deg,
+    112deg,
     transparent 0%,
-    rgba(201, 169, 98, 0.04) 38%,
-    rgba(255, 252, 245, 0.02) 49%,
-    transparent 54%,
-    rgba(139, 141, 148, 0.05) 78%,
+    rgba(201, 169, 98, 0.03) 32%,
+    rgba(255, 252, 245, 0.055) 47%,
+    rgba(255, 252, 245, 0.01) 50%,
+    transparent 56%,
+    rgba(139, 141, 148, 0.045) 79%,
     transparent 100%
   );
   background-size: 220% 220%;
@@ -125,24 +124,25 @@
 .layerGrid {
   position: absolute;
   inset: 0;
-  opacity: 0.32;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 85% 65% at 50% 38%, black 15%, transparent 72%);
+  opacity: 0.16;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: radial-gradient(ellipse 80% 58% at 50% 32%, black 10%, transparent 78%);
 }
 
 .layerTwinkle {
   position: absolute;
   inset: -6%;
-  opacity: 0.28;
-  mix-blend-mode: screen;
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
   background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.2px),
-    radial-gradient(circle, rgba(232, 204, 122, 0.28) 0 1px, transparent 1.2px),
-    radial-gradient(circle, rgba(201, 169, 98, 0.24) 0 1px, transparent 1.2px);
-  background-size: 170px 170px, 240px 240px, 310px 310px;
-  background-position: 0% 0%, 30% 55%, 80% 18%;
+    radial-gradient(ellipse at 12% 26%, rgba(255, 255, 255, 0.12), transparent 14%),
+    radial-gradient(ellipse at 85% 30%, rgba(241, 211, 138, 0.12), transparent 12%),
+    radial-gradient(ellipse at 62% 72%, rgba(255, 255, 255, 0.08), transparent 14%);
+  background-size: 38% 28%, 44% 34%, 42% 26%;
+  background-position: 0% 0%, 100% 0%, 50% 100%;
   animation: ambientTwinkle 18s ease-in-out infinite alternate;
 }
 
@@ -263,8 +263,8 @@
 .layerGrain {
   position: absolute;
   inset: 0;
-  opacity: 0.045;
-  mix-blend-mode: overlay;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grainShift 0.12s steps(2) infinite;
 }
@@ -285,7 +285,9 @@
 .layerVignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 75% 70% at 50% 42%, transparent 25%, rgba(0, 0, 0, 0.5) 100%);
+  background:
+    radial-gradient(ellipse 72% 58% at 50% 34%, transparent 26%, rgba(0, 0, 0, 0.42) 100%),
+    radial-gradient(ellipse 56% 20% at 50% 58%, rgba(255, 255, 255, 0.04), transparent 72%);
   mix-blend-mode: multiply;
   opacity: 0.75;
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getOrders,
@@ -63,19 +62,14 @@ export default function PortalPage() {
 
   if (authLoading || !user) {
     return (
-      <>
-        <Header />
-        <main id="main-content" className={styles.main}>
-          <p className={styles.loading}>Loading…</p>
-        </main>
-      </>
+      <main id="main-content" className={styles.main}>
+        <p className={styles.loading}>Loading…</p>
+      </main>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main}>
+    <main id="main-content" className={styles.main}>
         <h1 className={styles.title}>My account</h1>
         <p className={styles.greeting}>Welcome back{user.name ? `, ${user.name}` : ""}</p>
         {user.role === "ADMIN" && (
@@ -199,6 +193,5 @@ export default function PortalPage() {
           </>
         )}
       </main>
-    </>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, Fraunces, Plus_Jakarta_Sans, Outfit, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { BuildProvider } from "@/contexts/BuildContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantThemeProvider } from "@/components/TenantThemeProvider";
@@ -16,43 +16,43 @@ import "./globals.css";
 
 /**
  * Typography stack (CSS variable names kept for existing modules):
- * - --font-montserrat -> Syne (bold gallery/display for UI, labels, section titles)
- * - --font-display -> Playfair (hero and marquee-scale headlines)
- * - --font-serif -> Fraunces (italic ledes, editorial moments)
- * - --font-inter -> Plus Jakarta Sans (body, forms, readable UI)
- * - --font-poppins -> Outfit (nav, cards, secondary UI)
+ * - --font-montserrat -> Manrope (structured labels, UI chrome, section titles)
+ * - --font-display -> Cormorant Garamond (hero/editorial statements)
+ * - --font-serif -> Cormorant Garamond (select luxury accents)
+ * - --font-inter -> Manrope (body, forms, readable UI)
+ * - --font-poppins -> Manrope (nav, cards, secondary UI)
  */
-const syne = Syne({
+const manropeUi = Manrope({
   subsets: ["latin"],
   variable: "--font-montserrat",
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const playfair = Playfair_Display({
+const cormorantDisplay = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
-const fraunces = Fraunces({
+const cormorantSerif = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const manropeBody = Manrope({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
   weight: ["400", "500", "600", "700"],
 });
 
-const outfit = Outfit({
+const manropeNav = Manrope({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
@@ -90,7 +90,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-US"
-      className={`${syne.variable} ${playfair.variable} ${fraunces.variable} ${plusJakarta.variable} ${outfit.variable}`}
+      className={`${manropeUi.variable} ${cormorantDisplay.variable} ${cormorantSerif.variable} ${manropeBody.variable} ${manropeNav.variable}`}
     >
       <body className="site-shell" style={{ fontFamily: "var(--font-body), var(--font-inter), system-ui, sans-serif" }}>
         <SkipToContent />

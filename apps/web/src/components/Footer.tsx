@@ -10,9 +10,12 @@ export function Footer() {
     <footer className="border-t border-white/10 bg-black/40">
       <div className="shell grid gap-8 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
         <div>
-          <p className="text-sm uppercase tracking-[0.32em] text-[#f1d38a]">VEX Atelier</p>
+          <p className="font-[family-name:var(--font-montserrat)] text-[0.7rem] uppercase tracking-[0.38em] text-[#f1d38a]">VEX Atelier</p>
+          <p className="mt-3 font-[family-name:var(--font-display)] text-[1.45rem] italic leading-none text-[#f5f1e8]">
+            Private automotive operating environment
+          </p>
           <p className="mt-4 max-w-sm text-sm leading-7 text-[#cfc4b2]">
-            Cinematic digital presence for private inventory, concierge-led acquisition, and dealer-grade operational flow.
+            Concierge-led inventory, acquisition flow, and dealer-grade operational continuity for premium automotive clients.
           </p>
         </div>
 

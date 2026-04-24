@@ -3,7 +3,6 @@
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "./auth.module.css";
 
@@ -36,56 +35,62 @@ function LoginInner() {
 
   return (
     <main id="main-content" className={styles.main}>
-      <h1 className={styles.title}>Sign in</h1>
-      <p className={styles.subtitle}>Use your email and password.</p>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
-            required
-            autoComplete="email"
-          />
-        </label>
-        <label className={styles.label}>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-            autoComplete="current-password"
-          />
-        </label>
-        {error && <p className={styles.error}>{error}</p>}
-        <button type="submit" disabled={loading} className={styles.cta}>
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
-      <p className={styles.footer}>
-        New here? <Link href="/register">Create an account</Link>
-      </p>
+      <div className={styles.heroCopy}>
+        <p className={styles.eyebrow}>Member access</p>
+        <h1 className={styles.title}>Return to your private garage</h1>
+        <p className={styles.subtitle}>Continue into saved inventory, live deal progress, and concierge-led delivery planning.</p>
+      </div>
+      <section className={styles.panel}>
+        <h2 className={styles.panelTitle}>Sign in</h2>
+        <p className={styles.panelSubtitle}>Use your email and password.</p>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label className={styles.label}>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={styles.input}
+              required
+              autoComplete="email"
+            />
+          </label>
+          <label className={styles.label}>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles.input}
+              required
+              autoComplete="current-password"
+            />
+          </label>
+          {error && <p className={styles.error}>{error}</p>}
+          <button type="submit" disabled={loading} className={styles.cta}>
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+        <p className={styles.footer}>
+          New here? <Link href="/register">Create an account</Link>
+        </p>
+      </section>
     </main>
   );
 }
 
 export default function LoginPage() {
   return (
-    <>
-      <Header />
-      <Suspense
-        fallback={
-          <main id="main-content" className={styles.main}>
-            <p className={styles.subtitle}>Loading sign-in…</p>
-          </main>
-        }
-      >
-        <LoginInner />
-      </Suspense>
-    </>
+    <Suspense
+      fallback={
+        <main id="main-content" className={styles.main}>
+          <section className={styles.panel}>
+            <p className={styles.panelSubtitle}>Loading sign-in…</p>
+          </section>
+        </main>
+      }
+    >
+      <LoginInner />
+    </Suspense>
   );
 }

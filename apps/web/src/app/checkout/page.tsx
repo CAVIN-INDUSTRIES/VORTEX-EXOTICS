@@ -3,7 +3,6 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Header } from "@/components/Header";
 import { useBuild } from "@/contexts/BuildContext";
 import {
   getInventoryItem,
@@ -153,23 +152,18 @@ function CheckoutPageInner() {
 
   if (loading && !buildMode && effectiveInventoryId) {
     return (
-      <>
-        <Header />
-        <main id="main-content" className={styles.main}>
-          <div className={styles.loadingWrap}>
-            <div className={styles.spinner} />
-            <p className={styles.loadingText}>Loading your deal…</p>
-          </div>
-        </main>
-      </>
+      <main id="main-content" className={styles.main}>
+        <div className={styles.loadingWrap}>
+          <div className={styles.spinner} />
+          <p className={styles.loadingText}>Loading your deal…</p>
+        </div>
+      </main>
     );
   }
 
   if (orderId) {
     return (
-      <>
-        <Header />
-        <main id="main-content" className={styles.main}>
+      <main id="main-content" className={styles.main}>
           <div className={styles.confirmation}>
             <div className={styles.confirmIcon} aria-hidden>✓</div>
             <h1 className={styles.confirmTitle}>Order placed</h1>
@@ -183,7 +177,6 @@ function CheckoutPageInner() {
             </div>
           </div>
         </main>
-      </>
     );
   }
 
@@ -191,9 +184,7 @@ function CheckoutPageInner() {
   const noVehicle = !displayVehicle && !vehicle && !inventoryItem;
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main}>
+    <main id="main-content" className={styles.main}>
         <h1 className={styles.title}>Checkout</h1>
 
         {noVehicle && (
@@ -368,7 +359,6 @@ function CheckoutPageInner() {
           </div>
         )}
       </main>
-    </>
   );
 }
 
@@ -376,15 +366,12 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <>
-          <Header />
-          <main id="main-content" className={styles.main}>
-            <div className={styles.loadingWrap}>
-              <div className={styles.spinner} />
-              <p className={styles.loadingText}>Loading checkout…</p>
-            </div>
-          </main>
-        </>
+        <main id="main-content" className={styles.main}>
+          <div className={styles.loadingWrap}>
+            <div className={styles.spinner} />
+            <p className={styles.loadingText}>Loading checkout…</p>
+          </div>
+        </main>
       }
     >
       <CheckoutPageInner />

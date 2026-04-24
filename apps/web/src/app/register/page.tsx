@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "../login/auth.module.css";
 
@@ -32,11 +31,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main}>
-        <h1 className={styles.title}>Create account</h1>
-        <p className={styles.subtitle}>We’ll email you when something needs your attention.</p>
+    <main id="main-content" className={styles.main}>
+      <div className={styles.heroCopy}>
+        <p className={styles.eyebrow}>Private access</p>
+        <h1 className={styles.title}>Create your VEX registry</h1>
+        <p className={styles.subtitle}>
+          Open a private account for saved vehicles, deal visibility, concierge communication, and acquisition follow-through.
+        </p>
+      </div>
+      <section className={styles.panel}>
+        <h2 className={styles.panelTitle}>Create account</h2>
+        <p className={styles.panelSubtitle}>We&apos;ll reach out only when your collection or transaction needs attention.</p>
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
             Email
@@ -80,7 +85,7 @@ export default function RegisterPage() {
         <p className={styles.footer}>
           Already have an account? <Link href="/login">Sign in</Link>
         </p>
-      </main>
-    </>
+      </section>
+    </main>
   );
 }

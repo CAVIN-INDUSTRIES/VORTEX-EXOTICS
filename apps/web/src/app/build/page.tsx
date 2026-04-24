@@ -4,7 +4,6 @@ import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Header } from "@/components/Header";
 import { useBuild } from "@/contexts/BuildContext";
 import { getVehicles, getVehicleOptions, getInventoryItem } from "@/lib/api";
 import { formatUsd } from "@/lib/formatCurrency";
@@ -150,19 +149,14 @@ function BuildPageInner() {
 
   if (loading && !vehicle) {
     return (
-      <>
-        <Header />
-        <main id="main-content" className={styles.main} data-apex-studio-page="1">
-          <p className={styles.loading}>Loading…</p>
-        </main>
-      </>
+      <main id="main-content" className={styles.main} data-apex-studio-page="1">
+        <p className={styles.loading}>Loading…</p>
+      </main>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main} data-apex-studio-page="1">
+    <main id="main-content" className={styles.main} data-apex-studio-page="1">
         <div className={styles.progress}>
           {STEPS.map((label, i) => (
             <button
@@ -443,7 +437,6 @@ function BuildPageInner() {
           )}
         </div>
       </main>
-    </>
   );
 }
 

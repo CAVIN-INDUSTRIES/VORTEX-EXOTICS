@@ -59,6 +59,14 @@ test("capture desktop route audit screenshots", async ({ page }) => {
 
   await stabilizePage(page, "/configure");
   await saveShot(page, "homepage/configure-desktop.png");
+
+  await stabilizePage(page, "/login");
+  await expect(page.getByRole("heading", { name: /return to your private garage/i })).toBeVisible();
+  await saveShot(page, "regression/login-desktop.png");
+
+  await stabilizePage(page, "/register");
+  await expect(page.getByRole("heading", { name: /create your vex registry/i })).toBeVisible();
+  await saveShot(page, "regression/register-desktop.png");
 });
 
 test("capture mobile route audit screenshots", async ({ browser }) => {
@@ -80,6 +88,9 @@ test("capture mobile route audit screenshots", async ({ browser }) => {
 
   await stabilizePage(page, "/appraisal");
   await saveShot(page, "mobile/appraisal-mobile.png");
+
+  await stabilizePage(page, "/register");
+  await saveShot(page, "mobile/register-mobile.png");
 
   await stabilizePage(page, "/");
   await page.getByText("Ready to acquire, consign, or structure a private deal?").scrollIntoViewIfNeeded();

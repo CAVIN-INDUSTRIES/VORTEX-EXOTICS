@@ -4,6 +4,8 @@ import { FEATURED_VEHICLES, formatPrice } from "@/lib/vehicles";
 import { EntrySequence } from "@/components/entry/EntrySequence";
 import { VehicleCard } from "@/components/VehicleCard";
 import { MotionReveal } from "@/components/site/MotionReveal";
+import { getVideoProps } from "@/lib/media/videoLoader";
+import { responsiveImage } from "@/lib/media/responsiveImage";
 
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
@@ -117,10 +119,9 @@ export default function HomePage() {
           <video
             className="absolute inset-0 h-full w-full object-cover opacity-30"
             autoPlay
-            muted
             loop
-            playsInline
             src={heroVideoUrl}
+            {...getVideoProps("hero")}
           />
         ) : null}
         <div className="gate-backplate" aria-hidden />
@@ -142,10 +143,22 @@ export default function HomePage() {
               </p>
 
               <div className="hero-actions-lux mt-8 flex flex-col gap-4 sm:flex-row">
-                <Link href="/inventory" className="gold-button" data-magnetic="true">
+                <Link
+                  href="/inventory"
+                  className="gold-button"
+                  data-magnetic="true"
+                  data-analytics-event="hero_cta_click"
+                  data-analytics-surface="homepage_hero"
+                >
                   Explore Inventory
                 </Link>
-                <Link href="/appraisal" className="ghost-button" data-magnetic="true">
+                <Link
+                  href="/appraisal"
+                  className="ghost-button"
+                  data-magnetic="true"
+                  data-analytics-event="concierge_cta_click"
+                  data-analytics-surface="homepage_hero"
+                >
                   Request Private Appraisal
                 </Link>
               </div>
@@ -188,12 +201,11 @@ export default function HomePage() {
                   <div className="mt-6 overflow-hidden rounded-[1.75rem]">
                     <div className="relative aspect-[16/10]">
                       <Image
-                        src={spotlightVehicle.image}
+                        {...responsiveImage(spotlightVehicle.image, "hero")}
                         alt={`${spotlightVehicle.year} ${spotlightVehicle.make} ${spotlightVehicle.model}`}
                         fill
                         priority
                         className="luxury-photo object-cover"
-                        sizes="(max-width: 1100px) 100vw, 34vw"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
                       <div className="absolute inset-x-4 bottom-4">
@@ -408,10 +420,22 @@ export default function HomePage() {
               Reach the team directly for discreet market guidance, curated acquisition support, or a seller-first review.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Link href="/contact" className="gold-button" data-magnetic="true">
+              <Link
+                href="/contact"
+                className="gold-button"
+                data-magnetic="true"
+                data-analytics-event="concierge_cta_click"
+                data-analytics-surface="homepage_final_cta"
+              >
                 Request Private Access
               </Link>
-              <Link href="/inventory" className="ghost-button" data-magnetic="true">
+              <Link
+                href="/inventory"
+                className="ghost-button"
+                data-magnetic="true"
+                data-analytics-event="collection_engagement"
+                data-analytics-surface="homepage_final_cta"
+              >
                 Explore The Collection
               </Link>
             </div>

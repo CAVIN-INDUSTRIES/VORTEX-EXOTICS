@@ -8,6 +8,8 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
+import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
+import { AmbientGlow, GradientDrift, LightField, NoiseLayer } from "@/components/atmosphere";
 import { CinematicMotionProvider, LuxuryEdgeAccent, SceneAwareFx } from "@/components/fx";
 import { getSiteUrl } from "@/lib/siteUrl";
 import "./globals.css";
@@ -92,7 +94,12 @@ export default function RootLayout({
     >
       <body className="site-shell" style={{ fontFamily: "var(--font-body), var(--font-inter), system-ui, sans-serif" }}>
         <SkipToContent />
+        <AnalyticsProvider />
         <AmbientShell />
+        <AmbientGlow />
+        <LightField />
+        <GradientDrift />
+        <NoiseLayer />
         <CinematicMotionProvider>
           <LuxuryEdgeAccent />
           <SceneAwareFx />

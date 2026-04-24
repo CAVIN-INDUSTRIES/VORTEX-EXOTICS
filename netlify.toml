@@ -5,7 +5,7 @@
   # Build from workspace root but target only the web app
   base = "."
   publish = "apps/web/.next"
-  command = "pnpm install --frozen-lockfile --prod=false && pnpm --filter @vex/shared run build && pnpm --filter @vex/cinematic run build && pnpm --filter @vex/3d-configurator run build && pnpm --filter @vex/ui run build && pnpm --filter @vex/web run build"
+  command = "pnpm install --frozen-lockfile --prod=false && pnpm --filter @vex/shared run build && pnpm --filter @vex/design-system run build && pnpm --filter @vex/cinematic run build && pnpm --filter @vex/3d-configurator run build && pnpm --filter @vex/ui run build && pnpm --filter @vex/web run build"
 
 [build.environment]
   # Explicit versions for reproducibility

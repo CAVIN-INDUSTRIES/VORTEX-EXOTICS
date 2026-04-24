@@ -1,7 +1,9 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@vex/shared", "@vex/ui", "@vex/cinematic", "@vex/3d-configurator"],
+  transpilePackages: ["@vex/shared", "@vex/ui", "@vex/cinematic", "@vex/3d-configurator", "@vex/design-system"],
   env: {
     NEXT_PUBLIC_CONTACT_PHONE: process.env.NEXT_PUBLIC_CONTACT_PHONE || "",
     NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
@@ -26,4 +28,16 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(
+  nextConfig,
+  {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    silent: true,
+  },
+  {
+    disableLogger: true,
+    hideSourceMaps: true,
+    widenClientFileUpload: true,
+  }
+);

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { FEATURED_VEHICLES } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/VehicleCard";
+import { CollectionNarrativeEngine } from "@/components/inventory/CollectionNarrativeEngine";
 import { MotionReveal } from "@/components/site/MotionReveal";
 
 const priceRanges = [
@@ -147,6 +148,10 @@ export default function InventoryPage() {
         </div>
       </MotionReveal>
 
+      <MotionReveal delay={0.05}>
+        <CollectionNarrativeEngine />
+      </MotionReveal>
+
       <MotionReveal className="mt-10 cinema-panel rounded-[2rem] p-6 sm:p-8">
         <div className="flex flex-wrap gap-3">
           {collectionTabs.map((tab) => {
@@ -224,11 +229,21 @@ export default function InventoryPage() {
           </MotionReveal>
 
           <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
-            {sorted.map((vehicle, index) => (
-              <MotionReveal key={vehicle.id} delay={index * 0.04}>
-                <VehicleCard vehicle={vehicle} />
+            {sorted.length > 0 ? (
+              sorted.map((vehicle, index) => (
+                <MotionReveal key={vehicle.id} delay={index * 0.04}>
+                  <VehicleCard vehicle={vehicle} />
+                </MotionReveal>
+              ))
+            ) : (
+              <MotionReveal className="cinema-panel rounded-[2rem] p-8 lg:col-span-2 2xl:col-span-3">
+                <p className="section-kicker">Private archive</p>
+                <h3 className="mt-4 text-3xl text-[#fff8eb]">No qualified vehicles match this room.</h3>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-[#d8d0c2]">
+                  This collection is intentionally narrow. Adjust the filters or request concierge sourcing for a vehicle that fits the buyer profile.
+                </p>
               </MotionReveal>
-            ))}
+            )}
           </div>
         </div>
       </div>

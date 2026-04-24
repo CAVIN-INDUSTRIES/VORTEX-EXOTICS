@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { getInternalApiBase } from "@/lib/apiBase";
 
 const UPSTREAM_MS = 12_000;
@@ -26,6 +27,10 @@ export async function GET() {
     return NextResponse.json(body, { status: r.status });
   } catch (e) {
     const aborted = e instanceof Error && e.name === "AbortError";
+    Sentry.captureException(e, {
+      tags: { route: "investor-pilot-network", upstream: "dealer-pilots" },
+      extra: { api },
+    });
     return NextResponse.json(
       {
         code: aborted ? "TIMEOUT" : "UPSTREAM_UNREACHABLE",

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/vehicles";
 import type { Vehicle } from "@/lib/vehicles";
+import { vehicleImageProps } from "@/lib/media/responsiveImage";
 
 function getVehicleMetadata(vehicle: Vehicle) {
   const mileageQuality = vehicle.miles < 500 ? "Delivery-mile" : vehicle.miles < 1500 ? "Low-mile" : "Driven";
@@ -21,14 +22,17 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
     <Link
       href={`/inventory/${vehicle.id}`}
       prefetch={false}
+      data-analytics-event="vehicle_detail_engagement"
+      data-analytics-surface="vehicle_card"
+      data-analytics-vehicle-id={String(vehicle.id)}
+      data-analytics-vehicle={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
       className="group glass-panel vehicle-tile overflow-hidden rounded-[1.55rem] transition duration-300 hover:-translate-y-1 hover:border-[#f1d38a]/32"
     >
       <div className="relative aspect-[16/11] overflow-hidden">
         <Image
-          src={vehicle.image}
+          {...vehicleImageProps(vehicle.image)}
           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           fill
-          sizes="(max-width: 980px) 100vw, 33vw"
           className="luxury-photo object-cover transition duration-700 group-hover:scale-[1.045]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_22%),linear-gradient(0deg,rgba(0,0,0,0.82),rgba(0,0,0,0.08)_58%,transparent)]" />

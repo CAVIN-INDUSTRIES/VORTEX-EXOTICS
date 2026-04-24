@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createAppraisal } from "@/lib/api";
+import { trackEvent } from "@/lib/analytics/posthog";
 import { MotionReveal } from "@/components/site/MotionReveal";
 
 const CONDITIONS = ["excellent", "good", "fair", "poor"] as const;
@@ -65,6 +66,13 @@ function AppraisalForm() {
     }
 
     setLoading(true);
+    trackEvent("appraisal_submission_funnel", {
+      stage: "submit_attempt",
+      hasVin,
+      hasMileage: parsedMileage !== undefined,
+      hasCondition: Boolean(condition),
+      hasNotes,
+    });
     try {
       const data = await createAppraisal(
         {
@@ -78,8 +86,10 @@ function AppraisalForm() {
         { tenantId }
       );
       setResult({ id: data.id, message: data.message });
+      trackEvent("appraisal_submission_funnel", { stage: "submit_success", appraisalId: data.id });
     } catch {
       setError("Failed to submit appraisal.");
+      trackEvent("appraisal_submission_funnel", { stage: "submit_failure" });
     } finally {
       setLoading(false);
     }
@@ -175,7 +185,14 @@ function AppraisalForm() {
               </label>
 
               {error ? <p className="rounded-[1.2rem] border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-100">{error}</p> : null}
-              <button type="submit" disabled={loading} className="gold-button w-full">
+              <button
+                type="submit"
+                disabled={loading}
+                className="gold-button w-full"
+                data-analytics-event="appraisal_submission_funnel"
+                data-analytics-surface="appraisal_form"
+                data-analytics-stage="submit_click"
+              >
                 {loading ? "Submitting..." : "Request Private Valuation"}
               </button>
             </form>

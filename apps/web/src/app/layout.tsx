@@ -61,22 +61,22 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
-  title: "Vex | Dealer OS - CRM, inventory, portal, appraisals",
+  title: "VEX Atelier | Private Market Luxury Automotive Platform",
   description:
-    "White-label dealer platform: tenant-scoped CRM, inventory, customer portal, and appraisals - with a public marketplace layer for discovery and consignment.",
+    "Luxury cinematic vehicle platform for private inventory, concierge transactions, appraisals, and premium dealer operations.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Vex" },
   openGraph: {
-    title: "VEX Dealer Platform",
-    description: "CRM + inventory + portal + appraisals for modern auto dealers.",
+    title: "VEX Atelier",
+    description: "A luxury cinematic platform for private vehicle discovery, appraisal, and concierge acquisition flow.",
     type: "website",
     url: siteUrl,
     images: [{ url: "/og-vex-appraisals.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "VEX Dealer Platform",
-    description: "White-label dealer SaaS with analytics and appraisals.",
+    title: "VEX Atelier",
+    description: "Luxury cinematic website for private inventory, appraisals, and dealer-grade operations.",
   },
 };
 
@@ -90,7 +90,7 @@ export default function RootLayout({
       lang="en-US"
       className={`${syne.variable} ${playfair.variable} ${fraunces.variable} ${plusJakarta.variable} ${outfit.variable}`}
     >
-      <body style={{ fontFamily: "var(--font-body), var(--font-inter), system-ui, sans-serif" }}>
+      <body className="site-shell" style={{ fontFamily: "var(--font-body), var(--font-inter), system-ui, sans-serif" }}>
         <SkipToContent />
         <AmbientShell />
         <CinematicMotionProvider>

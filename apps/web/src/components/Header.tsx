@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import styles from "./Header.module.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const NAV_LINKS = [
   { href: "/inventory", label: "Inventory" },
-  { href: "/how-it-works", label: "How It Works" },
-  { href: "/sell", label: "Sell Your Car" },
+  { href: "/how-it-works", label: "Experience" },
+  { href: "/sell", label: "Sell" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -18,85 +19,126 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 18);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    if (!menuOpen) return;
     const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (menuOpen) document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
   }, [menuOpen]);
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
-      <div className={styles.shell}>
-        <Link href="/" className={styles.brand} onClick={() => setMenuOpen(false)}>
-          <span className={styles.brandWord}>VEX</span>
-          <span className={styles.brandSub}>Private motor market</span>
+    <header
+      className={`sticky top-0 z-50 border-b transition ${
+        scrolled
+          ? "border-white/10 bg-[#070707]/84 backdrop-blur-2xl"
+          : "border-transparent bg-transparent"
+      }`}
+    >
+      <div className="shell flex items-center justify-between gap-4 py-4">
+        <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#f1d38a]/20 bg-white/[0.05] text-sm font-semibold tracking-[0.2em] text-[#f1d38a] shadow-[0_0_48px_rgba(212,175,55,0.08)]">
+            VX
+          </span>
+          <span>
+            <span className="block text-sm uppercase tracking-[0.32em] text-[#f1d38a]">VEX Atelier</span>
+            <span className="block text-xs text-[#bcae97]">Private market luxury platform</span>
+          </span>
         </Link>
 
-        <nav className={styles.navDesktop} aria-label="Primary navigation">
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href;
+        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
+          {NAV_LINKS.map((item) => {
+            const active = pathname === item.href;
             return (
               <Link
-                key={href}
-                href={href}
-                className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
+                key={item.href}
+                href={item.href}
+                className={`text-sm transition ${
+                  active ? "text-[#fff8eb]" : "text-[#d6ccbd]/72 hover:text-[#f1d38a]"
+                }`}
                 onClick={() => setMenuOpen(false)}
               >
-                {label}
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className={styles.actions}>
-          <Link href="/contact" className={styles.cta} onClick={() => setMenuOpen(false)}>
-            Begin Concierge Review
+        <div className="flex items-center gap-3">
+          <Link href="/appraisal" className="hidden rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-[#f5f1e8] transition hover:border-[#f1d38a]/28 hover:bg-white/[0.08] sm:inline-flex">
+            Appraise a Vehicle
+          </Link>
+          <Link href="/contact" className="gold-button hidden sm:inline-flex">
+            Reserve Concierge
           </Link>
           <button
             type="button"
-            className={styles.menuButton}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-[#f5f1e8] md:hidden"
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((state) => !state)}
+            onClick={() => setMenuOpen((open) => !open)}
           >
-            <span className={menuOpen ? styles.burgerOpen : styles.burger} />
+            <span className="space-y-1.5">
+              <span className={`block h-0.5 w-4 bg-current transition ${menuOpen ? "translate-y-2 rotate-45" : ""}`} />
+              <span className={`block h-0.5 w-4 bg-current transition ${menuOpen ? "opacity-0" : ""}`} />
+              <span className={`block h-0.5 w-4 bg-current transition ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+            </span>
           </button>
         </div>
       </div>
 
-      {menuOpen ? (
-        <div className={styles.mobileMenu}>
-          <button type="button" className={styles.mobileOverlay} onClick={() => setMenuOpen(false)} aria-label="Close menu" />
-          <div className={styles.mobileSheet}>
-            <p className={styles.mobileEyebrow}>Navigate the private market</p>
-            {NAV_LINKS.map(({ href, label }) => {
-              const active = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`${styles.mobileLink} ${active ? styles.mobileLinkActive : ""}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {label}
+      <AnimatePresence>
+        {menuOpen ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 md:hidden"
+          >
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-x-5 top-24 rounded-[2rem] border border-[#f1d38a]/16 bg-[#111111]/90 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl"
+            >
+              <p className="text-xs uppercase tracking-[0.32em] text-[#f1d38a]/70">Navigate the estate</p>
+              <div className="mt-5 grid gap-3">
+                {NAV_LINKS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-[#f5f1e8]"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-5 grid gap-3">
+                <Link href="/appraisal" className="ghost-button" onClick={() => setMenuOpen(false)}>
+                  Start Appraisal
                 </Link>
-              );
-            })}
-            <Link href="/contact" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
-              Begin Concierge Review
-            </Link>
-          </div>
-        </div>
-      ) : null}
+                <Link href="/contact" className="gold-button" onClick={() => setMenuOpen(false)}>
+                  Reserve Concierge
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </header>
   );
 }

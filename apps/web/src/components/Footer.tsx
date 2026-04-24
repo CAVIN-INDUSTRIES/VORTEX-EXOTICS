@@ -1,5 +1,4 @@
 import Link from "next/link";
-import styles from "./Footer.module.css";
 
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
@@ -8,56 +7,46 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
-      <div className={styles.shell}>
-        <div className={styles.brandColumn}>
-          <p className={styles.brand}>VEX</p>
-          <p className={styles.copy}>
-            Private-market presentation, qualified access, and concierge-led closings for exceptional vehicles.
+    <footer className="border-t border-white/10 bg-black/40">
+      <div className="shell grid gap-8 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
+        <div>
+          <p className="text-sm uppercase tracking-[0.32em] text-[#f1d38a]">VEX Atelier</p>
+          <p className="mt-4 max-w-sm text-sm leading-7 text-[#cfc4b2]">
+            Cinematic digital presence for private inventory, concierge-led acquisition, and dealer-grade operational flow.
           </p>
         </div>
 
-        <div className={styles.linkColumn}>
-          <p className={styles.label}>Explore</p>
-          <Link href="/inventory" className={styles.link}>
-            Inventory
-          </Link>
-          <Link href="/how-it-works" className={styles.link}>
-            How It Works
-          </Link>
-          <Link href="/sell" className={styles.link}>
-            Sell Your Car
-          </Link>
+        <div className="space-y-3 text-sm text-[#cfc4b2]">
+          <p className="uppercase tracking-[0.24em] text-[#f1d38a]/70">Explore</p>
+          <Link href="/inventory" className="block transition hover:text-[#fff8eb]">Inventory</Link>
+          <Link href="/how-it-works" className="block transition hover:text-[#fff8eb]">Experience</Link>
+          <Link href="/sell" className="block transition hover:text-[#fff8eb]">Sell</Link>
         </div>
 
-        <div className={styles.linkColumn}>
-          <p className={styles.label}>Company</p>
-          <Link href="/contact" className={styles.link}>
-            Contact
-          </Link>
-          <Link href="/privacy" className={styles.link}>
-            Privacy
-          </Link>
-          <Link href="/terms" className={styles.link}>
-            Terms
-          </Link>
+        <div className="space-y-3 text-sm text-[#cfc4b2]">
+          <p className="uppercase tracking-[0.24em] text-[#f1d38a]/70">Company</p>
+          <Link href="/pricing" className="block transition hover:text-[#fff8eb]">Pricing</Link>
+          <Link href="/privacy" className="block transition hover:text-[#fff8eb]">Privacy</Link>
+          <Link href="/terms" className="block transition hover:text-[#fff8eb]">Terms</Link>
         </div>
 
-        <div className={styles.linkColumn}>
-          <p className={styles.label}>Direct</p>
-          <a href={contactPhone ? `tel:${contactPhone.replace(/\D/g, "")}` : undefined} className={styles.link}>
+        <div className="space-y-3 text-sm text-[#cfc4b2]">
+          <p className="uppercase tracking-[0.24em] text-[#f1d38a]/70">Direct</p>
+          <a href={contactPhone ? `tel:${contactPhone.replace(/\D/g, "")}` : undefined} className="block transition hover:text-[#fff8eb]">
             {contactPhone || "Phone on request"}
           </a>
-          <a href={contactEmail ? `mailto:${contactEmail}` : undefined} className={styles.link}>
+          <a href={contactEmail ? `mailto:${contactEmail}` : undefined} className="block transition hover:text-[#fff8eb]">
             {contactEmail || "Email on request"}
           </a>
-          <p className={styles.muted}>Human-led response for discreet, high-value inquiries.</p>
+          <p className="pt-2 text-xs uppercase tracking-[0.24em] text-[#9f927d]">Human-led response only</p>
         </div>
       </div>
 
-      <div className={styles.bottomBar}>
-        <p>Copyright {year} VEX Auto. All rights reserved.</p>
-        <p>Built for private acquisitions, selective consignment, and seamless collector-grade flow.</p>
+      <div className="border-t border-white/8">
+        <div className="shell flex flex-col gap-3 py-5 text-xs uppercase tracking-[0.18em] text-[#9f927d] md:flex-row md:items-center md:justify-between">
+          <p>Copyright {year} VEX Atelier</p>
+          <p>Private acquisitions, selective consignment, premium automotive operations</p>
+        </div>
       </div>
     </footer>
   );

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { FEATURED_VEHICLES } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/VehicleCard";
-import styles from "./inventory.module.css";
+import { MotionReveal } from "@/components/site/MotionReveal";
 
 const priceRanges = [
   { label: "All price bands", value: "all" },
@@ -58,103 +58,82 @@ export default function InventoryPage() {
     });
   }, [filtered, sort]);
 
+  const filters = [
+    { label: "Make", value: make, onChange: setMake, options: makes.map((option) => ({ label: option, value: option })) },
+    { label: "Price band", value: priceRange, onChange: setPriceRange, options: priceRanges },
+    { label: "Mileage", value: mileage, onChange: setMileage, options: mileageRanges },
+    { label: "Sort", value: sort, onChange: setSort, options: sortOptions },
+  ];
+
   return (
-    <main className={styles.main}>
-      <section className={styles.hero}>
+    <main id="main-content" className="shell py-14 sm:py-18">
+      <MotionReveal className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className={styles.eyebrow}>Private inventory</p>
-          <h1 className={styles.title}>A quieter, sharper catalog for exceptional machines.</h1>
+          <p className="section-kicker">Private inventory</p>
+          <h1 className="section-title">A cinematic catalog for exceptional machines.</h1>
         </div>
-        <div className={styles.heroMeta}>
-          <p className={styles.subtitle}>
-            Every listing is presented with restraint, context, and a purchase path designed for serious buyers.
+        <div className="glass-panel rounded-[1.75rem] p-6">
+          <p className="text-sm leading-7 text-[#d8d0c2]">
+            Every listing is framed with restraint, context, and a direct path to serious conversation.
+            The public layer stays elegant while the inventory route remains fast and usable.
           </p>
-          <div className={styles.metaCards}>
-            <div className={styles.metaCard}>
-              <span className={styles.metaValue}>{sorted.length}</span>
-              <span className={styles.metaLabel}>Verified vehicles</span>
+          <div className="mt-5 grid grid-cols-2 gap-4">
+            <div className="rounded-[1.4rem] border border-white/10 bg-black/20 p-4">
+              <p className="text-[0.7rem] uppercase tracking-[0.24em] text-[#a99f8d]">Verified vehicles</p>
+              <p className="mt-2 text-3xl text-[#fff8eb]">{sorted.length}</p>
             </div>
-            <div className={styles.metaCard}>
-              <span className={styles.metaValue}>1:1</span>
-              <span className={styles.metaLabel}>Concierge support</span>
+            <div className="rounded-[1.4rem] border border-white/10 bg-black/20 p-4">
+              <p className="text-[0.7rem] uppercase tracking-[0.24em] text-[#a99f8d]">Concierge support</p>
+              <p className="mt-2 text-3xl text-[#fff8eb]">1:1</p>
             </div>
           </div>
         </div>
-      </section>
+      </MotionReveal>
 
-      <section className={styles.layout}>
-        <aside className={styles.filters}>
-          <div className={styles.panelHeading}>
-            <p className={styles.panelEyebrow}>Refine the room</p>
-            <h2 className={styles.panelTitle}>Filter the collection</h2>
+      <div className="mt-10 grid gap-6 xl:grid-cols-[320px_1fr]">
+        <MotionReveal className="glass-panel rounded-[1.75rem] p-6 xl:sticky xl:top-28 xl:self-start">
+          <p className="section-kicker">Refine the room</p>
+          <h2 className="mt-4 text-3xl text-[#fff8eb]">Filter the collection</h2>
+
+          <div className="mt-6 grid gap-5">
+            {filters.map((filter) => (
+              <label key={filter.label} className="grid gap-2">
+                <span className="text-xs uppercase tracking-[0.24em] text-[#b8ac98]">{filter.label}</span>
+                <select
+                  className="field-base"
+                  value={filter.value}
+                  onChange={(event) => filter.onChange(event.target.value)}
+                >
+                  {filter.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
           </div>
 
-          <label className={styles.field}>
-            <span className={styles.label}>Make</span>
-            <select className={styles.select} value={make} onChange={(event) => setMake(event.target.value)}>
-              {makes.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className={styles.field}>
-            <span className={styles.label}>Price band</span>
-            <select className={styles.select} value={priceRange} onChange={(event) => setPriceRange(event.target.value)}>
-              {priceRanges.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className={styles.field}>
-            <span className={styles.label}>Mileage</span>
-            <select className={styles.select} value={mileage} onChange={(event) => setMileage(event.target.value)}>
-              {mileageRanges.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className={styles.field}>
-            <span className={styles.label}>Sort</span>
-            <select className={styles.select} value={sort} onChange={(event) => setSort(event.target.value)}>
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className={styles.noteCard}>
-            <p className={styles.noteTitle}>Collector-grade pace</p>
-            <p className={styles.noteCopy}>
-              The catalog is intentionally restrained. Fewer listings, more context, and a cleaner path to a real
-              conversation.
-            </p>
+          <div className="mt-6 rounded-[1.4rem] border border-[#f1d38a]/16 bg-[#d4af37]/7 p-4 text-sm leading-7 text-[#d8d0c2]">
+            Collector-grade pace means fewer listings, tighter framing, and stronger confidence in each inquiry.
           </div>
-        </aside>
+        </MotionReveal>
 
-        <div className={styles.results}>
-          <div className={styles.resultsHeader}>
-            <p className={styles.resultsCount}>Showing {sorted.length} vehicles</p>
-            <p className={styles.resultsNote}>Verified sellers, editorial framing, direct inquiry flow.</p>
-          </div>
+        <div>
+          <MotionReveal className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <p className="text-sm uppercase tracking-[0.24em] text-[#a99f8d]">Showing {sorted.length} vehicles</p>
+            <p className="text-sm text-[#bcae97]">Verified sellers, editorial framing, direct inquiry flow.</p>
+          </MotionReveal>
 
-          <div className={styles.grid}>
-            {sorted.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+          <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
+            {sorted.map((vehicle, index) => (
+              <MotionReveal key={vehicle.id} delay={index * 0.04}>
+                <VehicleCard vehicle={vehicle} />
+              </MotionReveal>
             ))}
           </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

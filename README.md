@@ -187,6 +187,7 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 
 ## Production deployment
 
+- **Chosen stack:** `apps/web` on **Vercel**, `apps/api` on **Railway**, **Neon Postgres**, **Upstash Redis**, and **Cloudflare R2** for media. See [docs/PRODUCTION_INFRASTRUCTURE_DECISION.md](docs/PRODUCTION_INFRASTRUCTURE_DECISION.md) and [docs/DEPLOYMENT_PUBLIC_STACK.md](docs/DEPLOYMENT_PUBLIC_STACK.md).
 - **API (Docker-first):** See [deploy/docker-compose.yml](deploy/docker-compose.yml), [deploy/.env.example](deploy/.env.example), and [deploy/README.md](deploy/README.md). With `NODE_ENV=production`, the process **exits on boot** if `CORS_ORIGIN` is empty or `*`, if `SKIP_VALUATION_ENV_CHECK` is set, or if valuation keys are missing — by design. Set `JWT_SECRET`, `REDIS_URL` (recommended), `PUBLIC_WEB_URL` (Stripe return URLs), and Stripe secrets if billing is live.
 - **Next.js (web + CRM):** Run `apps/web` and `apps/crm` on a second platform (Vercel, Fly.io, Railway, etc.) with the **same** `NEXT_PUBLIC_API_URL` pointing at the API origin. Compose in this repo targets the API and backing services by design.
 - **Pilot white-label (custom domain → tenant):** [docs/pilot-white-label-dns.md](docs/pilot-white-label-dns.md)

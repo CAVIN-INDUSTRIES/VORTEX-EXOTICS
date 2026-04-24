@@ -2,10 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { createStripeCheckoutSession } from "@/lib/api";
-import styles from "./pricing.module.css";
+import { MotionReveal } from "@/components/site/MotionReveal";
 
 type BillingInterval = "monthly" | "yearly";
 type Plan = "CHECK_MY_DEAL" | "VIP_CONCIERGE";
@@ -14,18 +13,21 @@ const PLANS: Array<{
   id: Plan;
   name: string;
   desc: string;
-  highlight?: string;
+  featured?: boolean;
+  label: string;
 }> = [
   {
     id: "CHECK_MY_DEAL",
     name: "Starter",
-    desc: "Inventory + CRM + appraisals (instant valuations) — get online fast with trade-in tools dealers use daily.",
+    label: "Private Launch",
+    desc: "Inventory, CRM, appraisals, and core dealer operations for teams that need a premium market presence quickly.",
   },
   {
     id: "VIP_CONCIERGE",
     name: "Pro",
-    desc: "Full portal + analytics + white-label + premium appraisal workflows — including unlimited API-powered valuations.",
-    highlight: "Most popular",
+    label: "Signature Presence",
+    desc: "Full portal, analytics, white-label operations, and premium appraisal workflows for a more ambitious operating surface.",
+    featured: true,
   },
 ];
 
@@ -35,7 +37,10 @@ export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<Plan | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const yearlyNote = useMemo(() => (billingInterval === "yearly" ? "Annual billing (discount applied in Stripe)" : ""), [billingInterval]);
+  const yearlyNote = useMemo(
+    () => (billingInterval === "yearly" ? "Annual billing with discount applied in Stripe." : ""),
+    [billingInterval]
+  );
 
   const startCheckout = async (plan: Plan) => {
     setError(null);
@@ -48,108 +53,69 @@ export default function PricingPage() {
       const session = await createStripeCheckoutSession({ plan, billingInterval }, token);
       if (session.url) window.location.href = session.url;
       else setError("Stripe did not return a checkout URL.");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to start checkout");
+    } catch (checkoutError) {
+      setError(checkoutError instanceof Error ? checkoutError.message : "Failed to start checkout");
     } finally {
       setLoadingPlan(null);
     }
   };
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className={styles.main}>
-        <div className={styles.header}>
-          <p className={styles.eyebrow}>Dealer SaaS</p>
-          <h1 className={styles.title}>Pricing that scales with your lot</h1>
-          <p className={styles.subhead}>Start in minutes. Upgrade anytime. Your brand stays front-and-center.</p>
-          <p className={styles.subhead} style={{ marginTop: "0.75rem", maxWidth: "44rem", opacity: 0.92 }}>
-            <strong>Cinematic 3D → MRR:</strong> dealers who run the <strong>vortex</strong> hero plus a live{" "}
-            <Link href="/build">/build</Link> preview typically see stronger qualified funnel depth than flat sites — we treat that as a{" "}
-            <strong>conversion multiplier</strong> on hero→configurator steps (measure before claiming lift). Self-serve plans below are{" "}
-            <strong>Vortex</strong> tier; <strong>Apex</strong> adds white-label 3D embeds and a cinematic portal;{" "}
-            <strong>Quantum</strong> is multi-rooftop enterprise (AI/autonomous hooks, DMS priority, SLA).
-          </p>
-          <p className={styles.subhead} style={{ marginTop: "0.65rem", maxWidth: "40rem", opacity: 0.88 }}>
-            Blueprints: <code>docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md</code> ·{" "}
-            <code>docs/plans/2026-04-05-vex-apex-studio-configurator-v1.0.md</code> (Apex Studio).{" "}
-            <Link href="/contact?intent=apex-tier">Apex quote →</Link>
-            {" · "}
-            <Link href="/contact?intent=quantum-tier">Quantum enterprise →</Link>
-          </p>
-        </div>
+    <main id="main-content" className="shell py-14 sm:py-18">
+      <MotionReveal className="max-w-3xl">
+        <p className="section-kicker">Pricing</p>
+        <h1 className="section-title">Dealer platform pricing with a premium public surface.</h1>
+        <p className="section-copy">
+          The luxury frontend is only one layer. Underneath it, the platform still supports subscriptions,
+          inventory, CRM, appraisal, and portal workflows for modern dealer operations.
+        </p>
+      </MotionReveal>
 
-        <section className={styles.tierStrip} aria-label="VEX product tiers">
-          <div className={styles.tierCard}>
-            <h2 className={styles.tierName}>Vortex</h2>
-            <p className={styles.tierDesc}>
-              Growth stack — inventory, CRM, appraisals, portal. Subscribe via Starter or Pro below.
-            </p>
-          </div>
-          <div className={styles.tierCard}>
-            <h2 className={styles.tierName}>Apex</h2>
-            <p className={styles.tierDesc}>
-              Cinematic revenue tier: white-label 3D hero + configurator embeds, branded vault experience, custom domain path.
-            </p>
-          </div>
-          <div className={styles.tierCard}>
-            <h2 className={styles.tierName}>Quantum</h2>
-            <p className={styles.tierDesc}>
-              Enterprise: groups, dedicated cinematic pipeline, valuation automation at scale, integrations + SLA.
-            </p>
-          </div>
-        </section>
-
-        <div className={styles.toggleRow} aria-label="Billing interval">
+      <MotionReveal delay={0.06} className="mt-8 flex flex-wrap items-center gap-3">
+        {(["monthly", "yearly"] as BillingInterval[]).map((interval) => (
           <button
+            key={interval}
             type="button"
-            className={`${styles.toggle} ${billingInterval === "monthly" ? styles.toggleActive : ""}`}
-            onClick={() => setBillingInterval("monthly")}
-            data-magnetic="true"
-            data-sfx="button"
+            className={`rounded-full px-5 py-2.5 text-sm transition ${
+              billingInterval === interval
+                ? "bg-[linear-gradient(135deg,#f1d38a,#d4af37)] text-[#111111]"
+                : "border border-white/12 bg-white/[0.05] text-[#f5f1e8]"
+            }`}
+            onClick={() => setBillingInterval(interval)}
           >
-            Monthly
+            {interval === "monthly" ? "Monthly" : "Annual"}
           </button>
-          <button
-            type="button"
-            className={`${styles.toggle} ${billingInterval === "yearly" ? styles.toggleActive : ""}`}
-            onClick={() => setBillingInterval("yearly")}
-            data-magnetic="true"
-            data-sfx="button"
-          >
-            Annual
-          </button>
-          {yearlyNote && <span className={styles.note}>{yearlyNote}</span>}
-        </div>
+        ))}
+        {yearlyNote ? <span className="text-sm text-[#bcae97]">{yearlyNote}</span> : null}
+      </MotionReveal>
 
-        {error && <p className={styles.error}>{error}</p>}
+      {error ? <p className="mt-5 rounded-[1.2rem] border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-100">{error}</p> : null}
 
-        <div className={styles.grid}>
-          {PLANS.map((p) => (
-            <section key={p.id} className={`${styles.card} ${p.highlight ? styles.cardHighlight : ""}`}>
-              {p.highlight && <div className={styles.badge}>{p.highlight}</div>}
-              <h2 className={styles.cardTitle}>{p.name}</h2>
-              <p className={styles.cardDesc}>{p.desc}</p>
-              <div className={styles.cardActions}>
-                <button
-                  type="button"
-                  className={styles.cta}
-                  onClick={() => startCheckout(p.id)}
-                  disabled={loadingPlan === p.id}
-                  data-magnetic="true"
-                  data-sfx="button"
-                >
-                  {loadingPlan === p.id ? "Redirecting…" : "Start subscription"}
+      <div className="mt-10 grid gap-5 xl:grid-cols-2">
+        {PLANS.map((plan, index) => (
+          <MotionReveal key={plan.id} delay={index * 0.08}>
+            <section
+              className={`rounded-[2rem] border p-7 backdrop-blur-xl ${
+                plan.featured
+                  ? "border-[#f1d38a]/26 bg-[linear-gradient(180deg,rgba(212,175,55,0.18),rgba(255,255,255,0.05))] shadow-[0_0_90px_rgba(212,175,55,0.08)]"
+                  : "glass-panel"
+              }`}
+            >
+              <p className="section-kicker">{plan.label}</p>
+              <h2 className="mt-4 text-4xl text-[#fff8eb]">{plan.name}</h2>
+              <p className="mt-5 text-base leading-8 text-[#d8d0c2]">{plan.desc}</p>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <button type="button" className="gold-button" onClick={() => startCheckout(plan.id)} disabled={loadingPlan === plan.id}>
+                  {loadingPlan === plan.id ? "Redirecting..." : "Start subscription"}
                 </button>
-                <Link href="/portal/subscriptions" className={styles.secondary}>
+                <Link href="/portal/subscriptions" className="ghost-button">
                   Manage in portal
                 </Link>
               </div>
             </section>
-          ))}
-        </div>
-      </main>
-    </>
+          </MotionReveal>
+        ))}
+      </div>
+    </main>
   );
 }
-

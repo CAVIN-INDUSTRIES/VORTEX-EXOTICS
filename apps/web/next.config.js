@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-<<<<<<< Updated upstream
-  transpilePackages: ["@vex/shared", "@vex/ui"],
+  transpilePackages: ["@vex/shared", "@vex/ui", "@vex/cinematic", "@vex/3d-configurator"],
   env: {
     NEXT_PUBLIC_CONTACT_PHONE: process.env.NEXT_PUBLIC_CONTACT_PHONE || "",
     NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
@@ -23,18 +22,8 @@ const nextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
-  },
-=======
-  transpilePackages: ["@vex/shared"],
-  // Static export for Netlify
-  output: 'export',
-  distDir: 'dist',
-  images: {
     unoptimized: true,
   },
-  // Allow trailing slashes for cleaner URLs
-  trailingSlash: true,
->>>>>>> Stashed changes
 };
 
 export default nextConfig;

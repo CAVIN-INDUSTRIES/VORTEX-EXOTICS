@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { colors, radius, spacing, typography } from "@vex/design-system";
 import { FEATURED_VEHICLES, formatPrice } from "@/lib/vehicles";
+import { AutomotiveAtmosphere } from "@/components/atmosphere";
 import { EntrySequence } from "@/components/entry/EntrySequence";
+import { EditorialContainer, EditorialHeader, FeatureGrid, SectionShell } from "@/components/layout";
 import { VehicleCard } from "@/components/VehicleCard";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { getVideoProps } from "@/lib/media/videoLoader";
@@ -114,7 +117,12 @@ export default function HomePage() {
   return (
     <main id="main-content">
       <EntrySequence />
-      <section id="universe" className="cinematic-gate-hero relative overflow-hidden pb-20 pt-10 sm:pt-16">
+      <SectionShell
+        id="universe"
+        variant="hero"
+        className="cinematic-gate-hero relative overflow-hidden pb-20 pt-10 sm:pt-16"
+        atmosphere={<AutomotiveAtmosphere variant="hero" intensity="high" />}
+      >
         {heroVideoUrl ? (
           <video
             className="absolute inset-0 h-full w-full object-cover opacity-30"
@@ -130,16 +138,16 @@ export default function HomePage() {
         <div className="gate-film" aria-hidden />
         <div className="gate-grade" aria-hidden />
 
-        <div className="shell hero-stage relative">
+        <EditorialContainer width="feature" className="hero-stage relative">
           <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1fr_0.86fr] lg:gap-14">
             <MotionReveal className="hero-copy-lux">
-              <p className="section-kicker">Iron gate private market</p>
-              <h1 className="hero-title-lux mt-6 font-[var(--font-display)] text-5xl leading-[0.92] tracking-[-0.06em] text-[#fff8eb] sm:text-6xl lg:text-7xl">
-                Private access to the next era of exotic acquisition.
+              <p className="section-kicker" style={{ ...typography.sectionEyebrow }}>Private market operating layer</p>
+              <h1 className="hero-title-lux mt-6 text-[#fff8eb]" style={typography.displayHero}>
+                A private exotic vehicle operating environment for serious acquisition.
               </h1>
-              <p className="hero-lede-lux mt-7 text-base leading-8 text-[#d8d0c2] sm:text-lg">
-                A cinematic marketplace for verified exotic inventory, private appraisal, and concierge acquisition.
-                Built to feel calm, expensive, and deliberately out of reach.
+              <p className="hero-lede-lux mt-7 sm:text-lg" style={{ ...typography.bodyLarge, color: colors.textSoft }}>
+                VEX organizes verified collection access, valuation confidence, and white-glove transaction flow inside one
+                calmer automotive platform. The atmosphere should feel like a discreet showroom, not a public marketplace.
               </p>
 
               <div className="hero-actions-lux mt-8 flex flex-col gap-4 sm:flex-row">
@@ -164,7 +172,7 @@ export default function HomePage() {
               </div>
 
               <div className="hero-trust-strip mt-9" aria-label="Platform trust signals">
-                {trustSignals.slice(0, 4).map((signal) => (
+                {["Verified provenance posture", "White-glove acquisition support", "Private archive presentation", "Human-led close coordination"].map((signal) => (
                   <span key={signal}>{signal}</span>
                 ))}
               </div>
@@ -175,8 +183,8 @@ export default function HomePage() {
                   { value: "24h", label: "average response target" },
                   { value: "1:1", label: "concierge ownership" },
                 ].map((metric) => (
-                  <div key={metric.label} className="glass-panel stat-glass rounded-[1.35rem] p-5">
-                    <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#a99f8d]">{metric.label}</p>
+                  <div key={metric.label} className="glass-panel editorial-stat stat-glass rounded-[1.35rem] p-5">
+                    <p style={{ ...typography.metadata, color: colors.textMuted }}>{metric.label}</p>
                     <p className="mt-3 text-3xl font-semibold text-[#fff8eb]">{metric.value}</p>
                   </div>
                 ))}
@@ -185,12 +193,15 @@ export default function HomePage() {
 
             <MotionReveal delay={0.1} className="relative">
               <div className="gate-specular-line" aria-hidden />
-              <div className="cinema-panel gate-showpiece relative overflow-hidden rounded-[2rem] p-6 sm:p-8 md:[transform:perspective(1400px)_rotateY(-8deg)_rotateX(2deg)] md:transition-transform md:duration-500 md:hover:[transform:perspective(1400px)_rotateY(-4deg)_rotateX(0deg)]">
+              <div
+                className="vault-panel gate-showpiece relative overflow-hidden p-6 sm:p-8 md:[transform:perspective(1400px)_rotateY(-8deg)_rotateX(2deg)] md:transition-transform md:duration-500 md:hover:[transform:perspective(1400px)_rotateY(-4deg)_rotateX(0deg)]"
+                style={{ borderRadius: radius.heroPanel }}
+              >
                 <div className="absolute inset-0 bg-[linear-gradient(140deg,rgba(255,255,255,0.14),transparent_34%,transparent_68%,rgba(241,211,138,0.16))]" />
                 <div className="relative">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
-                      <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#f1d38a]/70">Current spotlight</p>
+                      <p style={{ ...typography.metadata, color: colors.goldSoft }}>Current spotlight</p>
                       <p className="mt-2 text-xl text-[#fff8eb]">{spotlightVehicle.year} {spotlightVehicle.make} {spotlightVehicle.model}</p>
                     </div>
                     <span className="rounded-full border border-[#f1d38a]/18 bg-[#d4af37]/10 px-3 py-1 text-xs text-[#f1d38a]">
@@ -218,16 +229,18 @@ export default function HomePage() {
                   </div>
 
                   <p className="mt-5 text-sm leading-7 text-[#d8d0c2]">
-                    {spotlightVehicle.description} Presented with the atmosphere, scarcity, and polish expected of a private market object.
+                    {spotlightVehicle.description} Presented with enough editorial structure to feel like a private acquisition brief,
+                    not a basic listing card.
                   </p>
                 </div>
               </div>
             </MotionReveal>
           </div>
-        </div>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-10">
+      <SectionShell variant="compact">
+        <EditorialContainer>
         <MotionReveal className="glass-panel rounded-[1.75rem] px-6 py-5">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.76rem] uppercase tracking-[0.28em] text-[#d9cfbe]">
             {trustSignals.map((signal) => (
@@ -238,19 +251,20 @@ export default function HomePage() {
             ))}
           </div>
         </MotionReveal>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
-        <MotionReveal className="max-w-3xl">
-          <p className="section-kicker">Private collection philosophy</p>
-          <h2 className="section-title">The platform exists for vehicles that deserve context before exposure.</h2>
-          <p className="section-copy">
-            VEX is not trying to become another high-volume listing wall. It is designed for curated exotic acquisition,
-            controlled seller visibility, and buyer confidence around assets where provenance, condition, rarity, and timing matter.
-          </p>
+      <SectionShell variant="default">
+        <EditorialContainer>
+        <MotionReveal>
+          <EditorialHeader
+            eyebrow="Private collection philosophy"
+            title="The platform exists for vehicles that deserve context before exposure."
+            description="VEX is not trying to become another high-volume listing wall. It is designed for curated exotic acquisition, controlled seller visibility, and buyer confidence around assets where provenance, condition, rarity, and timing matter."
+          />
         </MotionReveal>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+        <FeatureGrid className="mt-10" columns={3}>
           {collectionPrinciples.map((pillar, index) => (
             <MotionReveal key={pillar.title} delay={index * 0.08} className="glass-panel rounded-[1.75rem] p-6">
               <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-[#f1d38a]/20 bg-[#d4af37]/10 text-sm font-semibold text-[#f1d38a]">
@@ -260,21 +274,22 @@ export default function HomePage() {
               <p className="mt-4 text-sm leading-7 text-[#d8d0c2]">{pillar.copy}</p>
             </MotionReveal>
           ))}
-        </div>
-      </section>
+        </FeatureGrid>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
+      <SectionShell variant="default">
+        <EditorialContainer>
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <MotionReveal>
-            <p className="section-kicker">Verification layer</p>
-            <h2 className="section-title">Trust is presented as part of the product, not hidden behind the inquiry.</h2>
-            <p className="section-copy">
-              Exotic buyers do not only evaluate design, mileage, and price. They evaluate confidence. VEX surfaces the
-              checks and ownership signals that reduce uncertainty before the conversation becomes serious.
-            </p>
+            <EditorialHeader
+              eyebrow="Verification confidence"
+              title="Trust is presented as part of the product, not hidden behind the inquiry."
+              description="Exotic buyers do not only evaluate design, mileage, and price. They evaluate confidence. VEX surfaces the checks and ownership signals that reduce uncertainty before the conversation becomes serious."
+            />
           </MotionReveal>
 
-          <MotionReveal delay={0.08} className="cinema-panel rounded-[2rem] p-7 sm:p-9">
+          <MotionReveal delay={0.08} className="vault-panel rounded-[2rem] p-7 sm:p-9">
             <div className="grid gap-4 sm:grid-cols-2">
               {verificationLayers.map((signal) => (
                 <div key={signal} className="rounded-[1.35rem] border border-white/10 bg-black/24 p-5">
@@ -289,18 +304,19 @@ export default function HomePage() {
             </p>
           </MotionReveal>
         </div>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
-        <MotionReveal className="cinema-panel rounded-[2rem] p-7 sm:p-10">
+      <SectionShell variant="cinematic">
+        <EditorialContainer>
+        <MotionReveal className="vault-panel rounded-[2rem] p-7 sm:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <p className="section-kicker">Concierge acquisition</p>
-              <h2 className="section-title">A private purchase should feel orchestrated from the first conversation.</h2>
-              <p className="section-copy max-w-xl">
-                The VEX acquisition flow is built around fewer unknowns: buyer intent, collection fit, seller readiness,
-                appraisal confidence, logistics, and final delivery are treated as one connected experience.
-              </p>
+              <EditorialHeader
+                eyebrow="Concierge acquisition flow"
+                title="A private purchase should feel orchestrated from the first conversation."
+                description="The VEX acquisition flow is built around fewer unknowns: buyer intent, collection fit, seller readiness, appraisal confidence, logistics, and final delivery are treated as one connected experience."
+              />
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {conciergeStages.map((item, index) => (
@@ -313,17 +329,18 @@ export default function HomePage() {
             </div>
           </div>
         </MotionReveal>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
+      <SectionShell variant="default">
+        <EditorialContainer>
         <div className="grid gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-end">
           <MotionReveal>
-            <p className="section-kicker">Market intelligence</p>
-            <h2 className="section-title">The appraisal layer gives the experience financial gravity.</h2>
-            <p className="section-copy">
-              Premium presentation has to be supported by pricing awareness. VEX frames each acquisition or appraisal
-              with the signals that matter to owners, collectors, dealers, and high-intent buyers.
-            </p>
+            <EditorialHeader
+              eyebrow="Market intelligence"
+              title="The appraisal layer gives the experience financial gravity."
+              description="Premium presentation has to be supported by pricing awareness. VEX frames each acquisition or appraisal with the signals that matter to owners, collectors, dealers, and high-intent buyers."
+            />
           </MotionReveal>
           <MotionReveal delay={0.08} className="glass-panel rounded-[2rem] p-7">
             <div className="space-y-5">
@@ -336,36 +353,42 @@ export default function HomePage() {
             </div>
           </MotionReveal>
         </div>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
-        <MotionReveal className="max-w-3xl">
-          <p className="section-kicker">Confidence layer</p>
-          <h2 className="section-title">Luxury buyers still buy confidence before they buy rarity.</h2>
-          <p className="section-copy">
-            The visual atmosphere creates desire. The trust layer closes the gap between intrigue and action.
-            VEX now presents confidence explicitly through verification, transaction clarity, and concierge ownership.
-          </p>
+      <SectionShell variant="default">
+        <EditorialContainer>
+        <MotionReveal>
+          <EditorialHeader
+            eyebrow="Verification confidence"
+            title="Luxury buyers still buy confidence before they buy rarity."
+            description="The visual atmosphere creates desire. The trust layer closes the gap between intrigue and action. VEX now presents confidence explicitly through verification, transaction clarity, and concierge ownership."
+          />
         </MotionReveal>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+        <FeatureGrid className="mt-10" columns={2}>
           {confidenceCards.map((card, index) => (
-            <MotionReveal key={card.title} delay={index * 0.08} className="cinema-panel rounded-[1.9rem] p-7">
+            <MotionReveal key={card.title} delay={index * 0.08} className="vault-panel rounded-[1.9rem] p-7">
               <p className="section-kicker">{card.label}</p>
               <h3 className="mt-4 text-3xl text-[#fff8eb]">{card.title}</h3>
               <p className="mt-5 text-base leading-8 text-[#d8d0c2]">{card.copy}</p>
             </MotionReveal>
           ))}
-        </div>
-      </section>
+        </FeatureGrid>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
+      <SectionShell variant="cinematic" atmosphere={<AutomotiveAtmosphere variant="collection" intensity="medium" />}>
+        <EditorialContainer>
         <MotionReveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <p className="section-kicker">Featured private collection</p>
-            <h2 className="section-title">A tighter collection framed like an editorial acquisition file.</h2>
+            <EditorialHeader
+              eyebrow="Featured private collection"
+              title="A tighter collection framed like a private vault, not a listing grid."
+              description=""
+            />
           </div>
-          <p className="max-w-md text-sm leading-7 text-[#ad9f8a]">
+          <p className="max-w-md text-sm leading-7 text-[#ad9f8a]" style={{ ...typography.bodyStandard, color: colors.textMuted }}>
             Fewer listings, richer presentation, stronger hierarchy, and visible confidence signals before the buyer opens a detail page.
           </p>
         </MotionReveal>
@@ -385,18 +408,19 @@ export default function HomePage() {
             </MotionReveal>
           ))}
         </div>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-20">
-        <MotionReveal className="cinema-panel rounded-[2rem] p-7 sm:p-10">
+      <SectionShell variant="default">
+        <EditorialContainer>
+        <MotionReveal className="vault-panel rounded-[2rem] p-7 sm:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <p className="section-kicker">Process</p>
-              <h2 className="section-title">A concierge journey with less friction and more control.</h2>
-              <p className="section-copy max-w-xl">
-                VEX is designed to feel expensive because every stage is tighter: stronger presentation,
-                qualified access, and real human orchestration around the transaction.
-              </p>
+              <EditorialHeader
+                eyebrow="White-glove process"
+                title="A concierge journey with less friction and more control."
+                description="VEX is designed to feel expensive because every stage is tighter: stronger presentation, qualified access, and real human orchestration around the transaction."
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
               {processSteps.map((step) => (
@@ -409,15 +433,17 @@ export default function HomePage() {
             </div>
           </div>
         </MotionReveal>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
 
-      <section className="shell py-24">
+      <SectionShell variant="cinematic" atmosphere={<AutomotiveAtmosphere variant="cta" intensity="high" />}>
+        <EditorialContainer>
         <MotionReveal className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="cinema-panel rounded-[2rem] p-7 sm:p-10">
-            <p className="section-kicker">Direct line</p>
-            <h2 className="section-title">Ready to acquire, consign, or structure a private deal?</h2>
+          <div className="vault-panel rounded-[2rem] p-7 sm:p-10">
+            <p className="section-kicker">Final private access</p>
+            <h2 className="section-title">Ready to open a discreet acquisition channel, consign with context, or structure a serious private deal?</h2>
             <p className="section-copy max-w-xl">
-              Reach the team directly for discreet market guidance, curated acquisition support, or a seller-first review.
+              Reach the team for discreet market guidance, curated acquisition support, seller-first review, or access to inventory that should not read like an open marketplace.
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {[
@@ -426,7 +452,7 @@ export default function HomePage() {
                 { label: "Private handoff", value: "Human-led" },
               ].map((signal) => (
                 <div key={signal.label} className="rounded-[1.25rem] border border-white/10 bg-black/24 p-4">
-                  <p className="text-[0.68rem] uppercase tracking-[0.22em] text-[#a99f8d]">{signal.label}</p>
+                  <p style={{ ...typography.metadata, color: colors.textMuted }}>{signal.label}</p>
                   <p className="mt-3 text-xl text-[#fff8eb]">{signal.value}</p>
                 </div>
               ))}
@@ -455,7 +481,7 @@ export default function HomePage() {
 
           <div className="glass-panel rounded-[2rem] p-7 sm:p-10">
             <p className="section-kicker">Response protocol</p>
-            <h3 className="mt-4 text-3xl text-[#fff8eb]">A flagship CTA should feel like a private handoff, not a generic footer.</h3>
+            <h3 className="mt-4 text-3xl text-[#fff8eb]">A flagship CTA should feel like handing the keys to a private concierge desk.</h3>
             <div className="mt-6 space-y-4 text-sm leading-7 text-[#d8d0c2]">
               <p>Every inquiry is expected to move into a controlled, high-context conversation with verification, timing, and next-step clarity.</p>
               <p>{contactPhone || "Phone line configured on request"}</p>
@@ -464,7 +490,8 @@ export default function HomePage() {
             </div>
           </div>
         </MotionReveal>
-      </section>
+        </EditorialContainer>
+      </SectionShell>
     </main>
   );
 }

@@ -5,5 +5,7 @@ export const radius = {
   lg: "1.35rem",
   xl: "1.75rem",
   xxl: "2rem",
+  heroPanel: "2.25rem",
+  archiveCard: "1.55rem",
   pill: "999px",
 } as const;

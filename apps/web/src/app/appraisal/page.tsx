@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { AutomotiveAtmosphere } from "@/components/atmosphere";
+import { EditorialContainer, EditorialHeader, SectionShell } from "@/components/layout";
 import { createAppraisal } from "@/lib/api";
 import { trackEvent } from "@/lib/analytics/posthog";
 import { MotionReveal } from "@/components/site/MotionReveal";
@@ -119,15 +121,16 @@ export default function AppraisalPage() {
   };
 
   return (
-    <main id="main-content" className="shell py-14 sm:py-18">
+    <main id="main-content">
+      <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="auth" intensity="medium" />}>
+        <EditorialContainer>
       <MotionReveal className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
         <div className="glass-panel rounded-[2rem] p-7 sm:p-9">
-          <p className="section-kicker">Private valuation intake</p>
-          <h1 className="section-title">A premium appraisal flow built around confidence, not guesswork.</h1>
-          <p className="section-copy max-w-xl">
-            Submit the vehicle for a discreet review that considers market timing, condition quality, provenance,
-            and acquisition fit. No noisy onboarding, just the details needed to start a serious valuation conversation.
-          </p>
+          <EditorialHeader
+            eyebrow="Private valuation intake"
+            title="A premium appraisal flow built around confidence, not guesswork."
+            description="Submit the vehicle for a discreet review that considers market timing, condition quality, provenance, and acquisition fit. No noisy onboarding, just the details needed to start a serious valuation conversation."
+          />
           <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
             {["Private submission", "Expert review", "Market-aware guidance"].map((signal) => (
               <div key={signal} className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
@@ -295,6 +298,8 @@ export default function AppraisalPage() {
           </div>
         </div>
       </MotionReveal>
+        </EditorialContainer>
+      </SectionShell>
     </main>
   );
 }

@@ -209,6 +209,10 @@ main {
     @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
   }
 
+  .luxury-split-layout {
+    grid-template-columns: 1fr;
+  }
+
   .luxury-nav-bar {
     border: 1px solid rgba(255, 255, 255, 0.11);
     border-radius: 999px;
@@ -458,6 +462,111 @@ main {
       0 38px 120px rgba(0, 0, 0, 0.5),
       0 0 72px rgba(212, 175, 55, 0.12);
   }
+
+  .vault-panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
+      radial-gradient(circle at top right, rgba(241, 211, 138, 0.18), transparent 28%),
+      radial-gradient(circle at bottom left, rgba(141, 48, 38, 0.1), transparent 24%),
+      rgba(9, 9, 11, 0.82);
+    border: 1px solid rgba(241, 211, 138, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 40px 100px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(36px) saturate(1.18);
+  }
+
+  .archive-card {
+    border-radius: 1.55rem;
+  }
+
+  .editorial-stat {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      rgba(8, 8, 10, 0.48);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .editorial-rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(241, 211, 138, 0.42), rgba(255, 255, 255, 0.06), transparent);
+  }
+
+  .vex-automotive-atmosphere,
+  .vex-automotive-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .vex-automotive-atmosphere {
+    overflow: hidden;
+    z-index: 0;
+    isolation: isolate;
+  }
+
+  .vex-automotive-layer {
+    will-change: transform, opacity, filter;
+  }
+
+  .vex-automotive-reflection {
+    inset: -8%;
+    filter: blur(34px);
+    animation: vexAutomotiveFloat 24s ease-in-out infinite alternate;
+  }
+
+  .vex-automotive-metallic {
+    inset: -14%;
+    filter: blur(58px);
+    animation: vexAutomotiveFloatWide 28s ease-in-out infinite alternate;
+  }
+
+  .vex-automotive-specular {
+    inset: -16%;
+    background-size: 220% 220%;
+    mix-blend-mode: screen;
+    animation: vexSpecularSweep 20s ease-in-out infinite;
+  }
+
+  .vex-automotive-sweep {
+    inset: -18%;
+    background-size: 220% 220%;
+    mix-blend-mode: screen;
+    animation: vexHeadlightSweep 16s ease-in-out infinite;
+  }
+
+  .vex-automotive-road {
+    inset: auto -12% -30% -12%;
+    height: 70%;
+    transform: perspective(1000px) rotateX(76deg);
+    transform-origin: center bottom;
+    opacity: 0.18;
+    animation: vexRoadDrift 18s ease-in-out infinite alternate;
+  }
+
+  .vex-automotive-carbon {
+    inset: 0;
+    mix-blend-mode: soft-light;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.78), transparent 96%);
+  }
+
+  .vex-automotive-hero .vex-automotive-road {
+    opacity: 0.24;
+  }
+
+  .vex-automotive-subtle .vex-automotive-road,
+  .vex-automotive-auth .vex-automotive-road {
+    display: none;
+  }
+
+  .vex-automotive-auth .vex-automotive-carbon {
+    mask-image: none;
+  }
+
+  .vex-automotive-cta .vex-automotive-reflection,
+  .vex-automotive-collection .vex-automotive-reflection {
+    inset: -12%;
+  }
 }
 
 @keyframes gateBeamDrift {
@@ -505,6 +614,55 @@ main {
   }
 }
 
+@keyframes vexAutomotiveFloat {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2%, 1.5%, 0) scale(1.04);
+  }
+}
+
+@keyframes vexAutomotiveFloatWide {
+  from {
+    transform: translate3d(1%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-2%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes vexSpecularSweep {
+  0%,
+  100% {
+    background-position: 0% 45%;
+  }
+  50% {
+    background-position: 100% 55%;
+  }
+}
+
+@keyframes vexHeadlightSweep {
+  0%,
+  100% {
+    transform: translate3d(-2%, 0, 0) scale(1.02);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate3d(2%, -1%, 0) scale(1.05);
+    opacity: 0.32;
+  }
+}
+
+@keyframes vexRoadDrift {
+  from {
+    transform: perspective(1000px) rotateX(76deg) translate3d(-1%, 0, 0);
+  }
+  to {
+    transform: perspective(1000px) rotateX(76deg) translate3d(1%, 3%, 0);
+  }
+}
+
 @media (max-width: 1024px) {
   .hero-stage {
     padding-top: clamp(3rem, 10vw, 5rem);
@@ -525,6 +683,16 @@ main {
   .hero-actions-lux,
   .hero-trust-strip {
     justify-content: center;
+  }
+
+  .luxury-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .luxury-split-layout {
+    grid-template-columns: var(--vex-split-columns, minmax(0, 1fr) minmax(0, 1fr));
   }
 }
 
@@ -550,5 +718,9 @@ main {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .vex-automotive-layer {
+    animation: none !important;
   }
 }

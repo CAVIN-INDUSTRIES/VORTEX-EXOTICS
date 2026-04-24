@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { colors, typography } from "@vex/design-system";
+import { AutomotiveAtmosphere } from "@/components/atmosphere";
 import { FEATURED_VEHICLES } from "@/lib/vehicles";
+import { EditorialContainer, EditorialHeader, SectionShell } from "@/components/layout";
 import { VehicleCard } from "@/components/VehicleCard";
 import { CollectionNarrativeEngine } from "@/components/inventory/CollectionNarrativeEngine";
 import { MotionReveal } from "@/components/site/MotionReveal";
@@ -141,11 +144,16 @@ export default function InventoryPage() {
   };
 
   return (
-    <main id="main-content" className="shell py-14 sm:py-18">
+    <main id="main-content">
+      <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="inventory" intensity="medium" />}>
+        <EditorialContainer>
       <MotionReveal className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="section-kicker">Private inventory</p>
-          <h1 className="section-title">A private collection organized by acquisition intent.</h1>
+          <EditorialHeader
+            eyebrow="Private inventory"
+            title="A curated vault organized by acquisition intent."
+            description=""
+          />
         </div>
         <div className="glass-panel rounded-[1.75rem] p-6">
           <p className="text-sm leading-7 text-[#d8d0c2]">
@@ -211,14 +219,14 @@ export default function InventoryPage() {
       </MotionReveal>
 
       <div className="mt-10 grid gap-8 xl:grid-cols-[340px_1fr]">
-        <MotionReveal className="glass-panel rounded-[1.75rem] p-6 xl:sticky xl:top-28 xl:self-start">
+        <MotionReveal className="vault-panel rounded-[1.75rem] p-6 xl:sticky xl:top-28 xl:self-start">
           <p className="section-kicker">Refine the room</p>
           <h2 className="mt-4 text-3xl text-[#fff8eb]">Filter the collection</h2>
 
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
             {filters.map((filter) => (
               <label key={filter.label} className="grid gap-2 rounded-[1.25rem] border border-white/8 bg-black/18 p-4">
-                <span className="text-xs uppercase tracking-[0.24em] text-[#b8ac98]">{filter.label}</span>
+                <span style={{ ...typography.formLabel, color: colors.textMuted }}>{filter.label}</span>
                 <select
                   className="field-base"
                   value={filter.value}
@@ -281,6 +289,8 @@ export default function InventoryPage() {
           </div>
         </div>
       </div>
+        </EditorialContainer>
+      </SectionShell>
     </main>
   );
 }

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { AutomotiveAtmosphere } from "@/components/atmosphere";
+import { EditorialContainer, EditorialHeader, SectionShell } from "@/components/layout";
 import { createLead } from "@/lib/api";
 import { MotionReveal } from "@/components/site/MotionReveal";
 
@@ -75,14 +77,15 @@ export default function ContactPage() {
   };
 
   return (
-    <main id="main-content" className="shell py-14 sm:py-18">
+    <main id="main-content">
+      <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="auth" intensity="medium" />}>
+        <EditorialContainer>
       <MotionReveal className="max-w-3xl">
-        <p className="section-kicker">Direct contact</p>
-        <h1 className="section-title">Bring the right context. We will take it from there.</h1>
-        <p className="section-copy">
-          Reach the acquisition team for private buying, selective consignment, or discreet market guidance.
-          The tone should feel personal, informed, and responsive from the first message.
-        </p>
+        <EditorialHeader
+          eyebrow="Direct contact"
+          title="Bring the right context. We will take it from there."
+          description="Reach the acquisition team for private buying, selective consignment, or discreet market guidance. The tone should feel personal, informed, and responsive from the first message."
+        />
       </MotionReveal>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -190,6 +193,8 @@ export default function ContactPage() {
           ) : null}
         </MotionReveal>
       </div>
+        </EditorialContainer>
+      </SectionShell>
     </main>
   );
 }

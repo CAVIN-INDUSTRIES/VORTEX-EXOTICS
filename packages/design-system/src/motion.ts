@@ -1,4 +1,10 @@
 export const motion = {
+  entryReveal: { duration: 0.72, distance: 20, ease: [0.22, 1, 0.36, 1] },
+  sectionReveal: { duration: 0.54, distance: 16, ease: [0.22, 1, 0.36, 1] },
+  hoverLift: { duration: 0.26, y: -6, ease: [0.22, 1, 0.36, 1] },
+  magneticCTA: { strength: 0.18, duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+  ambientDrift: { duration: 22, scale: 1.04, ease: [0.65, 0, 0.35, 1] },
+  reducedMotionFallback: { duration: 0.01, distance: 0 },
   durationFast: 0.24,
   durationBase: 0.48,
   durationSlow: 0.9,

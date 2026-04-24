@@ -53,6 +53,18 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
 
             <MotionReveal delay={0.08} className="cinema-panel rounded-[2rem] p-7 sm:p-9">
               <p className="section-kicker">{vehicle.listingBadge}</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {[vehicle.rarityTier, vehicle.verifiedBadge, vehicle.availabilityBadge]
+                  .filter(Boolean)
+                  .map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.22em] text-[#e9dfcf]"
+                    >
+                      {item}
+                    </span>
+                  ))}
+              </div>
               <h1 className="mt-4 font-[var(--font-display)] text-5xl leading-[0.94] tracking-[-0.05em] text-[#fff8eb]">
                 {vehicle.year} {vehicle.make} {vehicle.model}
               </h1>

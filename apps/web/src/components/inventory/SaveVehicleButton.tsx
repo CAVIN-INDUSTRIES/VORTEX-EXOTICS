@@ -36,12 +36,16 @@ export function SaveVehicleButton({ vehicleId }: { vehicleId: string }) {
       type="button"
       onClick={toggleSaved}
       aria-pressed={saved}
-      className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition ${
+      className={`relative overflow-hidden rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d38a]/40 ${
         saved
           ? "border-[#f1d38a]/45 bg-[#d4af37]/16 text-[#fff6de]"
-          : "border-white/10 bg-white/[0.04] text-[#d8d0c2] hover:border-[#f1d38a]/22 hover:text-[#fff8eb]"
+          : "border-white/10 bg-white/[0.04] text-[#d8d0c2] hover:border-[#f1d38a]/24 hover:bg-white/[0.06] hover:text-[#fff8eb]"
       }`}
     >
+      <span
+        className="pointer-events-none absolute inset-y-0 left-[-35%] w-[40%] -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent)] opacity-0 transition duration-700 group-hover:translate-x-[260%] group-hover:opacity-100"
+        aria-hidden="true"
+      />
       {saved ? "Saved" : "Save to Vault"}
     </button>
   );

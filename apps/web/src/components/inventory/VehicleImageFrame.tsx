@@ -26,15 +26,31 @@ export function VehicleImageFrame({
   const hasImage = Boolean(vehicle.primaryImage.src);
 
   return (
-    <div className={`relative overflow-hidden ${variantAspectClass[variant]} ${className}`}>
+    <div
+      className={`relative overflow-hidden ${variantAspectClass[variant]} ${className} ring-1 ring-white/10 transition duration-500 group-hover:ring-[#f1d38a]/28`}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 transition duration-700 group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(140deg,rgba(255,255,255,0.10),transparent_38%,transparent_64%,rgba(241,211,138,0.14))]" />
+        <div className="absolute inset-x-[-24%] top-[-18%] h-[52%] rotate-[-10deg] bg-[radial-gradient(circle,rgba(255,255,255,0.16),transparent_62%)] blur-3xl" />
+        <div className="absolute inset-x-[18%] bottom-[-26%] h-[52%] rounded-[50%] bg-[radial-gradient(circle,rgba(212,175,55,0.16),transparent_72%)] blur-3xl" />
+        <div className="absolute inset-x-[12%] top-[20%] h-[1px] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)] opacity-70" />
+      </div>
+
       {hasImage ? (
-        <Image
-          {...responsiveImage(vehicle.primaryImage.src as string, variant === "hero" ? "hero" : "editorial")}
-          alt={vehicle.primaryImage.alt}
-          fill
-          priority={priority}
-          className="luxury-photo object-cover"
-        />
+        <>
+          <Image
+            {...responsiveImage(vehicle.primaryImage.src as string, variant === "hero" ? "hero" : "editorial")}
+            alt={vehicle.primaryImage.alt}
+            fill
+            priority={priority}
+            className="luxury-photo object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.12),transparent_52%)] opacity-60" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18),transparent_28%,transparent_62%,rgba(0,0,0,0.82))]" />
+        </>
       ) : (
         <div className="absolute inset-0">
           <div
@@ -88,7 +104,16 @@ export function VehicleImageFrame({
         </div>
       )}
 
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),transparent_24%),linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.12)_54%,transparent)]" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_24%),linear-gradient(0deg,rgba(0,0,0,0.78),rgba(0,0,0,0.12)_54%,transparent)]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 transition duration-700 group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(0deg,rgba(0,0,0,0.92),rgba(0,0,0,0.35)_55%,transparent)]" />
+      </div>
     </div>
   );
 }

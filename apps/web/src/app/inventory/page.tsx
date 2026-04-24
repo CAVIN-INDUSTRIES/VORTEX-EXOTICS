@@ -295,8 +295,9 @@ export default function InventoryPage() {
                       : "No vehicles match the current room."}
                   </p>
                 </div>
-                <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-[#d8d0c2]">
-                  Primary CTA: Request Private Access
+                <div className="rounded-[1.35rem] border border-[#f1d38a]/18 bg-[linear-gradient(140deg,rgba(212,175,55,0.16),rgba(255,255,255,0.03)_55%,rgba(0,0,0,0.18))] px-4 py-3 text-sm text-[#fff1cf] shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
+                  <span className="mr-2 text-[0.68rem] uppercase tracking-[0.26em] text-[#f1d38a]/75">Primary CTA</span>
+                  Request Private Access
                 </div>
               </MotionReveal>
 

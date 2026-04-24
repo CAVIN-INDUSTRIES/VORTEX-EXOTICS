@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutomotiveAtmosphere } from "@/components/atmosphere";
+import { SaveVehicleButton } from "@/components/inventory/SaveVehicleButton";
 import { VehicleImageFrame } from "@/components/inventory/VehicleImageFrame";
 import { WowFactorList } from "@/components/inventory/WowFactorList";
 import { EditorialContainer, EditorialHeader, FeatureGrid, SectionShell } from "@/components/layout";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { FEATURED_VEHICLES, formatPrice, getVehicleById } from "@/lib/vehicles";
+import { buildVehicleAppraisalHref, buildVehicleContactHref, readInventoryBackHref } from "@/lib/inventory/workflow";
 
 const verificationConfidence = [
   "Verified listing posture",
@@ -14,8 +16,15 @@ const verificationConfidence = [
   "Trade and appraisal support available",
 ];
 
-export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function VehicleDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { id } = await params;
+  const resolvedSearchParams = await searchParams;
   const vehicle = getVehicleById(id);
 
   if (!vehicle) {
@@ -24,13 +33,17 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
 
   const relatedVehicles = FEATURED_VEHICLES.filter((candidate) => candidate.id !== vehicle.id && candidate.make !== vehicle.make).slice(0, 3);
   const maskedVin = `${"*".repeat(Math.max(0, vehicle.vin.length - 6))}${vehicle.vin.slice(-6)}`;
+  const backHref = readInventoryBackHref(resolvedSearchParams);
+  const backQuery = backHref.includes("?") ? backHref.split("?")[1] : "";
+  const contactHref = buildVehicleContactHref(vehicle, backHref);
+  const appraisalHref = buildVehicleAppraisalHref(vehicle, backHref);
 
   return (
     <main id="main-content">
       <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="inventory" intensity="medium" />}>
         <EditorialContainer>
           <MotionReveal>
-            <Link href="/inventory" className="inline-flex items-center gap-2 text-sm text-[#bcae97] transition hover:text-[#fff8eb]">
+            <Link href={backHref} className="inline-flex items-center gap-2 text-sm text-[#bcae97] transition hover:text-[#fff8eb]">
               <span aria-hidden="true">←</span>
               Back to inventory
             </Link>
@@ -59,7 +72,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                   .map((item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.22em] text-[#e9dfcf]"
+                      className="rounded-full border border-white/10 bg-black/18 px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.22em] text-[#e9dfcf]"
                     >
                       {item}
                     </span>
@@ -97,15 +110,13 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
               </div>
 
               <div className="mt-7 flex flex-col gap-4 sm:flex-row">
-                <Link href={`/contact?vehicle=${vehicle.id}`} className="gold-button">
+                <Link href={contactHref} className="gold-button">
                   {vehicle.ctas.primary}
                 </Link>
-                <Link href={`/appraisal?vehicle=${vehicle.id}`} className="ghost-button">
+                <Link href={appraisalHref} className="ghost-button">
                   {vehicle.ctas.tertiary ?? "Request Appraisal / Trade"}
                 </Link>
-                <Link href="/contact" className="ghost-button">
-                  Ask About This Vehicle
-                </Link>
+                <SaveVehicleButton vehicleId={vehicle.id} />
               </div>
 
               <div className="mt-7 rounded-[1.45rem] border border-white/10 bg-black/20 p-5">
@@ -192,10 +203,10 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 <p>Private access remains the primary conversion action for this file.</p>
               </div>
               <div className="mt-7 flex flex-col gap-4 sm:flex-row">
-                <Link href={`/contact?vehicle=${vehicle.id}`} className="gold-button">
+                <Link href={contactHref} className="gold-button">
                   Request Private Access
                 </Link>
-                <Link href={`/appraisal?vehicle=${vehicle.id}`} className="ghost-button">
+                <Link href={appraisalHref} className="ghost-button">
                   Trade / Appraisal Inquiry
                 </Link>
               </div>
@@ -220,7 +231,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 <p className="mt-4 text-sm leading-7 text-[#d8d0c2]">{candidate.editorialHeadline}</p>
                 <div className="mt-5 flex items-center justify-between gap-4">
                   <span className="text-[#f1d38a]">{formatPrice(candidate.price)}</span>
-                  <Link href={`/inventory/${candidate.id}`} className="ghost-button !px-4 !py-2">
+                  <Link href={backQuery ? `/inventory/${candidate.id}?${backQuery}` : `/inventory/${candidate.id}`} className="ghost-button !px-4 !py-2">
                     View Details
                   </Link>
                 </div>
@@ -240,10 +251,10 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             <div className="text-right text-[0.72rem] uppercase tracking-[0.2em] text-[#d8d0c2]">{vehicle.availabilityBadge}</div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Link href={`/contact?vehicle=${vehicle.id}`} className="gold-button !px-4 !py-3 text-center">
+            <Link href={contactHref} className="gold-button !px-4 !py-3 text-center">
               Access
             </Link>
-            <Link href={`/appraisal?vehicle=${vehicle.id}`} className="ghost-button !px-4 !py-3 text-center">
+            <Link href={appraisalHref} className="ghost-button !px-4 !py-3 text-center">
               Trade
             </Link>
           </div>

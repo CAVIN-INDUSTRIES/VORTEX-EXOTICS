@@ -1,4 +1,4 @@
-import { readInventoryFiltersFromRecord } from "@/lib/inventory/workflow";
+import { readInventoryFiltersFromRecord } from "@/lib/inventoryWorkflow";
 import { InventoryPageClient } from "./InventoryPageClient";
 
 export default async function InventoryPage({

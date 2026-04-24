@@ -7,7 +7,7 @@ import { WowFactorList } from "@/components/inventory/WowFactorList";
 import { EditorialContainer, EditorialHeader, FeatureGrid, SectionShell } from "@/components/layout";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { FEATURED_VEHICLES, formatPrice, getVehicleById } from "@/lib/vehicles";
-import { buildVehicleAppraisalHref, buildVehicleContactHref, readInventoryBackHref } from "@/lib/inventory/workflow";
+import { buildVehicleAppraisalHref, buildVehicleContactHref, readInventoryBackHref } from "@/lib/inventoryWorkflow";
 
 const verificationConfidence = [
   "Verified listing posture",

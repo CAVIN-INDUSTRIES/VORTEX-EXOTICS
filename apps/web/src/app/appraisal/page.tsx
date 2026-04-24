@@ -41,6 +41,9 @@ function buildMailtoHref(subject: string, lines: Array<string | null | undefined
 
 export default function AppraisalPage() {
   const [tenantId, setTenantId] = useState<string | null>(null);
+  const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const [vehicleLabel, setVehicleLabel] = useState<string | null>(null);
+  const [returnTo, setReturnTo] = useState<string | null>(null);
   const [vin, setVin] = useState("");
   const [mileage, setMileage] = useState("");
   const [condition, setCondition] = useState<(typeof CONDITIONS)[number] | "">("");
@@ -51,7 +54,14 @@ export default function AppraisalPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setTenantId(new URLSearchParams(window.location.search).get("tenantId"));
+    const params = new URLSearchParams(window.location.search);
+    setTenantId(params.get("tenantId"));
+    setVehicleId(params.get("vehicle"));
+    setVehicleLabel(params.get("vehicleLabel"));
+    setReturnTo(params.get("returnTo"));
+    if (params.get("vehicle") || params.get("vehicleLabel")) {
+      setNotes((current) => current || `Trade or appraisal request related to ${params.get("vehicleLabel") || params.get("vehicle")}.`);
+    }
   }, []);
 
   const conciergeFallbackHref = useMemo(
@@ -59,11 +69,12 @@ export default function AppraisalPage() {
       buildMailtoHref("Private appraisal request", [
         "Private appraisal details",
         `VIN: ${vin.trim() || "Not provided"}`,
+        `Vehicle: ${vehicleLabel || vehicleId || "Not provided"}`,
         `Mileage: ${mileage.trim() || "Not provided"}`,
         `Condition: ${condition || "Not provided"}`,
         `Notes: ${notes.trim() || "Not provided"}`,
       ]),
-    [condition, mileage, notes, vin]
+    [condition, mileage, notes, vehicleId, vehicleLabel, vin]
   );
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -157,6 +168,12 @@ export default function AppraisalPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="grid gap-5">
+              {vehicleId || vehicleLabel ? (
+                <div className="rounded-[1.2rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-[#ddd4c6]">
+                  This appraisal request is linked to {vehicleLabel || vehicleId}.
+                </div>
+              ) : null}
+
               <label className="grid gap-2">
                 <span className="text-sm text-[#ddd4c6]">VIN (optional, 17 chars)</span>
                 <input
@@ -240,6 +257,11 @@ export default function AppraisalPage() {
                   <Link href="/contact" className="gold-button">
                     Open Private Contact
                   </Link>
+                  {returnTo ? (
+                    <Link href={returnTo} className="ghost-button">
+                      Return To Vehicle
+                    </Link>
+                  ) : null}
                 </div>
               </div>
             </form>

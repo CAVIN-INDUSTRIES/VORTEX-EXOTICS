@@ -18,6 +18,9 @@ function buildMailtoHref(subject: string, lines: Array<string | null | undefined
 
 export default function ContactPage() {
   const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const [vehicleLabel, setVehicleLabel] = useState<string | null>(null);
+  const [intent, setIntent] = useState<string | null>(null);
+  const [returnTo, setReturnTo] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +34,42 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setVehicleId(new URLSearchParams(window.location.search).get("vehicle"));
+    const params = new URLSearchParams(window.location.search);
+    const nextVehicleId = params.get("vehicle");
+    const nextVehicleLabel = params.get("vehicleLabel");
+    const nextIntent = params.get("intent");
+    const nextReturnTo = params.get("returnTo");
+
+    setVehicleId(nextVehicleId);
+    setVehicleLabel(nextVehicleLabel);
+    setIntent(nextIntent);
+    setReturnTo(nextReturnTo);
+    if (nextVehicleId || nextVehicleLabel || nextIntent) {
+      setValues((current) => {
+        if (current.message.trim().length > 0) {
+          return current;
+        }
+
+        const label = nextVehicleLabel || nextVehicleId || "the selected vehicle";
+        const intro =
+          nextIntent === "vehicle-inquiry"
+            ? `I have a question about ${label}.`
+            : nextIntent === "trade-appraisal"
+              ? `I want to discuss a trade or appraisal tied to ${label}.`
+              : `I want private access to ${label}.`;
+
+        return { ...current, message: intro };
+      });
+    }
   }, []);
 
-  const source = useMemo(() => (vehicleId ? `CONTACT_VEHICLE_${vehicleId}` : "CONTACT_PAGE"), [vehicleId]);
+  const source = useMemo(() => {
+    if (!vehicleId) {
+      return "CONTACT_PAGE";
+    }
+
+    return intent ? `CONTACT_${intent.toUpperCase().replace(/[^A-Z0-9]+/g, "_")}_${vehicleId}` : `CONTACT_VEHICLE_${vehicleId}`;
+  }, [intent, vehicleId]);
   const conciergeFallbackHref = useMemo(
     () =>
       buildMailtoHref("Private VEX inquiry", [
@@ -42,11 +77,12 @@ export default function ContactPage() {
         `Role: ${values.role}`,
         `Email: ${values.email.trim() || "Not provided"}`,
         `Phone: ${values.phone.trim() || "Not provided"}`,
-        `Vehicle: ${vehicleId || "Not specified"}`,
+        `Vehicle: ${vehicleLabel || vehicleId || "Not specified"}`,
+        `Intent: ${intent || "General inquiry"}`,
         "",
         values.message.trim() || "No message provided.",
       ]),
-    [values, vehicleId]
+    [intent, values, vehicleId, vehicleLabel]
   );
 
   const handleSubmit = async () => {
@@ -161,6 +197,12 @@ export default function ContactPage() {
             </div>
           </div>
 
+          {vehicleId || vehicleLabel ? (
+            <div className="mt-5 rounded-[1.2rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-[#ddd4c6]">
+              This inquiry is linked to {vehicleLabel || vehicleId}.
+            </div>
+          ) : null}
+
           <button type="button" className="gold-button mt-6 w-full" onClick={handleSubmit} disabled={loading}>
             {loading ? "Submitting..." : "Submit inquiry"}
           </button>
@@ -189,6 +231,13 @@ export default function ContactPage() {
           {submitted ? (
             <div className="mt-4 rounded-[1.2rem] border border-[#f1d38a]/18 bg-[#d4af37]/8 px-4 py-3 text-sm text-[#fff8eb]">
               Thank you. Your message has been submitted and the team will follow up shortly.
+              {returnTo ? (
+                <div className="mt-3">
+                  <Link href={returnTo} className="ghost-button">
+                    Return To Vehicle
+                  </Link>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </MotionReveal>

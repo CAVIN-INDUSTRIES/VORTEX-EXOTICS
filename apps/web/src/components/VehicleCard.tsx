@@ -2,16 +2,18 @@ import Link from "next/link";
 import { colors, glass, radius, spacing, typography } from "@vex/design-system";
 import type { Vehicle } from "@/lib/vehicles";
 import { formatPrice } from "@/lib/vehicles";
+import { buildVehicleContactHref, vehicleDisplayName } from "@/lib/inventoryWorkflow";
 import { SaveVehicleButton } from "@/components/inventory/SaveVehicleButton";
 import { VehicleImageFrame } from "@/components/inventory/VehicleImageFrame";
-import { WowFactorList } from "@/components/inventory/WowFactorList";
 
 function metadataPills(vehicle: Vehicle) {
-  return [vehicle.verifiedBadge, vehicle.availabilityBadge, vehicle.conditionClass];
+  return [vehicle.verifiedBadge, vehicle.availabilityBadge];
 }
 
-export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inventoryHref?: string }) {
   const metadata = metadataPills(vehicle);
+  const detailHref = inventoryHref ? `/inventory/${vehicle.id}?${inventoryHref}` : `/inventory/${vehicle.id}`;
+  const contactHref = buildVehicleContactHref(vehicle, detailHref);
 
   return (
     <article
@@ -20,7 +22,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
     >
       <div className="relative">
         <Link
-          href={`/inventory/${vehicle.id}`}
+          href={detailHref}
           prefetch={false}
           data-analytics-event="vehicle_detail_engagement"
           data-analytics-surface="vehicle_card_image"
@@ -30,7 +32,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         >
           <VehicleImageFrame vehicle={vehicle} />
           <div className="pointer-events-none absolute inset-x-4 top-4 flex flex-wrap gap-2">
-            {[vehicle.listingBadge, vehicle.rarityTier, vehicle.primaryImage.status === "pending" ? "Image verification pending" : null]
+            {[vehicle.listingBadge, vehicle.primaryImage.status === "pending" ? "Image verification pending" : null]
               .filter(Boolean)
               .map((item) => (
                 <span
@@ -65,45 +67,22 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.035] p-4">
-            <p style={{ ...typography.metadata, color: colors.textMuted }}>At a glance</p>
-            <div className="mt-3 grid gap-2 text-sm text-[#e8dfd1]">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#a99f8d]">Mileage</span>
-                <span>{vehicle.miles.toLocaleString()} mi</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#a99f8d]">Location</span>
-                <span>{vehicle.location}</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#a99f8d]">Availability</span>
-                <span>{vehicle.acquisitionStatus}</span>
-              </div>
-            </div>
+            <p style={{ ...typography.metadata, color: colors.textMuted }}>Mileage</p>
+            <p className="mt-3 text-sm text-[#e8dfd1]">{vehicle.miles.toLocaleString()} mi</p>
           </div>
-
+          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.035] p-4">
+            <p style={{ ...typography.metadata, color: colors.textMuted }}>Location</p>
+            <p className="mt-3 text-sm text-[#e8dfd1]">{vehicle.location}</p>
+          </div>
           <div className="rounded-[1.25rem] border border-[#f1d38a]/16 bg-[#d4af37]/8 p-4">
-            <p style={{ ...typography.metadata, color: colors.goldSoft }}>Key spec profile</p>
-            <div className="mt-3 grid gap-2 text-sm text-[#fff8eb]">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#d9c9ad]">Power</span>
-                <span>{vehicle.horsepower} hp</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#d9c9ad]">Drive</span>
-                <span>{vehicle.drivetrain}</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[#d9c9ad]">Transmission</span>
-                <span>{vehicle.transmission}</span>
-              </div>
-            </div>
+            <p style={{ ...typography.metadata, color: colors.goldSoft }}>Powertrain</p>
+            <p className="mt-3 text-sm text-[#fff8eb]">{vehicle.horsepower} hp · {vehicle.drivetrain}</p>
           </div>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2">
           {metadata.map((item) => (
             <span
               key={item}
@@ -115,25 +94,18 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           ))}
         </div>
 
-        <div>
-          <p className="mb-3 text-[0.72rem] uppercase tracking-[0.26em] text-[#a99f8d]" style={typography.metadata}>
-            Why this vehicle matters
-          </p>
-          <WowFactorList items={vehicle.wowFactors} compact />
-        </div>
-
         <div className="rounded-[1.2rem] border border-white/10 bg-black/24 p-4">
           <div className="grid gap-2 text-sm text-[#d8d0c2]">
             <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Exterior / Interior</span>
-              <span>{vehicle.exteriorColor} / {vehicle.interiorColor}</span>
+              <span className="text-[#a99f8d]">Vehicle</span>
+              <span>{vehicleDisplayName(vehicle)}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Engine</span>
-              <span>{vehicle.engine}</span>
+              <span className="text-[#a99f8d]">Image status</span>
+              <span>{vehicle.primaryImage.status === "pending" ? "Verification pending" : "Verified"}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Concierge</span>
+              <span className="text-[#a99f8d]">Next step</span>
               <span>{vehicle.conciergeAvailability}</span>
             </div>
           </div>
@@ -141,14 +113,11 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex flex-1 flex-col gap-3 sm:flex-row">
-            <Link href={`/contact?vehicle=${vehicle.id}`} className="gold-button text-center">
+            <Link href={contactHref} className="gold-button text-center">
               {vehicle.ctas.primary}
             </Link>
-            <Link href={`/inventory/${vehicle.id}`} className="ghost-button text-center">
+            <Link href={detailHref} className="ghost-button text-center">
               {vehicle.ctas.secondary}
-            </Link>
-            <Link href={`/appraisal?vehicle=${vehicle.id}`} className="ghost-button text-center">
-              {vehicle.ctas.tertiary}
             </Link>
           </div>
           <SaveVehicleButton vehicleId={vehicle.id} />

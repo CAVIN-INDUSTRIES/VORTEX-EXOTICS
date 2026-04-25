@@ -273,6 +273,20 @@
   animation: none;
 }
 
+:global(html[data-effects="lite"]) .layerAurora,
+:global(html[data-effects="lite"]) .layerMesh,
+:global(html[data-effects="lite"]) .layerSweep,
+:global(html[data-effects="lite"]) .layerTwinkle,
+:global(html[data-effects="lite"]) .orb,
+:global(html[data-effects="lite"]) .layerGrain {
+  animation: none !important;
+}
+
+:global(html[data-effects="lite"]) .layerGrain,
+:global(html[data-effects="lite"]) .layerGrid {
+  opacity: 0 !important;
+}
+
 @keyframes grainShift {
   0% {
     transform: translate(0, 0);

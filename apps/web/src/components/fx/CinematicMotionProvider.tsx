@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useAdaptiveEffects } from "@/hooks/useAdaptiveEffects";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { destroyLenis, initLenis } from "@/lib/scroll/lenis";
 
@@ -19,16 +20,18 @@ function getScene(pathname: string): string {
 export function CinematicMotionProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const reduced = usePrefersReducedMotion();
+  const { allowHeavyFx, effectsLevel } = useAdaptiveEffects();
 
   useEffect(() => {
     document.documentElement.dataset.scene = getScene(pathname);
+    document.documentElement.dataset.effects = effectsLevel;
     if (reduced) document.documentElement.classList.add("reduced-motion");
     else document.documentElement.classList.remove("reduced-motion");
-  }, [pathname, reduced]);
+  }, [effectsLevel, pathname, reduced]);
 
   useEffect(() => {
     async function setup() {
-      if (reduced) return;
+      if (reduced || !allowHeavyFx) return;
 
       const [{ gsap }, { ScrollTrigger }] = await Promise.all([import("gsap"), import("gsap/ScrollTrigger")]);
 
@@ -40,7 +43,7 @@ export function CinematicMotionProvider({ children }: { children: React.ReactNod
     return () => {
       destroyLenis();
     };
-  }, [reduced]);
+  }, [allowHeavyFx, reduced]);
 
   return <>{children}</>;
 }

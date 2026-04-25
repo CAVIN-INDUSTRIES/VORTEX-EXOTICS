@@ -43,7 +43,7 @@ function Loader() {
 export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Props) {
   const headingId = useId();
   const webglEligible = useWebglEligible();
-  const { maxDpr } = useAdaptiveEffects();
+  const { allowHeavyFx, maxDpr } = useAdaptiveEffects();
   const glb = modelGlbUrl?.trim() || DEFAULT_PUBLIC_VEHICLE_GLB;
   const isListingAsset = Boolean(modelGlbUrl?.trim());
   const cam = getCanvasCamera(false);
@@ -96,10 +96,10 @@ export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Prop
           />
         ) : (
           <Canvas
-            shadows
+            shadows={allowHeavyFx}
             dpr={[1, maxDpr]}
             camera={{ position: cam.position, fov: cam.fov, near: 0.1, far: 120 }}
-            gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+            gl={{ antialias: true, alpha: false, powerPreference: allowHeavyFx ? "high-performance" : "default" }}
             onCreated={({ gl }) => configureVexRenderer(gl)}
           >
             <Suspense fallback={<Loader />}>
@@ -113,7 +113,7 @@ export function InventoryVehicleViewer({ modelGlbUrl, modelSource, title }: Prop
                 onPresetApplied={onPresetApplied}
                 autoRotate={false}
                 compact={false}
-                premium
+                premium={allowHeavyFx}
               />
             </Suspense>
           </Canvas>

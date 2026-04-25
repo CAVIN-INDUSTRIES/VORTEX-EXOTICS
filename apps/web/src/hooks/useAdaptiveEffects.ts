@@ -11,16 +11,22 @@ export function useAdaptiveEffects() {
 
   return useMemo(() => {
     if (typeof navigator === "undefined") {
-      return { allowHeavyFx: !reducedMotion, maxDpr: resolveConfiguratorMaxDpr({ reducedMotion }) };
+      return {
+        allowHeavyFx: !reducedMotion,
+        effectsLevel: reducedMotion ? "lite" : "full",
+        maxDpr: resolveConfiguratorMaxDpr({ reducedMotion }),
+      };
     }
 
-    const nav = navigator as NavigatorWithDeviceMemory;
+    const nav = navigator as NavigatorWithDeviceMemory & { connection?: { saveData?: boolean } };
     const memory = nav.deviceMemory ?? 8;
     const cores = navigator.hardwareConcurrency ?? 8;
-    const constrained = memory <= 4 || cores <= 4 || reducedMotion;
+    const saveData = Boolean(nav.connection?.saveData);
+    const constrained = memory <= 4 || cores <= 4 || saveData || reducedMotion;
 
     return {
       allowHeavyFx: !constrained,
+      effectsLevel: constrained ? "lite" : "full",
       maxDpr: resolveConfiguratorMaxDpr({
         reducedMotion,
         deviceMemory: memory,

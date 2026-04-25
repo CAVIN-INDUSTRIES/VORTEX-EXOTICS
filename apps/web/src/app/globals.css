@@ -507,6 +507,8 @@ main {
 
   .vex-automotive-layer {
     will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
 
   .vex-automotive-reflection {
@@ -567,6 +569,36 @@ main {
   .vex-automotive-collection .vex-automotive-reflection {
     inset: -12%;
   }
+}
+
+html[data-effects="lite"] .gate-beams,
+html[data-effects="lite"] .gate-film,
+html[data-effects="lite"] .vex-atmosphere-glow span,
+html[data-effects="lite"] .vex-atmosphere-drift,
+html[data-effects="lite"] .vex-automotive-specular,
+html[data-effects="lite"] .vex-automotive-sweep,
+html[data-effects="lite"] .vex-automotive-road {
+  animation: none !important;
+}
+
+html[data-effects="lite"] .site-shell::before,
+html[data-effects="lite"] .site-shell::after,
+html[data-effects="lite"] .vex-atmosphere-lightfield,
+html[data-effects="lite"] .vex-atmosphere-noise,
+html[data-effects="lite"] .gate-film {
+  opacity: 0 !important;
+}
+
+html[data-effects="lite"] .vex-atmosphere-glow,
+html[data-effects="lite"] .vex-atmosphere-drift,
+html[data-effects="lite"] .vex-automotive-atmosphere {
+  filter: none !important;
+}
+
+html[data-effects="lite"] .glass-panel,
+html[data-effects="lite"] .vault-panel,
+html[data-effects="lite"] .luxury-nav-bar {
+  backdrop-filter: blur(14px) saturate(1.05);
 }
 
 @keyframes gateBeamDrift {

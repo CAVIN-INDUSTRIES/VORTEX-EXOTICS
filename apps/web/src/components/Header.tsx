@@ -40,12 +40,16 @@ export function Header() {
       <div className="shell pb-3">
         <div className="luxury-nav-bar flex items-center justify-between gap-4 px-3 py-3 sm:px-4">
         <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
-          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#f1d38a]/24 bg-white/[0.06] text-[0.68rem] font-semibold tracking-[0.28em] text-[#f1d38a] shadow-[0_0_48px_rgba(212,175,55,0.08)]">
-            VX
-          </span>
-          <span>
-            <span className="block font-[family-name:var(--font-montserrat)] text-[0.68rem] uppercase tracking-[0.38em] text-[#f1d38a]">VEX Atelier</span>
-            <span className="block font-[family-name:var(--font-display)] text-[1rem] italic tracking-[0.04em] text-[#d8ccb9]">Private automotive registry</span>
+          <span className="flex h-11 items-center">
+            <span className="mr-3 h-8 w-px bg-[linear-gradient(180deg,rgba(241,211,138,0),rgba(241,211,138,0.9),rgba(241,211,138,0))]" aria-hidden />
+            <span className="leading-none">
+              <span className="block font-[family-name:var(--font-display)] text-[1.55rem] tracking-[0.08em] text-[#fff8eb] sm:text-[1.8rem]">
+                Vortex
+              </span>
+              <span className="mt-1 block font-[family-name:var(--font-montserrat)] text-[0.62rem] uppercase tracking-[0.52em] text-[#f1d38a] sm:text-[0.66rem]">
+                Exotics
+              </span>
+            </span>
           </span>
         </Link>
 

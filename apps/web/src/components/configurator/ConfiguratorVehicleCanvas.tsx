@@ -75,7 +75,7 @@ export function ConfiguratorVehicleCanvas({
   const hintId = useId();
   const webglEligible = useWebglEligible();
   const [webgpuCapable, setWebgpuCapable] = useState<boolean | null>(null);
-  const { maxDpr } = useAdaptiveEffects();
+  const { allowHeavyFx, maxDpr } = useAdaptiveEffects();
 
   useEffect(() => {
     let cancelled = false;
@@ -154,10 +154,10 @@ export function ConfiguratorVehicleCanvas({
         ) : (
           <Canvas
             className={styles.canvas}
-            shadows
+            shadows={allowHeavyFx}
             dpr={[1, maxDpr]}
             camera={{ position: cam.position, fov: cam.fov, near: 0.1, far: 80 }}
-            gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+            gl={{ antialias: true, alpha: false, powerPreference: allowHeavyFx ? "high-performance" : "default" }}
             onCreated={({ gl }) => configureVexRenderer(gl)}
           >
             <Suspense fallback={<CanvasLoader />}>
@@ -169,7 +169,7 @@ export function ConfiguratorVehicleCanvas({
                 onPresetApplied={onPresetApplied}
                 autoRotate={resolvedAutoRotate}
                 compact={compact}
-                premium={premium}
+                premium={premium && allowHeavyFx}
                 compactGrid={compactGrid}
               />
             </Suspense>

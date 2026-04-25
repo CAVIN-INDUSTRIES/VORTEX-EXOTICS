@@ -112,6 +112,12 @@ export function shouldUseWebGL(): boolean {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (mq.matches) return false;
   try {
+    type NavWithHints = Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+    const nav = navigator as NavWithHints;
+    const memory = nav.deviceMemory ?? 8;
+    const cores = navigator.hardwareConcurrency ?? 8;
+    const saveData = Boolean(nav.connection?.saveData);
+    if (saveData || memory <= 4 || cores <= 4) return false;
     const c = document.createElement("canvas");
     return Boolean(c.getContext("webgl2") || c.getContext("webgl"));
   } catch {

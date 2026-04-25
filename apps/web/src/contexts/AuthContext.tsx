@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { getPublicApiBase } from "@/lib/apiBase";
+import { getPublicApiBase, isApiConfiguredForProduction } from "@/lib/apiBase";
 
 const API_BASE = getPublicApiBase();
 const TOKEN_KEY = "vex_token";
@@ -35,6 +35,11 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function ensureApiBase(action: "login" | "register" | "session") {
+  if (process.env.NODE_ENV === "production" && !isApiConfiguredForProduction()) {
+    throw new Error(
+      "Public API is not configured for production (missing NEXT_PUBLIC_API_URL). Update environment variables and redeploy."
+    );
+  }
   if (!API_BASE) {
     if (action === "register") {
       throw new Error(PUBLIC_AUTH_UNAVAILABLE_MESSAGE);

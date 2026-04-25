@@ -12,7 +12,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   color: #0a0906;
-  background: linear-gradient(90deg, var(--accent), var(--highlight));
+  background: linear-gradient(90deg, var(--gold, #d4af37), var(--gold-soft, #f1d38a));
   padding: 0.35rem 0.55rem;
   border-radius: 2px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: var(--text-muted, #c4c2bc);
   font-size: 0.9rem;
   background: #050608;
 }
@@ -50,9 +50,9 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--gold, #d4af37);
   width: fit-content;
-  border: 1px solid var(--accent-30);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 999px;
   padding: 0.18rem 0.5rem;
 }
@@ -61,7 +61,7 @@
   font-family: var(--font-montserrat), sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: var(--text, #f6f1e8);
   line-height: 1.3;
 }
 
@@ -71,28 +71,28 @@
 }
 
 .mainLink:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--gold, #d4af37);
   outline-offset: 3px;
   border-radius: 6px;
 }
 
 .meta {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--text-muted, #c4c2bc);
 }
 
 .price {
   font-family: var(--font-montserrat), sans-serif;
   font-weight: 700;
   font-size: 1.15rem;
-  color: var(--accent-bright);
+  color: var(--gold-soft, #f1d38a);
   margin-top: 0.25rem;
   letter-spacing: 0.02em;
 }
 
 .cta {
   font-size: 0.9rem;
-  color: var(--accent);
+  color: var(--gold, #d4af37);
   margin-top: 0.5rem;
   transition: opacity 0.2s ease;
 }
@@ -121,21 +121,21 @@
 }
 
 .actionPrimary {
-  background: linear-gradient(130deg, var(--accent-bright), var(--accent));
+  background: linear-gradient(130deg, var(--gold-soft, #f1d38a), var(--gold, #d4af37));
   color: #090805;
   border: 1px solid rgba(255, 255, 255, 0.18);
   font-weight: 700;
 }
 
 .actionSecondary {
-  color: var(--text-primary);
-  border: 1px solid var(--line-gold);
+  color: var(--text, #f6f1e8);
+  border: 1px solid var(--line-gold, rgba(212, 175, 55, 0.22));
   background: rgba(255, 255, 255, 0.03);
   font-weight: 600;
 }
 
 .actionGhost {
-  color: var(--accent);
+  color: var(--gold, #d4af37);
   border: 1px solid transparent;
   font-weight: 600;
 }
@@ -143,6 +143,6 @@
 .actionPrimary:focus-visible,
 .actionSecondary:focus-visible,
 .actionGhost:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--gold, #d4af37);
   outline-offset: 2px;
 }

@@ -1,5 +1,5 @@
 import type { RaisePackage } from "@vex/shared";
-import { getPublicApiBase } from "@/lib/apiBase";
+import { assertPublicApiConfigured, getPublicApiBase } from "@/lib/apiBase";
 
 const API_BASE = getPublicApiBase();
 const PUBLIC_INTAKE_UNAVAILABLE_MESSAGE =
@@ -23,9 +23,7 @@ function errorMessageFromBody(body: unknown): string | null {
 }
 
 function ensurePublicApiAvailable() {
-  if (!API_BASE) {
-    throw new Error(PUBLIC_INTAKE_UNAVAILABLE_MESSAGE);
-  }
+  assertPublicApiConfigured(PUBLIC_INTAKE_UNAVAILABLE_MESSAGE);
 }
 
 export interface InventoryItem {
@@ -54,7 +52,7 @@ export interface InventoryItem {
     year: number;
     basePrice: number;
     bodyType: string | null;
-    imageUrls: unknown;
+    imageUrls: string[] | null;
   };
 }
 

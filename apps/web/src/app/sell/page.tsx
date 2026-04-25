@@ -41,6 +41,9 @@ export default function SellPage() {
             not a commodity intake sequence.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <Link href="/private-acquisition" className="gold-button">
+              Begin Private Consultation
+            </Link>
             <Link href="/contact" className="gold-button">
               Submit your vehicle
             </Link>

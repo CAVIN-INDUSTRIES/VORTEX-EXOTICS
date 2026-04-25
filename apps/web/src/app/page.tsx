@@ -2,8 +2,6 @@ import Link from "next/link";
 import { colors, radius, typography } from "@vex/design-system";
 import { FEATURED_VEHICLES, formatPrice } from "@/lib/vehicles";
 import { AutomotiveAtmosphere } from "@/components/atmosphere";
-import { HeroBackgroundVideo } from "@/components/HeroBackgroundVideo";
-import { EntrySequence } from "@/components/entry/EntrySequence";
 import { EditorialContainer, EditorialHeader, FeatureGrid, SectionShell } from "@/components/layout";
 import { VehicleCard } from "@/components/VehicleCard";
 import { VehicleImageFrame } from "@/components/inventory/VehicleImageFrame";
@@ -97,22 +95,13 @@ export default function HomePage() {
 
   return (
     <main id="main-content">
-      <EntrySequence />
-
       <SectionShell
         id="universe"
-        variant="hero"
-        className="cinematic-gate-hero relative overflow-hidden pb-18 pt-10 sm:pt-16"
-        atmosphere={<AutomotiveAtmosphere variant="hero" intensity="high" />}
+        variant="compact"
+        className="cinematic-gate-hero relative overflow-hidden"
+        atmosphere={<AutomotiveAtmosphere variant="hero" intensity="medium" />}
       >
-        <HeroBackgroundVideo className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        <div className="gate-backplate" aria-hidden />
-        <div className="gate-beams" aria-hidden />
-        <div className="gate-aperture" aria-hidden />
-        <div className="gate-film" aria-hidden />
-        <div className="gate-grade" aria-hidden />
-
-        <EditorialContainer width="feature" className="hero-stage relative">
+        <EditorialContainer width="feature" className="hero-stage relative z-[4]">
           <div className="mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-12">
             <MotionReveal className="hero-copy-lux max-w-2xl">
               <p className="section-kicker" style={{ ...typography.sectionEyebrow }}>

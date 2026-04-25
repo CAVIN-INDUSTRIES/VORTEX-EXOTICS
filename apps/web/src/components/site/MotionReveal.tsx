@@ -20,11 +20,11 @@ export function MotionReveal({
 
   return (
     <motion.div
-      initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y }}
-      whileInView={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
+      initial={false}
+      animate={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
       transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay }}
       className={className}
+      style={{ opacity: 1 }}
     >
       {children}
     </motion.div>

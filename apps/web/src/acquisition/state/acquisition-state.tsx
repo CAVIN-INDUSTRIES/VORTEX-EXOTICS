@@ -11,11 +11,16 @@ type AcquisitionState = {
   lastUpdatedAt: string | null;
 };
 
-type AcquisitionAction =
-  | { type: "hydrate"; payload: AcquisitionState }
-  | { type: "update-step"; stepId: AcquisitionFlowStepId; payload: Partial<AcquisitionProfile> }
-  | { type: "replace-profile"; payload: AcquisitionProfile }
-  | { type: "reset" };
+export type AcquisitionAction =
+  | { type: "HYDRATE"; payload: AcquisitionState }
+  | { type: "SET_FIELD"; payload: Partial<AcquisitionProfile> }
+  | { type: "SET_PREFERRED_BRANDS"; payload: string[] }
+  | { type: "SET_AVOIDED_BRANDS"; payload: string[] }
+  | { type: "SET_DESIRED_EMOTION"; payload: string[] }
+  | { type: "SET_LIFESTYLE"; payload: string[] }
+  | { type: "SET_COMPARE_VEHICLES"; payload: string[] }
+  | { type: "REPLACE_PROFILE"; payload: AcquisitionProfile }
+  | { type: "RESET" };
 
 const initialState: AcquisitionState = {
   profile: defaultAcquisitionProfile(),
@@ -29,31 +34,60 @@ function sanitizeProfile(candidate: unknown): AcquisitionProfile {
   }
 
   const source = candidate as Partial<AcquisitionProfile>;
+  const validOwnershipDurations = new Set<AcquisitionProfile["ownershipDuration"]>([
+    "under-1-year",
+    "1-2-years",
+    "3-5-years",
+    "5-10-years",
+    "long-term-collector",
+  ]);
+  const validDrivingFrequency = new Set<AcquisitionProfile["drivingFrequency"]>(["daily", "weekly", "monthly", "rarely"]);
+  const validFinancingPreference = new Set<AcquisitionProfile["financingPreference"]>(["cash", "financing", "lease", "open"]);
   return {
     budget: typeof source.budget === "number" ? source.budget : base.budget,
     preferredBrands: Array.isArray(source.preferredBrands)
-      ? source.preferredBrands.filter((v): v is string => typeof v === "string")
+      ? source.preferredBrands.filter((value): value is string => typeof value === "string")
       : base.preferredBrands,
     ownershipIntent: typeof source.ownershipIntent === "string" ? source.ownershipIntent : base.ownershipIntent,
+    ownershipDuration:
+      typeof source.ownershipDuration === "string" && validOwnershipDurations.has(source.ownershipDuration as AcquisitionProfile["ownershipDuration"])
+        ? (source.ownershipDuration as AcquisitionProfile["ownershipDuration"])
+        : base.ownershipDuration,
+    drivingFrequency:
+      typeof source.drivingFrequency === "string" && validDrivingFrequency.has(source.drivingFrequency as AcquisitionProfile["drivingFrequency"])
+        ? (source.drivingFrequency as AcquisitionProfile["drivingFrequency"])
+        : base.drivingFrequency,
     lifestyle: Array.isArray(source.lifestyle)
-      ? source.lifestyle.filter((v): v is string => typeof v === "string")
+      ? source.lifestyle.filter((value): value is string => typeof value === "string")
       : base.lifestyle,
     riskTolerance: typeof source.riskTolerance === "number" ? source.riskTolerance : base.riskTolerance,
-    ownershipDuration: typeof source.ownershipDuration === "number" ? source.ownershipDuration : base.ownershipDuration,
+    monthlyOwnershipComfort:
+      typeof source.monthlyOwnershipComfort === "number" ? source.monthlyOwnershipComfort : base.monthlyOwnershipComfort,
+    financingPreference:
+      typeof source.financingPreference === "string" &&
+      validFinancingPreference.has(source.financingPreference as AcquisitionProfile["financingPreference"])
+        ? (source.financingPreference as AcquisitionProfile["financingPreference"])
+        : base.financingPreference,
     desiredEmotion: Array.isArray(source.desiredEmotion)
-      ? source.desiredEmotion.filter((v): v is string => typeof v === "string")
+      ? source.desiredEmotion.filter((value): value is string => typeof value === "string")
       : base.desiredEmotion,
     compareVehicles: Array.isArray(source.compareVehicles)
-      ? source.compareVehicles.filter((v): v is string => typeof v === "string")
+      ? source.compareVehicles.filter((value): value is string => typeof value === "string")
       : base.compareVehicles,
+    avoidedBrands: Array.isArray(source.avoidedBrands)
+      ? source.avoidedBrands.filter((value): value is string => typeof value === "string")
+      : base.avoidedBrands,
+    mustHaveFeatures: Array.isArray(source.mustHaveFeatures)
+      ? source.mustHaveFeatures.filter((value): value is string => typeof value === "string")
+      : base.mustHaveFeatures,
   };
 }
 
 function acquisitionReducer(state: AcquisitionState, action: AcquisitionAction): AcquisitionState {
   switch (action.type) {
-    case "hydrate":
+    case "HYDRATE":
       return action.payload;
-    case "update-step":
+    case "SET_FIELD":
       return {
         profile: {
           ...state.profile,
@@ -61,12 +95,52 @@ function acquisitionReducer(state: AcquisitionState, action: AcquisitionAction):
         },
         lastUpdatedAt: new Date().toISOString(),
       };
-    case "replace-profile":
+    case "SET_PREFERRED_BRANDS":
+      return {
+        profile: {
+          ...state.profile,
+          preferredBrands: action.payload,
+        },
+        lastUpdatedAt: new Date().toISOString(),
+      };
+    case "SET_AVOIDED_BRANDS":
+      return {
+        profile: {
+          ...state.profile,
+          avoidedBrands: action.payload,
+        },
+        lastUpdatedAt: new Date().toISOString(),
+      };
+    case "SET_DESIRED_EMOTION":
+      return {
+        profile: {
+          ...state.profile,
+          desiredEmotion: action.payload,
+        },
+        lastUpdatedAt: new Date().toISOString(),
+      };
+    case "SET_LIFESTYLE":
+      return {
+        profile: {
+          ...state.profile,
+          lifestyle: action.payload,
+        },
+        lastUpdatedAt: new Date().toISOString(),
+      };
+    case "SET_COMPARE_VEHICLES":
+      return {
+        profile: {
+          ...state.profile,
+          compareVehicles: action.payload,
+        },
+        lastUpdatedAt: new Date().toISOString(),
+      };
+    case "REPLACE_PROFILE":
       return {
         profile: action.payload,
         lastUpdatedAt: new Date().toISOString(),
       };
-    case "reset":
+    case "RESET":
       return {
         profile: defaultAcquisitionProfile(),
         lastUpdatedAt: new Date().toISOString(),
@@ -78,9 +152,8 @@ function acquisitionReducer(state: AcquisitionState, action: AcquisitionAction):
 
 type AcquisitionStateContextValue = {
   state: AcquisitionState;
-  updateStep: (stepId: AcquisitionFlowStepId, payload: Partial<AcquisitionProfile>) => void;
-  replaceProfile: (profile: AcquisitionProfile) => void;
-  reset: () => void;
+  profile: AcquisitionProfile;
+  dispatch: (action: AcquisitionAction) => void;
 };
 
 const AcquisitionStateContext = createContext<AcquisitionStateContextValue | null>(null);
@@ -126,7 +199,7 @@ export function AcquisitionStateProvider({ children }: { children: React.ReactNo
   useEffect(() => {
     const hydrated = readPersistedState();
     if (hydrated) {
-      dispatch({ type: "hydrate", payload: hydrated });
+      dispatch({ type: "HYDRATE", payload: hydrated });
     }
   }, []);
 
@@ -137,15 +210,8 @@ export function AcquisitionStateProvider({ children }: { children: React.ReactNo
   const value = useMemo<AcquisitionStateContextValue>(
     () => ({
       state,
-      updateStep: (stepId, payload) => {
-        dispatch({ type: "update-step", stepId, payload });
-      },
-      replaceProfile: (profile) => {
-        dispatch({ type: "replace-profile", payload: profile });
-      },
-      reset: () => {
-        dispatch({ type: "reset" });
-      },
+      profile: state.profile,
+      dispatch,
     }),
     [state]
   );
@@ -160,3 +226,20 @@ export function useAcquisitionState() {
   }
   return ctx;
 }
+
+export function useAcquisition() {
+  const { profile } = useAcquisitionState();
+  return profile;
+}
+
+export function useAcquisitionMeta() {
+  const { state } = useAcquisitionState();
+  return { lastUpdatedAt: state.lastUpdatedAt };
+}
+
+export function useAcquisitionDispatch() {
+  const { dispatch } = useAcquisitionState();
+  return dispatch;
+}
+
+export const ACQUISITION_STORAGE_KEY = STORAGE_KEY;

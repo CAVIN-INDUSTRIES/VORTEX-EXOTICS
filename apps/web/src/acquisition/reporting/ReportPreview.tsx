@@ -8,7 +8,7 @@ export function ReportPreview({ report }: { report: VehicleRecommendationReport 
   return (
     <div className="space-y-8">
       <section className="rounded-[1.9rem] border p-6 sm:p-8" style={{ borderColor: acquisitionTheme.colors.line, background: acquisitionTheme.effects.panel }}>
-        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: acquisitionTheme.colors.goldSoft }}>
+        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: acquisitionTheme.semantic.goldSoft }}>
           Executive Summary
         </p>
         <h2 className="mt-4 text-3xl text-[#fff8eb]">{report.summary.headline}</h2>

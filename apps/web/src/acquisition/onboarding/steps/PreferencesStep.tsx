@@ -1,42 +1,44 @@
-import type { AcquisitionStepProps } from "@/acquisition/types/contracts";
-import { PREFERENCE_BRANDS, PREFERENCE_BRAND_AVOIDANCE, PREFERENCE_COMFORT, PREFERENCE_EMOTIONS } from "@/acquisition/schemas/questions";
+import type { AcquisitionStepComponentProps } from "@/acquisition/types/contracts";
 
 function isSelected(list: string[], item: string) {
   return list.includes(item);
 }
 
-export function PreferencesStep({ profile, dispatch }: AcquisitionStepProps) {
+export function PreferencesStep({ profile, questions, onProfilePatch }: AcquisitionStepComponentProps) {
+  const preferredBrandQuestion = questions.find((question) => question.id === "preferredBrands");
+  const emotionQuestion = questions.find((question) => question.id === "desiredEmotion");
+  const lifestyleQuestion = questions.find((question) => question.id === "lifestyle");
+  const avoidedBrandQuestion = {
+    options: ["Maserati", "Jaguar", "Alfa Romeo", "Lotus", "Aston Martin", "Bentley"],
+  };
+
   const toggleBrand = (brand: string) => {
-    dispatch({
-      type: "SET_PREFERRED_BRANDS",
-      payload: isSelected(profile.preferredBrands, brand)
+    onProfilePatch({
+      preferredBrands: isSelected(profile.preferredBrands, brand)
         ? profile.preferredBrands.filter((current) => current !== brand)
         : [...profile.preferredBrands, brand],
     });
   };
 
   const toggleAvoidedBrand = (brand: string) => {
-    dispatch({
-      type: "SET_AVOIDED_BRANDS",
-      payload: isSelected(profile.avoidedBrands, brand)
+    onProfilePatch({
+      avoidedBrands: isSelected(profile.avoidedBrands, brand)
         ? profile.avoidedBrands.filter((current) => current !== brand)
         : [...profile.avoidedBrands, brand],
     });
   };
 
   const toggleEmotion = (emotion: string) => {
-    dispatch({
-      type: "SET_DESIRED_EMOTION",
-      payload: isSelected(profile.desiredEmotion, emotion)
+    onProfilePatch({
+      desiredEmotion: isSelected(profile.desiredEmotion, emotion)
         ? profile.desiredEmotion.filter((current) => current !== emotion)
         : [...profile.desiredEmotion, emotion],
     });
   };
 
   const toggleLifestyle = (experience: string) => {
-    dispatch({
-      type: "SET_LIFESTYLE",
-      payload: isSelected(profile.lifestyle, experience)
+    onProfilePatch({
+      lifestyle: isSelected(profile.lifestyle, experience)
         ? profile.lifestyle.filter((current) => current !== experience)
         : [...profile.lifestyle, experience],
     });
@@ -51,7 +53,7 @@ export function PreferencesStep({ profile, dispatch }: AcquisitionStepProps) {
           Choose the brands that align with your ownership identity and market confidence.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
-          {PREFERENCE_BRANDS.options?.map((brand) => (
+          {preferredBrandQuestion?.options?.map((brand) => (
             <button
               key={brand}
               type="button"
@@ -72,7 +74,7 @@ export function PreferencesStep({ profile, dispatch }: AcquisitionStepProps) {
         <p className="text-xs uppercase tracking-[0.28em] text-[#f1d38a]/75">Brand filters</p>
         <h3 className="mt-3 text-2xl text-[#fff8eb]">Avoided brands</h3>
         <div className="mt-4 flex flex-wrap gap-2">
-          {PREFERENCE_BRAND_AVOIDANCE.options?.map((brand) => (
+          {avoidedBrandQuestion?.options?.map((brand) => (
             <button
               key={brand}
               type="button"
@@ -93,7 +95,7 @@ export function PreferencesStep({ profile, dispatch }: AcquisitionStepProps) {
         <p className="text-xs uppercase tracking-[0.28em] text-[#f1d38a]/75">Ownership emotion</p>
         <h3 className="mt-3 text-2xl text-[#fff8eb]">How should ownership feel?</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {PREFERENCE_EMOTIONS.options?.map((emotion) => (
+          {emotionQuestion?.options?.map((emotion) => (
             <label
               key={emotion}
               className="flex items-center gap-3 rounded-[1rem] border border-white/12 bg-white/[0.03] px-4 py-3 text-sm text-[#e5dccf]"
@@ -113,7 +115,7 @@ export function PreferencesStep({ profile, dispatch }: AcquisitionStepProps) {
         <p className="text-xs uppercase tracking-[0.28em] text-[#f1d38a]/75">Lifestyle match</p>
         <h3 className="mt-3 text-2xl text-[#fff8eb]">Comfort and use profile</h3>
         <div className="mt-4 flex flex-wrap gap-2">
-          {PREFERENCE_COMFORT.options?.map((experience) => (
+          {lifestyleQuestion?.options?.map((experience) => (
             <button
               key={experience}
               type="button"

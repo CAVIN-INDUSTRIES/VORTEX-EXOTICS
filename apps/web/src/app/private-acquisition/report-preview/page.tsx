@@ -1,5 +1,6 @@
 import { ReportPreview } from "@/acquisition/reporting/ReportPreview";
-import { mockVehicleRecommendationReport } from "@/acquisition/mock/mockVehicleResults";
+import { buildMockVehicleReport } from "@/acquisition/mock/mockVehicleResults";
+import { defaultAcquisitionProfile } from "@/acquisition/types/contracts";
 
 export const metadata = {
   title: "Private Acquisition Report Preview | VEX Atelier",
@@ -7,9 +8,10 @@ export const metadata = {
 };
 
 export default function PrivateAcquisitionReportPreviewPage() {
+  const report = buildMockVehicleReport(defaultAcquisitionProfile());
   return (
     <main id="main-content" className="shell py-14 sm:py-18">
-      <ReportPreview report={mockVehicleRecommendationReport} />
+      <ReportPreview report={report} />
     </main>
   );
 }

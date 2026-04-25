@@ -1,58 +1,40 @@
 "use client";
 
-import type { QuestionDefinition } from "@/acquisition/types/contracts";
-import { useAcquisitionState } from "@/acquisition/state";
-import { ACQUISITION_THEME } from "@/acquisition/config/acquisition-theme";
+import type { AcquisitionStepComponentProps } from "@/acquisition/types/contracts";
+import { acquisitionTheme } from "@/acquisition/config/acquisition-theme";
 
-const QUESTION: QuestionDefinition = {
-  id: "lifestyle-signals",
-  type: "multi",
-  label: "Lifestyle signals",
-  options: [
-    "Urban driving",
-    "Highway touring",
-    "Collector events",
-    "Business presence",
-    "Weekend escapes",
-    "Stealth preference",
-  ],
-  helperText: "Choose all that apply to your ownership rhythm.",
-};
+function includes(list: string[], value: string) {
+  return list.includes(value);
+}
 
-const EMOTIONS: QuestionDefinition = {
-  id: "desired-emotion",
-  type: "multi",
-  label: "Desired ownership emotion",
-  options: ["Stealth confidence", "Raw drama", "Elegant status", "Collector significance", "Technical precision"],
-};
-
-export function LifestyleStep() {
-  const { profile, dispatch } = useAcquisitionState();
+export function LifestyleStep({ profile, onProfilePatch, questions }: AcquisitionStepComponentProps) {
+  const lifestyleQuestion = questions.find((question) => question.id === "lifestyle");
+  const emotionQuestion = questions.find((question) => question.id === "desiredEmotion");
 
   const toggleLifestyle = (value: string) => {
-    const next = profile.lifestyle.includes(value)
+    const next = includes(profile.lifestyle, value)
       ? profile.lifestyle.filter((entry) => entry !== value)
       : [...profile.lifestyle, value];
-    dispatch({ type: "SET_FIELD", payload: { lifestyle: next } });
+    onProfilePatch({ lifestyle: next });
   };
 
   const toggleEmotion = (value: string) => {
-    const next = profile.desiredEmotion.includes(value)
+    const next = includes(profile.desiredEmotion, value)
       ? profile.desiredEmotion.filter((entry) => entry !== value)
       : [...profile.desiredEmotion, value];
-    dispatch({ type: "SET_FIELD", payload: { desiredEmotion: next } });
+    onProfilePatch({ desiredEmotion: next });
   };
 
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: ACQUISITION_THEME.colors.goldSoft }}>
-          {QUESTION.label}
+        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: acquisitionTheme.colors.softGoldBright }}>
+          {lifestyleQuestion?.label ?? "Lifestyle signals"}
         </p>
-        <p className="mt-2 text-sm text-[#cfc6b8]">{QUESTION.helperText}</p>
+        <p className="mt-2 text-sm text-[#cfc6b8]">{lifestyleQuestion?.helperText ?? "Choose all that apply to your ownership rhythm."}</p>
         <div className="mt-4 flex flex-wrap gap-3">
-          {QUESTION.options?.map((option) => {
-            const active = profile.lifestyle.includes(option);
+          {(lifestyleQuestion?.options ?? []).map((option) => {
+            const active = includes(profile.lifestyle, option);
             return (
               <button
                 key={option}
@@ -73,12 +55,12 @@ export function LifestyleStep() {
       </div>
 
       <div>
-        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: ACQUISITION_THEME.colors.goldSoft }}>
-          {EMOTIONS.label}
+        <p className="text-xs uppercase tracking-[0.28em]" style={{ color: acquisitionTheme.colors.softGoldBright }}>
+          {emotionQuestion?.label ?? "Desired ownership emotion"}
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {EMOTIONS.options?.map((option) => {
-            const active = profile.desiredEmotion.includes(option);
+          {(emotionQuestion?.options ?? []).map((option) => {
+            const active = includes(profile.desiredEmotion, option);
             return (
               <button
                 key={option}

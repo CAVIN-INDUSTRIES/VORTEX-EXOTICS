@@ -1,5 +1,6 @@
+"use client";
+
 import Link from "next/link";
-import { Suspense } from "react";
 import { AutomotiveAtmosphere } from "@/components/atmosphere";
 import { EditorialContainer, SectionShell } from "@/components/layout";
 import { MotionReveal } from "@/components/site/MotionReveal";
@@ -7,13 +8,7 @@ import { AcquisitionWizard } from "@/acquisition/components";
 import { acquisitionTheme } from "@/acquisition/config";
 import { AcquisitionProvider } from "@/acquisition/state";
 
-export const metadata = {
-  title: "Private Acquisition Intelligence | VEX Atelier",
-  description:
-    "Build your private vehicle acquisition strategy with concierge-grade onboarding, market-aware preferences, and recommendation intelligence.",
-};
-
-export default function PrivateAcquisitionPage() {
+export function PrivateAcquisitionPageClient() {
   return (
     <AcquisitionProvider>
       <main id="main-content">
@@ -51,9 +46,7 @@ export default function PrivateAcquisitionPage() {
 
         <SectionShell variant="cinematic" atmosphere={<AutomotiveAtmosphere variant="collection" intensity="medium" />}>
           <EditorialContainer>
-            <Suspense fallback={<div className="rounded-[1.6rem] border border-white/10 bg-black/20 p-6 text-sm text-[#d8d0c2]">Loading consultation flow…</div>}>
-              <AcquisitionWizard />
-            </Suspense>
+            <AcquisitionWizard />
           </EditorialContainer>
         </SectionShell>
       </main>

@@ -16,6 +16,8 @@ test("v4.2 hero exposes cinematic GLSL data hook and survives scroll", async ({ 
 
 test("configure exploded toggles interactive viewer prop (smoke)", async ({ page }) => {
   await page.goto("/configure");
-  await page.getByRole("button", { name: /exploded view/i }).click();
-  await expect(page.getByRole("button", { name: /exploded view/i })).toHaveAttribute("aria-pressed", "true");
+  const explodedToggle = page.locator("button[data-exploded-view]");
+  await expect(explodedToggle).toBeVisible();
+  await explodedToggle.click();
+  await expect(explodedToggle).toHaveAttribute("aria-pressed", "true");
 });

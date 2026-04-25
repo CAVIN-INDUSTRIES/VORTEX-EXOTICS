@@ -30,18 +30,29 @@ async function stabilizePage(page: Page, url: string) {
   await page.waitForTimeout(1200);
 }
 
+function route(base: string, path: string) {
+  if (/^https?:\/\//.test(base)) {
+    const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
+    return `${normalizedBase}${path}`;
+  }
+  return path;
+}
+
 test("capture desktop route audit screenshots", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1200 });
+  const targetBase = process.env.PLAYWRIGHT_BASE_URL || "";
 
-  await stabilizePage(page, "/");
-  await expect(page.getByRole("heading", { name: /private exotic vehicle operating environment/i })).toBeVisible();
+  await stabilizePage(page, route(targetBase, "/"));
+  await expect(page.getByRole("heading", { name: /serious exotic acquisition needs a calmer front door/i })).toBeVisible();
   await saveLocatorShot(page, "homepage/homepage-hero-desktop.png", page.locator("#universe"));
 
   await page.mouse.wheel(0, 1800);
   await page.waitForTimeout(700);
   await saveShot(page, "homepage/homepage-mid-scroll-desktop.png");
 
-  const collectionHeading = page.getByRole("heading", { name: /private vault, not a listing grid/i });
+  const collectionHeading = page.getByRole("heading", {
+    name: /inventory section should feel like a private vault, not a generic grid/i,
+  });
   await collectionHeading.scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
   await saveLocatorShot(
@@ -59,7 +70,7 @@ test("capture desktop route audit screenshots", async ({ page }) => {
     page.locator("section").filter({ has: ctaHeading }).first()
   );
 
-  await stabilizePage(page, "/inventory");
+  await stabilizePage(page, route(targetBase, "/inventory"));
   await saveShot(page, "inventory/inventory-top-desktop.png");
 
   await page.getByText("Filter the collection").scrollIntoViewIfNeeded();
@@ -74,7 +85,7 @@ test("capture desktop route audit screenshots", async ({ page }) => {
   await saveLocatorShot(page, "inventory/bugatti-listing-desktop.png", page.locator("article").filter({ hasText: /bugatti chiron/i }).first());
   await saveLocatorShot(page, "inventory/lamborghini-listing-desktop.png", page.locator("article").filter({ hasText: /lamborghini huracan/i }).first());
 
-  await stabilizePage(page, "/inventory/bugatti-chiron-sport-2023");
+  await stabilizePage(page, route(targetBase, "/inventory/bugatti-chiron-sport-2023"));
   await saveShot(page, "inventory/detail-hero-desktop.png");
   await page.getByText("Key specs").scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
@@ -83,22 +94,22 @@ test("capture desktop route audit screenshots", async ({ page }) => {
   await page.waitForTimeout(500);
   await saveShot(page, "inventory/inquiry-cta-desktop.png");
 
-  await stabilizePage(page, "/appraisal");
-  await expect(page.getByRole("heading", { name: /premium appraisal flow/i })).toBeVisible();
+  await stabilizePage(page, route(targetBase, "/appraisal"));
+  await expect(page.getByRole("heading", { name: /premium appraisal flow built around confidence/i })).toBeVisible();
   await saveShot(page, "appraisal/appraisal-desktop.png");
 
-  await stabilizePage(page, "/contact");
+  await stabilizePage(page, route(targetBase, "/contact"));
   await expect(page.getByRole("heading", { name: /bring the right context/i })).toBeVisible();
   await saveShot(page, "contact/contact-desktop.png");
 
-  await stabilizePage(page, "/configure");
+  await stabilizePage(page, route(targetBase, "/configure"));
   await saveShot(page, "homepage/configure-desktop.png");
 
-  await stabilizePage(page, "/login");
+  await stabilizePage(page, route(targetBase, "/login"));
   await expect(page.getByRole("heading", { name: /return to your private garage/i })).toBeVisible();
   await saveShot(page, "regression/login-desktop.png");
 
-  await stabilizePage(page, "/register");
+  await stabilizePage(page, route(targetBase, "/register"));
   await expect(page.getByRole("heading", { name: /create your vex registry/i })).toBeVisible();
   await saveShot(page, "regression/register-desktop.png");
 });
@@ -108,17 +119,18 @@ test("capture mobile route audit screenshots", async ({ browser }) => {
     ...devices["iPhone 13"],
   });
   const page = await context.newPage();
+  const targetBase = process.env.PLAYWRIGHT_BASE_URL || "";
 
-  await stabilizePage(page, "/");
-  await expect(page.getByRole("heading", { name: /private exotic vehicle operating environment/i })).toBeVisible();
+  await stabilizePage(page, route(targetBase, "/"));
+  await expect(page.getByRole("heading", { name: /serious exotic acquisition needs a calmer front door/i })).toBeVisible();
   await saveShot(page, "mobile/homepage-hero-mobile.png");
 
-  await page.getByRole("button", { name: /open menu/i }).click();
+  await page.getByRole("button", { name: /open menu/i }).first().click();
   await page.waitForTimeout(400);
   await saveShot(page, "mobile/mobile-nav.png");
   await page.getByRole("button", { name: /close menu/i }).first().click({ force: true });
 
-  await stabilizePage(page, "/inventory");
+  await stabilizePage(page, route(targetBase, "/inventory"));
   await saveShot(page, "mobile/inventory-mobile.png");
   await saveShot(page, "inventory/mobile-inventory-top.png");
 
@@ -128,20 +140,20 @@ test("capture mobile route audit screenshots", async ({ browser }) => {
 
   await saveLocatorShot(page, "inventory/mobile-vehicle-card.png", page.locator("article").first());
 
-  await stabilizePage(page, "/inventory/bugatti-chiron-sport-2023");
+  await stabilizePage(page, route(targetBase, "/inventory/bugatti-chiron-sport-2023"));
   await saveShot(page, "inventory/mobile-detail-hero.png");
   await saveShot(page, "inventory/mobile-sticky-cta.png");
 
-  await stabilizePage(page, "/appraisal");
+  await stabilizePage(page, route(targetBase, "/appraisal"));
   await saveShot(page, "mobile/appraisal-mobile.png");
 
-  await stabilizePage(page, "/contact");
+  await stabilizePage(page, route(targetBase, "/contact"));
   await saveShot(page, "mobile/contact-mobile.png");
 
-  await stabilizePage(page, "/register");
+  await stabilizePage(page, route(targetBase, "/register"));
   await saveShot(page, "mobile/register-mobile.png");
 
-  await stabilizePage(page, "/");
+  await stabilizePage(page, route(targetBase, "/"));
   const mobileCtaHeading = page.getByRole("heading", { name: /ready to open a discreet acquisition channel/i });
   await mobileCtaHeading.scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);

@@ -12,5 +12,5 @@ test("configure route has garage-save CTA and exploded toggle", async ({ page })
   await expect(page.locator('[data-save-garage="1"]')).toBeVisible();
   const exploded = page.locator("button[data-exploded-view]");
   await expect(exploded).toBeVisible();
-  await expect(exploded).toHaveText(/exploded view/i);
+  await expect(exploded).toContainText(/exploded view/i);
 });

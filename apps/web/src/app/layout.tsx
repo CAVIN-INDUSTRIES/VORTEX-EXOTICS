@@ -66,19 +66,47 @@ export const metadata: Metadata = {
   title: "VEX Atelier | Private Market Luxury Automotive Platform",
   description:
     "Luxury cinematic vehicle platform for private inventory, concierge transactions, appraisals, and premium dealer operations.",
+  keywords: [
+    "luxury cars",
+    "dealer CRM",
+    "automotive marketplace",
+    "vehicle appraisal",
+    "private inventory",
+    "concierge acquisition",
+  ],
+  alternates: {
+    canonical: "/",
+  },
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/icon", type: "image/png", sizes: "512x512" }],
+    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+  },
   appleWebApp: { capable: true, title: "Vex" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: "VEX Atelier",
     description: "A luxury cinematic platform for private vehicle discovery, appraisal, and concierge acquisition flow.",
+    siteName: "VEX Atelier",
     type: "website",
     url: siteUrl,
-    images: [{ url: "/og-vex-appraisals.png", width: 1200, height: 630 }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "VEX Atelier",
     description: "Luxury cinematic website for private inventory, appraisals, and dealer-grade operations.",
+    images: ["/twitter-image"],
   },
 };
 

@@ -17,7 +17,7 @@ test("WebGPU feature flag is detectable in browser", async ({ page }) => {
 
 test("cinematic hero mounts a non-zero WebGL canvas when eligible", async ({ page }) => {
   await page.goto("/");
-  const canvas = page.locator("canvas").first();
+  const canvas = page.locator("#universe canvas").first();
   const count = await canvas.count();
   test.skip(count === 0, "No WebGL canvas (reduced motion, software renderer, or CI headless policy)");
 

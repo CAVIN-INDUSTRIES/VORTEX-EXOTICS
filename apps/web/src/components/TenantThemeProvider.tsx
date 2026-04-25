@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { tenantThemeJsonSchema, type TenantThemeJson } from "@vex/shared";
-import { getPublicApiBase, hasConfiguredPublicApiBase } from "@/lib/apiBase";
+import { getPublicApiBase, hasConfiguredPublicApiBase, getApiConfigErrorMessage } from "@/lib/apiBase";
 
 const API_BASE = getPublicApiBase();
 
@@ -43,6 +43,12 @@ export function TenantThemeProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!hasConfiguredPublicApiBase()) {
+      // Keep default theme when production API is intentionally not configured.
+      const message = getApiConfigErrorMessage("theme-loading");
+      if (message) {
+        // eslint-disable-next-line no-console
+        console.warn(message);
+      }
       applyTheme(null);
       return;
     }

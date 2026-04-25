@@ -178,6 +178,7 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 | Web   | `INTERNAL_PILOT_METRICS_KEY` | Same value as API — enables `/api/investor/pilot-network` (server proxy to `GET /dealer/pilots`). Optional locally; set in staging/prod for live pilot counters on `/investor` and `/investor-deck`. |
 | Web   | `INTERNAL_API_URL` | Optional server-only API origin for that proxy (defaults to `NEXT_PUBLIC_API_URL`). |
 | Web   | `NEXT_PUBLIC_SITE_URL` | Public site origin for metadata / Open Graph (e.g. https://your-domain.com). Falls back to `VERCEL_URL` on Vercel, else `http://localhost:3000`. |
+| Web   | `VEX_REQUIRE_EXPLICIT_PUBLIC_API` | Optional production safety guard (`1/true`) to hard-fail startup if `NEXT_PUBLIC_API_URL` is missing. Useful to prevent shipping a partially configured public intake surface. |
 | Web   | `NEXT_PUBLIC_HERO_VIDEO_URL` | Optional: looped hero background video URL (muted). Omit for gradient + 3D only. |
 | Web   | `NEXT_PUBLIC_HERO_VIDEO_POSTER` | Optional: poster image for hero video. |
 | CRM   | `NEXT_PUBLIC_API_URL`  | API base URL (same host as web in production). |
@@ -227,6 +228,12 @@ Use `pnpm` or `npx pnpm` if pnpm isn’t installed globally:
 | `pnpm run git:save -- "type: message"` | Stage all, commit, push current branch (default message if omitted). Use `GIT_SAVE_MSG` or pass a message after `--`. |
 | `pnpm run git:save:verify -- "type: message"` | Run `pnpm -w turbo run build`, then same as `git:save` (recommended before sharing). |
 | `cd apps/api && pnpm run db:seed` or `npx prisma db seed` | Seed DB (admin, vehicles, inventory) |
+
+### Web runtime env readiness notes
+
+- `apps/web` warns in production when `NEXT_PUBLIC_API_URL` is missing.
+- Set `VEX_REQUIRE_EXPLICIT_PUBLIC_API=1` in staging/production to force a startup error instead of a warning.
+- This guard helps avoid deploying a build where appraisal/contact/login/register requests are intentionally blocked due to missing API base configuration.
 
 ## Logo
 

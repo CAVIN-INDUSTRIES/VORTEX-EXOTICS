@@ -1,21 +1,47 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("private acquisition flow", () => {
-  test("wizard to report preview renders core sections", async ({ page }) => {
+  test("wizard navigation, persistence, and report generation", async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on("console", (msg) => {
       if (msg.type() === "error") consoleErrors.push(msg.text());
     });
 
-    await page.goto("/private-acquisition");
+    await page.addInitScript(() => {
+      window.localStorage.removeItem("vex.privateAcquisition.profile");
+      window.sessionStorage.removeItem("vex.privateAcquisition.report");
+    });
+    await page.goto("/private-acquisition?step=intro");
     await expect(page.getByTestId("private-acquisition-root")).toBeVisible();
 
-    await page.getByLabel("Name").fill("Morgan Vale");
-    await page.getByLabel("Email").fill("morgan@example.com");
-    await page.getByLabel("Location").fill("Miami");
+    await page.getByTestId("acq-begin-consultation").click();
+    await expect(page.getByTestId("acq-step-basics")).toBeVisible();
 
-    await page.getByTestId("acq-review-button").click();
+    const basicsStep = page.getByTestId("acq-step-basics");
+    await basicsStep.getByLabel("Name").fill("Morgan Vale");
+    await basicsStep.getByLabel("Email").fill("morgan@example.com");
+    await basicsStep.getByLabel("Location").fill("Miami");
+
+    await page.getByTestId("acq-next").click();
+    const budgetStep = page.getByTestId("acq-step-budget");
+    await expect(budgetStep).toBeVisible();
+    await budgetStep.getByLabel("Budget Maximum").fill("125000");
+    await expect(budgetStep.getByLabel("Budget Maximum")).toHaveValue("125000");
+
+    await page.reload();
+    await expect(page.getByTestId("acq-step-budget")).toBeVisible();
+    await expect(page.getByTestId("acq-step-budget").getByLabel("Budget Maximum")).toHaveValue("120000");
+
+    await page.getByTestId("acq-next").click();
+    await expect(page.getByTestId("acq-step-ownership")).toBeVisible();
+    await page.getByTestId("acq-next").click();
+    await expect(page.getByTestId("acq-step-intent")).toBeVisible();
+    await page.getByTestId("acq-next").click();
     await expect(page.getByTestId("acq-review-step")).toBeVisible();
+
+    await page.getByTestId("acq-previous").click();
+    await expect(page.getByTestId("acq-step-intent")).toBeVisible();
+    await page.getByTestId("acq-next").click();
 
     await page.getByTestId("acq-generate-report").click();
     await expect(page.getByTestId("acq-processing")).toBeVisible();

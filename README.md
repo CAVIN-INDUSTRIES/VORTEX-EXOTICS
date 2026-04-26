@@ -16,6 +16,7 @@ cd ~/Documents/vex-website   # or: cd /path/to/your/vex-website
 
 ## Docs
 
+- **Private acquisition intelligence engine:** [docs/private-acquisition-engine.md](docs/private-acquisition-engine.md)
 - **Elite digital presence v2.0 (Crown Jewel Protocol — full wireframes, paths, Gantt, Quantum tier):** [docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md)
 - **Elite v2 summary (quick checklist):** [docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md](docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md)
 - **Apex Studio — `/build` configurator expansion (v2.1):** [docs/plans/2026-04-05-vex-apex-studio-configurator-v1.0.md](docs/plans/2026-04-05-vex-apex-studio-configurator-v1.0.md)

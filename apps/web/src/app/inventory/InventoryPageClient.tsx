@@ -2,11 +2,8 @@
 
 import { useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { colors, typography } from "@vex/design-system";
-import { AutomotiveAtmosphere } from "@/components/atmosphere";
 import { VehicleCard } from "@/components/VehicleCard";
-import { CollectionNarrativeEngine } from "@/components/inventory/CollectionNarrativeEngine";
-import { EditorialContainer, EditorialHeader, SectionShell } from "@/components/layout";
+import { EditorialContainer, SectionShell } from "@/components/layout";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { FEATURED_VEHICLES, formatPrice } from "@/lib/vehicles";
 import type { InventoryFilters } from "@/lib/inventoryWorkflow";
@@ -16,42 +13,22 @@ const collectionTabs = [
   {
     label: "All",
     tag: "All",
-    intro: "The complete VEX curated vault, organized for serious acquisition rather than casual browsing.",
+    intro: "Full curated inventory.",
   },
   {
     label: "Ultra Rare",
     tag: "Ultra Rare",
-    intro: "Scarcity-led inventory where replacement difficulty and collector posture matter immediately.",
-  },
-  {
-    label: "Investment Grade",
-    tag: "Investment Grade",
-    intro: "Vehicles framed around long-term desirability, specification quality, and exit confidence.",
+    intro: "Scarcity-led inventory for collector buyers.",
   },
   {
     label: "Track Focused",
     tag: "Track Focused",
-    intro: "Motorsport-bred machines selected for technical credibility and serious driver appeal.",
+    intro: "Driver-first exotics with motorsport DNA.",
   },
   {
     label: "Grand Touring",
     tag: "Grand Touring",
-    intro: "High-comfort exotic and luxury inventory suited to distance, ceremony, and private arrival.",
-  },
-  {
-    label: "Open-Air",
-    tag: "Open-Air",
-    intro: "Spider and convertible inventory built around occasion, sound, and exposure.",
-  },
-  {
-    label: "New Arrivals",
-    tag: "New Arrivals",
-    intro: "Fresh opportunities moving through intake, verification, and buyer matching.",
-  },
-  {
-    label: "Private Access",
-    tag: "Private Access",
-    intro: "Sensitive opportunities best handled through discreet qualification and concierge-led access.",
+    intro: "Comfort-driven luxury vehicles for daily ownership.",
   },
 ];
 
@@ -111,7 +88,7 @@ function FilterPill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition ${
+      className={`rounded-full border px-4 py-2 text-xs transition ${
         active
           ? "border-[#f1d38a]/42 bg-[#d4af37]/16 text-[#fff6de]"
           : "border-white/10 bg-white/[0.04] text-[#cfc4b2] hover:border-[#f1d38a]/22 hover:text-[#fff8eb]"
@@ -175,160 +152,98 @@ export function InventoryPageClient({ initialFilters }: { initialFilters: Invent
 
   return (
     <main id="main-content">
-      <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="inventory" intensity="medium" />}>
+      <SectionShell variant="default">
         <EditorialContainer>
-          <MotionReveal className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div>
-              <EditorialHeader
-                eyebrow="Private inventory"
-                title="A curated exotic vehicle vault built for serious buyer decisions."
-                description="Each file is framed to answer the key questions fast: what the vehicle is, why it matters, whether it is verified, what it costs, and how to move into a private acquisition conversation."
-              />
-            </div>
-
-            <div className="vault-panel rounded-[1.85rem] p-6 sm:p-7">
-              <p className="text-sm leading-7 text-[#d8d0c2]">
-                Inventory is now structured around conversion clarity. Wrong cross-brand imagery is removed, pricing is visible,
-                trust signals are explicit, and every listing has a direct path into private access or trade/appraisal inquiry.
-              </p>
-              <div className="mt-6 grid grid-cols-2 gap-4 rounded-[1.35rem] border border-white/10 bg-black/18 p-4">
-                <div>
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-[#a99f8d]">Collection</p>
-                  <p className="mt-2 text-3xl text-[#fff8eb]">{sorted.length}</p>
-                </div>
-                <div className="border-l border-white/8 pl-4">
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-[#a99f8d]">Image review</p>
-                  <p className="mt-2 text-3xl text-[#fff8eb]">{pendingImageCount}</p>
-                </div>
-              </div>
-            </div>
+          <MotionReveal className="mx-auto max-w-3xl text-center">
+            <p className="section-kicker">Inventory</p>
+            <h1 className="section-title mt-5">Private vehicle listings</h1>
+            <p className="section-copy mx-auto mt-5">
+              Clean inventory cards with verified media, clear pricing, and direct access to details.
+            </p>
+            <p className="mt-4 text-sm text-[#cfc4b2]">
+              Showing {sorted.length} vehicles{pendingImageCount > 0 ? ` · ${pendingImageCount} pending media` : ""}
+            </p>
           </MotionReveal>
 
-          <MotionReveal delay={0.05}>
-            <CollectionNarrativeEngine />
-          </MotionReveal>
-
-          <MotionReveal delay={0.08} className="mt-10 cinema-panel rounded-[2rem] p-6 sm:p-8">
-            <div className="flex flex-wrap gap-3">
+          <MotionReveal delay={0.06} className="mt-8 rounded-2xl border border-white/10 p-5">
+            <div className="flex flex-wrap gap-2">
               {collectionTabs.map((tab) => (
                 <FilterPill key={tab.label} label={tab.label} active={collection === tab.label} onClick={() => updateFilters({ collection: tab.label })} />
               ))}
             </div>
+            <p className="mt-4 text-sm text-[#cfc4b2]">{activeCollection.intro}</p>
+          </MotionReveal>
 
-            <div className="mt-7 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <MotionReveal delay={0.1} className="mt-6 rounded-2xl border border-white/10 p-5">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div>
-                <p className="section-kicker">Collection focus</p>
-                <h2 className="mt-4 text-3xl text-[#fff8eb]">{activeCollection.label === "All" ? "Private vault overview" : activeCollection.label}</h2>
+                <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Make</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {makes.map((option) => (
+                    <FilterPill key={option} label={option} active={make === option} onClick={() => updateFilters({ make: option })} />
+                  ))}
+                </div>
               </div>
-              <div className="rounded-[1.45rem] border border-white/10 bg-black/16 p-5 text-sm leading-7 text-[#d8d0c2]">
-                {activeCollection.intro}
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Price</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {priceRanges.map((option) => (
+                    <FilterPill
+                      key={option.value}
+                      label={option.label}
+                      active={priceRange === option.value}
+                      onClick={() => updateFilters({ priceRange: option.value })}
+                    />
+                  ))}
+                </div>
               </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Mileage</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {mileageRanges.map((option) => (
+                    <FilterPill
+                      key={option.value}
+                      label={option.label}
+                      active={mileageRange === option.value}
+                      onClick={() => updateFilters({ mileageRange: option.value })}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Sort</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {sortOptions.map((option) => (
+                    <FilterPill key={option.value} label={option.label} active={sort === option.value} onClick={() => updateFilters({ sort: option.value })} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-[#cfc4b2]">
+                {topVehicle ? `Top result: ${topVehicle.year} ${topVehicle.make} ${topVehicle.model} · ${formatPrice(topVehicle.price)}` : "No matching vehicles"}
+              </p>
+              {hasActiveFilters ? (
+                <button type="button" className="ghost-button !px-4 !py-2" onClick={resetFilters}>
+                  Reset
+                </button>
+              ) : null}
             </div>
           </MotionReveal>
 
-          <div className="mt-10 grid gap-8 xl:grid-cols-[360px_1fr]">
-            <MotionReveal className="vault-panel rounded-[2rem] p-6 xl:sticky xl:top-28 xl:self-start">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="section-kicker">Refine the room</p>
-                  <h2 className="mt-4 text-3xl text-[#fff8eb]">Filter the collection</h2>
-                </div>
-                {hasActiveFilters ? (
-                  <button type="button" className="ghost-button !px-4 !py-2" onClick={resetFilters}>
-                    Reset
-                  </button>
-                ) : null}
-              </div>
-
-              <div className="mt-6 grid gap-5">
-                <div className="rounded-[1.25rem] border border-white/8 bg-black/14 p-4">
-                  <p style={{ ...typography.formLabel, color: colors.textMuted }}>Make</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {makes.map((option) => (
-                      <FilterPill key={option} label={option} active={make === option} onClick={() => updateFilters({ make: option })} />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[1.25rem] border border-white/8 bg-black/14 p-4">
-                  <p style={{ ...typography.formLabel, color: colors.textMuted }}>Price</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {priceRanges.map((option) => (
-                      <FilterPill
-                        key={option.value}
-                        label={option.label}
-                        active={priceRange === option.value}
-                        onClick={() => updateFilters({ priceRange: option.value })}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[1.25rem] border border-white/8 bg-black/14 p-4">
-                  <p style={{ ...typography.formLabel, color: colors.textMuted }}>Mileage</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {mileageRanges.map((option) => (
-                      <FilterPill
-                        key={option.value}
-                        label={option.label}
-                        active={mileageRange === option.value}
-                        onClick={() => updateFilters({ mileageRange: option.value })}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[1.25rem] border border-white/8 bg-black/14 p-4">
-                  <p style={{ ...typography.formLabel, color: colors.textMuted }}>Sort</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {sortOptions.map((option) => (
-                      <FilterPill key={option.value} label={option.label} active={sort === option.value} onClick={() => updateFilters({ sort: option.value })} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-[1.45rem] border border-white/10 bg-black/16 p-4 text-sm leading-7 text-[#d8d0c2]">
-                {pendingImageCount > 0
-                  ? `${pendingImageCount} listing${pendingImageCount > 1 ? "s" : ""} currently use a premium placeholder until the matching media set is verified.`
-                  : "All visible listings currently have verified media sets."}
-              </div>
-            </MotionReveal>
-
-            <div>
-              <MotionReveal className="mb-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.24em] text-[#a99f8d]">Showing {sorted.length} vehicles</p>
-                  <p className="mt-2 text-sm leading-7 text-[#d8d0c2]">
-                    {topVehicle
-                      ? `Fast buyer view: ${topVehicle.year} ${topVehicle.make} ${topVehicle.model} starts at ${formatPrice(topVehicle.price)} and carries ${topVehicle.verificationStatus.toLowerCase()}.`
-                      : "No vehicles match the current room."}
-                  </p>
-                </div>
-                <div className="rounded-[1.35rem] border border-[#f1d38a]/18 bg-[linear-gradient(140deg,rgba(212,175,55,0.16),rgba(255,255,255,0.03)_55%,rgba(0,0,0,0.18))] px-4 py-3 text-sm text-[#fff1cf] shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
-                  <span className="mr-2 text-[0.68rem] uppercase tracking-[0.26em] text-[#f1d38a]/75">Primary CTA</span>
-                  Request Private Access
-                </div>
+          <div className="mt-8 grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+            {sorted.length > 0 ? (
+              sorted.map((vehicle, index) => (
+                <MotionReveal key={vehicle.id} delay={index * 0.04}>
+                  <VehicleCard vehicle={vehicle} inventoryHref={inventoryHref} />
+                </MotionReveal>
+              ))
+            ) : (
+              <MotionReveal className="rounded-2xl border border-white/10 p-8 lg:col-span-2 2xl:col-span-3">
+                <h3 className="text-2xl text-[#fff8eb]">No vehicles match this filter.</h3>
+                <p className="mt-3 text-sm text-[#d8d0c2]">Try another collection, make, price, or mileage range.</p>
               </MotionReveal>
-
-              <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
-                {sorted.length > 0 ? (
-                  sorted.map((vehicle, index) => (
-                    <MotionReveal key={vehicle.id} delay={index * 0.04}>
-                      <VehicleCard vehicle={vehicle} inventoryHref={inventoryHref} />
-                    </MotionReveal>
-                  ))
-                ) : (
-                  <MotionReveal className="cinema-panel rounded-[2rem] p-8 lg:col-span-2 2xl:col-span-3">
-                    <p className="section-kicker">Private archive</p>
-                    <h3 className="mt-4 text-3xl text-[#fff8eb]">No vehicles match this buyer room.</h3>
-                    <p className="mt-4 max-w-2xl text-sm leading-7 text-[#d8d0c2]">
-                      Adjust the filters or move directly into concierge sourcing for a vehicle that fits the intended acquisition profile.
-                    </p>
-                  </MotionReveal>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </EditorialContainer>
       </SectionShell>

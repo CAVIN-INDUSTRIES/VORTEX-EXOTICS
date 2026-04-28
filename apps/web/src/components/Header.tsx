@@ -43,10 +43,10 @@ export function Header() {
           <span className="flex h-11 items-center">
             <span className="mr-3 h-8 w-px bg-[linear-gradient(180deg,rgba(241,211,138,0),rgba(241,211,138,0.9),rgba(241,211,138,0))]" aria-hidden />
             <span className="leading-none">
-              <span className="block font-[family-name:var(--font-display)] text-[1.55rem] tracking-[0.04em] text-[#fff8eb] sm:text-[1.75rem]">
+              <span className="block font-[family-name:var(--font-display)] text-[1.55rem] tracking-[0.08em] text-[#fff8eb] sm:text-[1.8rem]">
                 Vortex
               </span>
-              <span className="mt-1 block font-[family-name:var(--font-inter)] text-[0.64rem] uppercase tracking-[0.24em] text-[#f1d38a] sm:text-[0.68rem]">
+              <span className="mt-1 block font-[family-name:var(--font-montserrat)] text-[0.62rem] uppercase tracking-[0.52em] text-[#f1d38a] sm:text-[0.66rem]">
                 Exotics
               </span>
             </span>
@@ -60,7 +60,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-3 py-2 font-[family-name:var(--font-inter)] text-[0.78rem] tracking-[0.06em] transition ${
+                className={`relative rounded-full px-3 py-2 font-[family-name:var(--font-montserrat)] text-[0.7rem] uppercase tracking-[0.24em] transition ${
                   active ? "bg-white/[0.07] text-[#fff8eb]" : "text-[#d6ccbd]/72 hover:bg-white/[0.04] hover:text-[#f1d38a]"
                 }`}
                 onClick={() => setMenuOpen(false)}
@@ -72,7 +72,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/appraisal" className="hidden rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs tracking-[0.04em] text-[#f5f1e8] transition hover:border-[#f1d38a]/28 hover:bg-white/[0.08] lg:inline-flex">
+          <Link href="/appraisal" className="hidden rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#f5f1e8] transition hover:border-[#f1d38a]/28 hover:bg-white/[0.08] lg:inline-flex">
             Request Appraisal
           </Link>
           <Link href="/contact" className="gold-button hidden sm:inline-flex">
@@ -116,7 +116,7 @@ export function Header() {
               transition={{ duration: 0.25 }}
               className="absolute inset-x-5 top-24 rounded-[2rem] border border-[#f1d38a]/16 bg-[#111111]/90 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-[#f1d38a]/70">Navigate</p>
+              <p className="text-xs uppercase tracking-[0.32em] text-[#f1d38a]/70">Navigate the estate</p>
               <div className="mt-5 grid gap-3">
                 {NAV_LINKS.map((item) => (
                   <Link

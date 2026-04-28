@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { colors, glass, radius, spacing, typography } from "@vex/design-system";
+import { glass, radius, spacing } from "@vex/design-system";
 import type { Vehicle } from "@/lib/vehicles";
 import { formatPrice } from "@/lib/vehicles";
 import { buildVehicleContactHref, vehicleDisplayName } from "@/lib/inventoryWorkflow";
@@ -38,7 +38,6 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
                 <span
                   key={item}
                   className="rounded-full border border-white/12 bg-black/45 px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.18em] text-[#fff3cf]"
-                  style={typography.metadata}
                 >
                   {item}
                 </span>
@@ -48,37 +47,30 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
       </div>
 
       <div className="space-y-5 p-5 sm:p-6" style={{ padding: spacing.stackLg }}>
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-[#fff8eb]" style={{ ...typography.displaySection, fontSize: "clamp(1.8rem, 3vw, 2.5rem)" }}>
-                {vehicle.year} {vehicle.make} {vehicle.model}
-              </p>
-              <p className="mt-1 text-sm uppercase tracking-[0.22em] text-[#bfa987]">{vehicle.trim}</p>
-            </div>
-            <div className="text-right">
-              <p style={{ ...typography.metadata, color: colors.textMuted }}>Private file value</p>
-              <p className="mt-2 text-2xl font-semibold text-[#f1d38a]">{formatPrice(vehicle.price)}</p>
-            </div>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-2xl text-[#fff8eb]">
+              {vehicle.year} {vehicle.make} {vehicle.model}
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[#bfa987]">{vehicle.trim}</p>
           </div>
-
-          <p className="max-w-2xl text-sm leading-7 text-[#d8d0c2]" style={typography.bodyStandard}>
-            {vehicle.editorialHeadline}
-          </p>
+          <p className="text-xl font-semibold text-[#f1d38a]">{formatPrice(vehicle.price)}</p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.035] p-4">
-            <p style={{ ...typography.metadata, color: colors.textMuted }}>Mileage</p>
-            <p className="mt-3 text-sm text-[#e8dfd1]">{vehicle.miles.toLocaleString()} mi</p>
+        <p className="text-sm leading-6 text-[#d8d0c2]">{vehicle.editorialHeadline}</p>
+
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="rounded-xl border border-white/10 p-3 text-sm text-[#e8dfd1]">
+            <span className="text-[#a99f8d]">Mileage:</span> {vehicle.miles.toLocaleString()} mi
           </div>
-          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.035] p-4">
-            <p style={{ ...typography.metadata, color: colors.textMuted }}>Location</p>
-            <p className="mt-3 text-sm text-[#e8dfd1]">{vehicle.location}</p>
+          <div className="rounded-xl border border-white/10 p-3 text-sm text-[#e8dfd1]">
+            <span className="text-[#a99f8d]">Location:</span> {vehicle.location}
           </div>
-          <div className="rounded-[1.25rem] border border-[#f1d38a]/16 bg-[#d4af37]/8 p-4">
-            <p style={{ ...typography.metadata, color: colors.goldSoft }}>Powertrain</p>
-            <p className="mt-3 text-sm text-[#fff8eb]">{vehicle.horsepower} hp · {vehicle.drivetrain}</p>
+          <div className="rounded-xl border border-white/10 p-3 text-sm text-[#e8dfd1]">
+            <span className="text-[#a99f8d]">Power:</span> {vehicle.horsepower} hp
+          </div>
+          <div className="rounded-xl border border-white/10 p-3 text-sm text-[#e8dfd1]">
+            <span className="text-[#a99f8d]">Status:</span> {vehicle.availabilityBadge}
           </div>
         </div>
 
@@ -87,28 +79,11 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
             <span
               key={item}
               className="flex min-h-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-center text-[#d6ccbc]"
-              style={{ ...typography.metadata, letterSpacing: "0.14em" }}
+              style={{ letterSpacing: "0.08em", fontSize: "0.68rem", textTransform: "uppercase" }}
             >
               {item}
             </span>
           ))}
-        </div>
-
-        <div className="rounded-[1.2rem] border border-white/10 bg-black/24 p-4">
-          <div className="grid gap-2 text-sm text-[#d8d0c2]">
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Vehicle</span>
-              <span>{vehicleDisplayName(vehicle)}</span>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Image status</span>
-              <span>{vehicle.primaryImage.status === "pending" ? "Verification pending" : "Verified"}</span>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-[#a99f8d]">Next step</span>
-              <span>{vehicle.conciergeAvailability}</span>
-            </div>
-          </div>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
@@ -120,7 +95,10 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
               {vehicle.ctas.secondary}
             </Link>
           </div>
-          <SaveVehicleButton vehicleId={vehicle.id} />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#a99f8d]">{vehicleDisplayName(vehicle)}</span>
+            <SaveVehicleButton vehicleId={vehicle.id} />
+          </div>
         </div>
       </div>
     </article>

@@ -9,6 +9,8 @@ import { Header } from "@/components/Header";
 import { SkipToContent } from "@/components/SkipToContent";
 import { AmbientShell } from "@/components/ambient";
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
+import { AmbientGlow, AutomotiveAtmosphere, GradientDrift, LightField, NoiseLayer } from "@/components/atmosphere";
+import { CinematicMotionProvider, LuxuryEdgeAccent, SceneAwareFx } from "@/components/fx";
 import { getSiteUrl } from "@/lib/siteUrl";
 import "./globals.css";
 
@@ -94,17 +96,26 @@ export default function RootLayout({
         <SkipToContent />
         <AnalyticsProvider />
         <AmbientShell />
-        <TenantThemeProvider>
-          <QueryProvider>
-            <AuthProvider>
-              <BuildProvider>
-                <Header />
-                {children}
-                <Footer />
-              </BuildProvider>
-            </AuthProvider>
-          </QueryProvider>
-        </TenantThemeProvider>
+        <AmbientGlow />
+        <LightField />
+        <GradientDrift />
+        <NoiseLayer />
+        <AutomotiveAtmosphere variant="subtle" intensity="low" />
+        <CinematicMotionProvider>
+          <LuxuryEdgeAccent />
+          <SceneAwareFx />
+          <TenantThemeProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <BuildProvider>
+                  <Header />
+                  {children}
+                  <Footer />
+                </BuildProvider>
+              </AuthProvider>
+            </QueryProvider>
+          </TenantThemeProvider>
+        </CinematicMotionProvider>
       </body>
     </html>
   );

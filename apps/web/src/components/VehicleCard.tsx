@@ -31,18 +31,6 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
           className="block"
         >
           <VehicleImageFrame vehicle={vehicle} />
-          <div className="pointer-events-none absolute inset-x-4 top-4 flex flex-wrap gap-2">
-            {[vehicle.listingBadge, vehicle.primaryImage.status === "pending" ? "Image verification pending" : null]
-              .filter(Boolean)
-              .map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/12 bg-black/45 px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.18em] text-[#fff3cf]"
-                >
-                  {item}
-                </span>
-              ))}
-          </div>
         </Link>
       </div>
 
@@ -74,17 +62,9 @@ export function VehicleCard({ vehicle, inventoryHref }: { vehicle: Vehicle; inve
           </div>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
-          {metadata.map((item) => (
-            <span
-              key={item}
-              className="flex min-h-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-center text-[#d6ccbc]"
-              style={{ letterSpacing: "0.08em", fontSize: "0.68rem", textTransform: "uppercase" }}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
+        <p className="text-xs uppercase tracking-[0.08em] text-[#bcae97]">
+          {metadata.filter(Boolean).join(" · ")}
+        </p>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex flex-1 flex-col gap-3 sm:flex-row">

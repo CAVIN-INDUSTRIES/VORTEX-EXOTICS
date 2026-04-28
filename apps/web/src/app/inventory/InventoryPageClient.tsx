@@ -88,10 +88,10 @@ function FilterPill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-xs transition ${
+      className={`rounded-md border px-3 py-1.5 text-xs transition ${
         active
-          ? "border-[#f1d38a]/42 bg-[#d4af37]/16 text-[#fff6de]"
-          : "border-white/10 bg-white/[0.04] text-[#cfc4b2] hover:border-[#f1d38a]/22 hover:text-[#fff8eb]"
+          ? "border-[#f1d38a]/42 bg-[#d4af37]/12 text-[#fff6de]"
+          : "border-white/10 bg-transparent text-[#cfc4b2] hover:border-[#f1d38a]/22 hover:text-[#fff8eb]"
       }`}
     >
       {label}
@@ -178,45 +178,59 @@ export function InventoryPageClient({ initialFilters }: { initialFilters: Invent
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Make</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <select
+                  value={make}
+                  onChange={(event) => updateFilters({ make: event.target.value })}
+                  className="mt-2 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-[#e6dccd]"
+                >
                   {makes.map((option) => (
-                    <FilterPill key={option} label={option} active={make === option} onClick={() => updateFilters({ make: option })} />
+                    <option key={option} value={option} className="bg-[#111]">
+                      {option}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Price</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <select
+                  value={priceRange}
+                  onChange={(event) => updateFilters({ priceRange: event.target.value })}
+                  className="mt-2 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-[#e6dccd]"
+                >
                   {priceRanges.map((option) => (
-                    <FilterPill
-                      key={option.value}
-                      label={option.label}
-                      active={priceRange === option.value}
-                      onClick={() => updateFilters({ priceRange: option.value })}
-                    />
+                    <option key={option.value} value={option.value} className="bg-[#111]">
+                      {option.label}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Mileage</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <select
+                  value={mileageRange}
+                  onChange={(event) => updateFilters({ mileageRange: event.target.value })}
+                  className="mt-2 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-[#e6dccd]"
+                >
                   {mileageRanges.map((option) => (
-                    <FilterPill
-                      key={option.value}
-                      label={option.label}
-                      active={mileageRange === option.value}
-                      onClick={() => updateFilters({ mileageRange: option.value })}
-                    />
+                    <option key={option.value} value={option.value} className="bg-[#111]">
+                      {option.label}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.12em] text-[#a99f8d]">Sort</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <select
+                  value={sort}
+                  onChange={(event) => updateFilters({ sort: event.target.value })}
+                  className="mt-2 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm text-[#e6dccd]"
+                >
                   {sortOptions.map((option) => (
-                    <FilterPill key={option.value} label={option.label} active={sort === option.value} onClick={() => updateFilters({ sort: option.value })} />
+                    <option key={option.value} value={option.value} className="bg-[#111]">
+                      {option.label}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">

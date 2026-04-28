@@ -66,18 +66,9 @@ export default async function VehicleDetailPage({
 
             <MotionReveal delay={0.08} className="cinema-panel rounded-[2rem] p-7 sm:p-9">
               <p className="section-kicker">{vehicle.listingBadge}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {[vehicle.rarityTier, vehicle.verifiedBadge, vehicle.availabilityBadge]
-                  .filter(Boolean)
-                  .map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-white/10 bg-black/18 px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.22em] text-[#e9dfcf]"
-                    >
-                      {item}
-                    </span>
-                  ))}
-              </div>
+              <p className="mt-4 text-xs uppercase tracking-[0.1em] text-[#c9bda8]">
+                {[vehicle.rarityTier, vehicle.verifiedBadge, vehicle.availabilityBadge].filter(Boolean).join(" · ")}
+              </p>
               <h1 className="mt-4 font-[var(--font-display)] text-5xl leading-[0.94] tracking-[-0.05em] text-[#fff8eb]">
                 {vehicle.year} {vehicle.make} {vehicle.model}
               </h1>
@@ -156,7 +147,7 @@ export default async function VehicleDetailPage({
                   ["Condition", vehicle.conditionClass],
                   ["Rarity", vehicle.rarityTier],
                 ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between gap-4 rounded-[1.1rem] border border-white/10 bg-black/20 px-4 py-3">
+                  <div key={label} className="flex items-center justify-between gap-4 border-b border-white/10 px-1 py-3 last:border-b-0">
                     <span className="text-[#a99f8d]">{label}</span>
                     <span className="text-right text-[#fff8eb]">{value}</span>
                   </div>
@@ -173,7 +164,7 @@ export default async function VehicleDetailPage({
                   `Acquisition status: ${vehicle.acquisitionStatus}`,
                   `Concierge availability: ${vehicle.conciergeAvailability}`,
                 ].map((item) => (
-                  <div key={item} className="rounded-[1.15rem] border border-white/10 bg-white/[0.04] px-4 py-4 text-sm leading-7 text-[#d8d0c2]">
+                  <div key={item} className="border-b border-white/10 px-1 pb-3 text-sm leading-7 text-[#d8d0c2] last:border-b-0 last:pb-0">
                     {item}
                   </div>
                 ))}
@@ -186,7 +177,7 @@ export default async function VehicleDetailPage({
               <p className="section-kicker">Verification confidence</p>
               <div className="mt-6 grid gap-3">
                 {verificationConfidence.map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-[1.15rem] border border-white/10 bg-black/22 px-4 py-4 text-sm text-[#e6dece]">
+                  <div key={item} className="flex items-center gap-3 border-b border-white/10 px-1 pb-3 text-sm text-[#e6dece] last:border-b-0 last:pb-0">
                     <span className="h-2 w-2 rounded-full bg-[#f1d38a]" aria-hidden="true" />
                     {item}
                   </div>

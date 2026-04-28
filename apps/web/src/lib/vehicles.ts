@@ -64,8 +64,17 @@ function buildGallery(make: string, model: string, status: VehicleImageStatus, l
 }
 
 function createVehicle(input: Omit<Vehicle, "badge" | "color" | "conciergeStatus" | "performance" | "image">): Vehicle {
+  const fallbackImageSrc = input.primaryImage.src;
+  const normalizedGallery = input.galleryImages.map((media) => ({
+    ...media,
+    src: media.src ?? fallbackImageSrc,
+    status: media.src || fallbackImageSrc ? "verified" : media.status,
+    label: media.src || fallbackImageSrc ? "Verified image" : media.label,
+  }));
+
   return {
     ...input,
+    galleryImages: normalizedGallery,
     badge: input.listingBadge,
     color: input.exteriorColor,
     conciergeStatus: input.conciergeAvailability,

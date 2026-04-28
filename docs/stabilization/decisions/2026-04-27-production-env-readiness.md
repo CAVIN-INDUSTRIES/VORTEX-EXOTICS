@@ -21,7 +21,7 @@ When **`NODE_ENV=production`**, the API **must not start** unless **`REDIS_URL`*
 
 ### `env-contract.mjs` — **`production`** required keys
 
-- **API:** `DATABASE_URL`, `DIRECT_DATABASE_URL`, `JWT_SECRET`, `REDIS_URL`, `CORS_ORIGIN`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `EDMUNDS_API_KEY`, `EDMUNDS_SECRET`, `MARKETCHECK_API_KEY`
+- **API:** `DATABASE_URL`, `DIRECT_DATABASE_URL`, `JWT_SECRET`, `REDIS_URL`, `CORS_ORIGIN`, `PUBLIC_WEB_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `EDMUNDS_API_KEY`, `EDMUNDS_SECRET`, `MARKETCHECK_API_KEY`
 - **Web:** `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL`
 - **CRM:** `NEXT_PUBLIC_API_URL`
 - **Rules:** `forbidProductionSkip: true`, `requireStrictCors: true` → **`SKIP_VALUATION_ENV_CHECK`** forbidden; **`CORS_ORIGIN`** cannot be empty or `*`.
@@ -36,12 +36,12 @@ When **`NODE_ENV=production`**, the API **must not start** unless **`REDIS_URL`*
 
 - Requires **`EDMUNDS_*`**, **`MARKETCHECK`** valuation vars unless **`SKIP_VALUATION_ENV_CHECK`** — if skip not set and missing → **exit(1)** before **`assertProductionReady`**.
 
-### Examples vs contract gaps (unchanged tracking)
+### Examples vs contract gaps (tracking)
 
 | Item | Notes |
 |------|------|
 | **`INTERNAL_PILOT_METRICS_KEY`** | In **`.env.production.example`** files — **not** in **`env-contract`** **`production`** required list — **optional feature**. |
-| **`PUBLIC_WEB_URL`** | **`deploy/.env.example`** — Stripe return URLs; **`env-contract`** production does **not** list it — **gap** to track. |
+| **`PUBLIC_WEB_URL`** | **Closed** — now **`production`** **`required.api`** ([public web URL contract memo](2026-04-27-production-public-web-url-env-contract.md)). |
 | **`NEXT_PUBLIC_CONTACT_*`**, hero URLs | Web examples — **not** all in **`env-contract`** **`production`** **`required.web`**. |
 | **`CRM`** CRM-specific public vars | Contract minimal (**`NEXT_PUBLIC_API_URL`** only). |
 
@@ -49,7 +49,7 @@ When **`NODE_ENV=production`**, the API **must not start** unless **`REDIS_URL`*
 
 - **No** change to Redis client code, queue/cache/token/rate-limit implementations, or new env flags to opt out of Redis in production.
 - **No** change to auth, RBAC, tenant, billing, or Stripe runtime behavior.
-- **No** change to **`scripts/env-contract.mjs`** in this decision (contract already required **`REDIS_URL`**).
+- **No** change to **`scripts/env-contract.mjs`** beyond what the **original** Redis memo covered ( **`REDIS_URL`** was the only contract edit then). **`PUBLIC_WEB_URL`** is added under a **separate** approved memo.
 
 ## Rollout
 
@@ -102,8 +102,8 @@ NODE_ENV=development node -e "require('./dist/lib/productionEnv.js').assertProdu
 
 ## Follow-Up
 
-- Consider adding **`PUBLIC_WEB_URL`** to **`production`** **`required.api`** in **`env-contract`** if Stripe flows mandate — separate memo if behavior changes.
+- None for **`PUBLIC_WEB_URL`** — see [2026-04-27-production-public-web-url-env-contract.md](2026-04-27-production-public-web-url-env-contract.md).
 
 ---
 
-**Governance:** Runtime change limited to **`apps/api/src/lib/productionEnv.ts`** as approved; no auth, billing, tenant, Prisma schema, or Docker changes in this decision.
+**Governance:** Original memo runtime scope was **`apps/api/src/lib/productionEnv.ts`** (Redis). **`PUBLIC_WEB_URL`** contract closure is documented in the memo linked above.

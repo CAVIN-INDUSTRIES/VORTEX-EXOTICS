@@ -25,7 +25,22 @@ How shell entrypoints load env vs how `scripts/env-contract.mjs` reads files for
 - Scripts that `source` API env may export `DATABASE_URL` for subsequent `pnpm` processes.
 - If only `.env` (not `.env.local`) holds `DATABASE_URL`, **`verify:ship` may not export it to the shell**; **`ship-gate` will** if that file is present. Align your file layout with how you run gates.
 
+## Next.js production build concurrency (operational)
+
+**Symptom:** **`pnpm -w turbo run build`** appears to hang during **`@vex/web`** **`next build`**, or fails with **“Another next build process is already running”**, and **`apps/web/.next/lock`** appears.
+
+**Cause:** Two **`next build`** processes for **`apps/web`** (for example a background **`pnpm --filter @vex/web run build`** plus Turbo) contend for the same **`.next`** directory.
+
+**Triage:**
+
+1. `ps -eo pid,etime,cmd | rg 'next/dist/bin/next build|pnpm --filter @vex/web'` — stop stray trees.
+2. `rm -f apps/web/.next/lock` only **after** confirming no live **`next build`** (repo policy: lock file is a **signal**, not the root fix).
+3. Run **one** full gate: **`pnpm -w turbo run build`**, then **`pnpm run web:lock:check`**.
+
+This is **orchestration**, not a source defect. See [Next lock policy memo](decisions/2026-04-27-next-build-lock-policy.md).
+
 ## Related
 
 - Decision memo: `docs/stabilization/decisions/2026-04-27-local-orchestration-env-alignment.md`
 - Env contract script: `scripts/env-contract.mjs`
+- **`PUBLIC_WEB_URL`** production contract: `docs/stabilization/decisions/2026-04-27-production-public-web-url-env-contract.md`

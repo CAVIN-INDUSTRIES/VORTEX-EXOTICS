@@ -54,6 +54,7 @@ const contracts = {
         "JWT_SECRET",
         "REDIS_URL",
         "CORS_ORIGIN",
+        "PUBLIC_WEB_URL",
         "STRIPE_SECRET_KEY",
         "STRIPE_WEBHOOK_SECRET",
         "EDMUNDS_API_KEY",

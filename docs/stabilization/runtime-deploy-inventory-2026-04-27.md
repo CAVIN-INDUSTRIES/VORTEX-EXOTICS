@@ -68,6 +68,7 @@ Governance tiers (see [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-
 | **`JWT_SECRET`** | API | Required | **`requireEnv`** in **`index.ts`** |
 | **`REDIS_URL`** | API | Required | **`assertProductionReady`** → **`exit(1)`** if missing/blank |
 | **`CORS_ORIGIN`** | API | Required (not **`*`**) | **`assertProductionReady`** + **`env-contract`** **`requireStrictCors`** |
+| **`PUBLIC_WEB_URL`** | API | Required | Stripe return URLs via **`publicOrigins`** — **`env-contract`** only (see [public web URL memo](decisions/2026-04-27-production-public-web-url-env-contract.md)) |
 | **`STRIPE_SECRET_KEY`** | API | Required | Used when Stripe routes run — not duplicated in **`productionEnv`** |
 | **`STRIPE_WEBHOOK_SECRET`** | API | Required | Same |
 | **`EDMUNDS_API_KEY`** | API | Required | **`index.ts`** valuation gate (+ **`env-contract`** **`forbidProductionSkip`**) |
@@ -83,11 +84,10 @@ Governance tiers (see [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-
 | **`SKIP_VALUATION_ENV_CHECK`** | Forbidden in **`production`** contract; **`assertProductionReady`** **`exit(1)`** if set |
 | Valuation keys vs skip | **`index.ts`** — missing keys → **`exit(1)`** unless skip (**never** in prod) |
 
-### Documentation / contract gaps (findings only — no new **`productionEnv`** exits in this batch)
+### Documentation / contract gaps (findings only)
 
 | Item | Notes |
 |------|------|
-| **`PUBLIC_WEB_URL`** | **`deploy/.env.example`** — Stripe return URLs; **not** in **`env-contract`** **`production`** **`required.api`** |
 | **`INTERNAL_PILOT_METRICS_KEY`** | Optional pilot counters — **not** in **`env-contract`** |
 | **`NEXT_PUBLIC_*`** beyond minimal web list | Marketing/contact vars in examples — **not** all in **`required.web`** |
 
@@ -107,7 +107,7 @@ Governance tiers (see [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-
 | **`STRIPE_*`** | Required keys | Stripe routes need at runtime | Placeholders | **`STRIPE_*`** | |
 | **`NEXT_PUBLIC_SITE_URL`** / **`NEXT_PUBLIC_API_URL`** (web) | Web required | N/A (Next) | Web example | N/A | |
 | **`NEXT_PUBLIC_API_URL`** (crm) | CRM required | N/A | CRM example | N/A | |
-| **`PUBLIC_WEB_URL`** | **Not** in **`env-contract`** | Stripe URLs (runtime) | **`deploy/.env.example`** | No | **Gap** vs strict contract |
+| **`PUBLIC_WEB_URL`** | Yes | Stripe URLs (**`publicOrigins`**) | **`deploy/.env.example`** | No | **`env-contract`** + runtime usage |
 | **`INTERNAL_PILOT_METRICS_KEY`** | **Not** required | N/A | API/web examples optional | No | Feature-flag pilot counters |
 
 ---
@@ -119,6 +119,7 @@ Governance tiers (see [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-
 | [2026-04-27-api-container-migration-responsibility.md](decisions/2026-04-27-api-container-migration-responsibility.md) | Container vs workflow migrations |
 | [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-04-27-deploy-smoke-test-strategy.md) | Smoke tiers |
 | [2026-04-27-production-env-readiness.md](decisions/2026-04-27-production-env-readiness.md) | Env layers |
+| [2026-04-27-production-public-web-url-env-contract.md](decisions/2026-04-27-production-public-web-url-env-contract.md) | **`PUBLIC_WEB_URL`** production contract |
 | [2026-04-27-pilot-verify-runbook-consistency.md](decisions/2026-04-27-pilot-verify-runbook-consistency.md) | **`ship:gate`** vs **`pilot:verify`** |
 
 ---

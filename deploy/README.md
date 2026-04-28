@@ -75,16 +75,17 @@ From repo root, `pnpm run env:check:production` validates the **production** con
 - `DIRECT_DATABASE_URL`
 - `JWT_SECRET`
 - `REDIS_URL`
+- `CORS_ORIGIN`
+- `PUBLIC_WEB_URL` (public marketing site origin for Stripe Checkout / Billing Portal return URLs — **`pnpm run env:check:production`** requires it; see [public web URL memo](../docs/stabilization/decisions/2026-04-27-production-public-web-url-env-contract.md))
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `CORS_ORIGIN`
 
 For a quick local stack **without** live valuation keys, set in `.env`:
 
 `SKIP_VALUATION_ENV_CHECK=1`  
 (Remove this in any real pilot or production environment.)
 
-Kubernetes: mirror the same env contract—secrets for `JWT_SECRET`, Stripe, and valuation providers; `NODE_ENV=production`; tight `CORS_ORIGIN`; do **not** set `SKIP_VALUATION_ENV_CHECK`.
+Kubernetes: mirror the same env contract—secrets for `JWT_SECRET`, Stripe, and valuation providers; `NODE_ENV=production`; tight `CORS_ORIGIN`; set **`PUBLIC_WEB_URL`** for Stripe return URLs; do **not** set `SKIP_VALUATION_ENV_CHECK`.
 
 ## Image
 

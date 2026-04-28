@@ -36,10 +36,10 @@ export function Footer() {
         <div className="space-y-3 text-sm text-[#cfc4b2]">
           <p className="uppercase tracking-[0.24em] text-[#f1d38a]/70">Direct</p>
           <a href={contactPhone ? `tel:${contactPhone.replace(/\D/g, "")}` : undefined} className="block transition hover:text-[#fff8eb]">
-            {contactPhone || "Phone on request"}
+            {contactPhone || "Add NEXT_PUBLIC_CONTACT_PHONE"}
           </a>
           <a href={contactEmail ? `mailto:${contactEmail}` : undefined} className="block transition hover:text-[#fff8eb]">
-            {contactEmail || "Email on request"}
+            {contactEmail || "Add NEXT_PUBLIC_CONTACT_EMAIL"}
           </a>
           <p className="pt-2 text-xs uppercase tracking-[0.24em] text-[#9f927d]">Human-led response only</p>
         </div>

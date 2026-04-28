@@ -15,12 +15,18 @@ const PLANS: Array<{
   desc: string;
   featured?: boolean;
   label: string;
+  monthly: number;
+  yearly: number;
+  implementation: string;
 }> = [
   {
     id: "CHECK_MY_DEAL",
     name: "Starter",
     label: "Private Launch",
     desc: "Inventory, CRM, appraisals, and core dealer operations for teams that need a premium market presence quickly.",
+    monthly: 49,
+    yearly: 470,
+    implementation: "Launch in 1-2 weeks",
   },
   {
     id: "VIP_CONCIERGE",
@@ -28,6 +34,9 @@ const PLANS: Array<{
     label: "Signature Presence",
     desc: "Full portal, analytics, white-label operations, and premium appraisal workflows for a more ambitious operating surface.",
     featured: true,
+    monthly: 149,
+    yearly: 1430,
+    implementation: "Launch in 2-4 weeks",
   },
 ];
 
@@ -45,7 +54,7 @@ export default function PricingPage() {
   const startCheckout = async (plan: Plan) => {
     setError(null);
     if (!token) {
-      window.location.href = "/login?redirect=" + encodeURIComponent("/pricing");
+      window.location.href = "/contact?intent=dealer-demo";
       return;
     }
     setLoadingPlan(plan);
@@ -66,8 +75,7 @@ export default function PricingPage() {
         <p className="section-kicker">Pricing</p>
         <h1 className="section-title">Dealer platform pricing with a premium public surface.</h1>
         <p className="section-copy">
-          The luxury frontend is only one layer. Underneath it, the platform still supports subscriptions,
-          inventory, CRM, appraisal, and portal workflows for modern dealer operations.
+          Dealer platform pricing with clear implementation timelines, pilot-ready onboarding, and concierge support.
         </p>
       </MotionReveal>
 
@@ -87,6 +95,9 @@ export default function PricingPage() {
           </button>
         ))}
         {yearlyNote ? <span className="text-sm text-[#bcae97]">{yearlyNote}</span> : null}
+        <Link href="/contact?intent=dealer-demo" className="ghost-button !px-4 !py-2">
+          Book dealer demo
+        </Link>
       </MotionReveal>
 
       {error ? <p className="mt-5 rounded-[1.2rem] border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-100">{error}</p> : null}
@@ -103,13 +114,18 @@ export default function PricingPage() {
             >
               <p className="section-kicker">{plan.label}</p>
               <h2 className="mt-4 text-4xl text-[#fff8eb]">{plan.name}</h2>
+              <p className="mt-4 text-3xl text-[#f1d38a]">
+                ${billingInterval === "yearly" ? plan.yearly : plan.monthly}
+                <span className="ml-2 text-sm text-[#c9bca7]">/{billingInterval === "yearly" ? "year" : "month"}</span>
+              </p>
               <p className="mt-5 text-base leading-8 text-[#d8d0c2]">{plan.desc}</p>
+              <p className="mt-4 text-sm text-[#c9bca7]">{plan.implementation}</p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <button type="button" className="gold-button" onClick={() => startCheckout(plan.id)} disabled={loadingPlan === plan.id}>
-                  {loadingPlan === plan.id ? "Redirecting..." : "Start subscription"}
+                  {loadingPlan === plan.id ? "Redirecting..." : token ? "Start subscription" : "Request pilot access"}
                 </button>
-                <Link href="/portal/subscriptions" className="ghost-button">
-                  Manage in portal
+                <Link href="/contact?intent=dealer-demo" className="ghost-button">
+                  Talk to sales
                 </Link>
               </div>
             </section>

@@ -44,10 +44,10 @@ export function Header() {
             <span className="mr-3 h-8 w-px bg-[linear-gradient(180deg,rgba(241,211,138,0),rgba(241,211,138,0.9),rgba(241,211,138,0))]" aria-hidden />
             <span className="leading-none">
               <span className="block font-[family-name:var(--font-display)] text-[1.55rem] tracking-[0.08em] text-[#fff8eb] sm:text-[1.8rem]">
-                Vortex
+                VEX
               </span>
               <span className="mt-1 block font-[family-name:var(--font-montserrat)] text-[0.62rem] uppercase tracking-[0.52em] text-[#f1d38a] sm:text-[0.66rem]">
-                Exotics
+                Atelier
               </span>
             </span>
           </span>

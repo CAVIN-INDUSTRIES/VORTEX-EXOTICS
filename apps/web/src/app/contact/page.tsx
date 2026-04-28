@@ -130,8 +130,8 @@ export default function ContactPage() {
           <h2 className="mt-4 text-3xl text-[#fff8eb]">VEX Auto private acquisitions</h2>
           <div className="mt-6 space-y-4 text-sm leading-7 text-[#d8d0c2]">
             <p>Concierge-led guidance for collectors, sellers, and high-intent buyers navigating rare inventory.</p>
-            <p>Phone: {contactPhone || "Not configured"}</p>
-            <p>Email: {contactEmail || "Not configured"}</p>
+            <p>Phone: {contactPhone || "Set NEXT_PUBLIC_CONTACT_PHONE in production"}</p>
+            <p>Email: {contactEmail || "Set NEXT_PUBLIC_CONTACT_EMAIL in production"}</p>
             <p>Hours: Mon-Sat 9AM-7PM MST</p>
           </div>
         </MotionReveal>

@@ -527,7 +527,7 @@ export async function createLead(payload: { source?: string; email?: string; pho
   ensurePublicApiAvailable();
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}/leads`, {
+    res = await fetch(`${API_BASE}/public/leads${quickAppraisalQuery(null)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -539,7 +539,7 @@ export async function createLead(payload: { source?: string; email?: string; pho
     const body = await res.json().catch(() => null);
     throw new Error(errorMessageFromBody(body) ?? PUBLIC_INTAKE_UNAVAILABLE_MESSAGE);
   }
-  return res.json();
+  return unwrap(await res.json());
 }
 
 

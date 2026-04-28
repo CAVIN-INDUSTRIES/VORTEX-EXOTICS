@@ -4,7 +4,9 @@ import { assertTenantExists, resolvePublicTenantId } from "../lib/publicTenantRe
 declare global {
   namespace Express {
     interface Request {
-      /** Set by tenant resolution middleware for public appraisal routes. */
+      /** Set by tenant resolution middleware for public routes. */
+      publicTenantId?: string;
+      /** Backwards-compatible alias used by public appraisal routes. */
       publicAppraisalTenantId?: string;
     }
   }
@@ -25,6 +27,7 @@ export async function resolvePublicAppraisalTenant(req: Request, res: Response, 
     if (!ok) {
       return res.status(404).json({ code: "NOT_FOUND", message: "Tenant not found" });
     }
+    req.publicTenantId = tenantId;
     req.publicAppraisalTenantId = tenantId;
     next();
   } catch (e) {

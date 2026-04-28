@@ -31,7 +31,7 @@ export default function HomePage() {
               Private market operating layer
             </p>
             <h1 className="hero-title-lux mt-6 text-[#fff8eb]" style={typography.displayHero}>
-              A cleaner path to private exotic acquisition.
+              Private exotic inventory, verified sellers, appraisals, and concierge deal flow in one place.
             </h1>
             <p className="hero-lede-lux mx-auto mt-7 max-w-3xl sm:text-lg">
               VEX keeps inventory, valuation, and concierge execution in one consistent flow so buyers can move from discovery to
@@ -124,8 +124,8 @@ export default function HomePage() {
               <p className="section-kicker">Response protocol</p>
               <h3 className="mt-4 text-3xl text-[#fff8eb]">One human-owned path from first inquiry to final handoff.</h3>
               <div className="mt-6 space-y-4 text-sm leading-7 text-[#d8d0c2]">
-                <p>{contactPhone || "Phone line configured on request"}</p>
-                <p>{contactEmail || "Email contact configured on request"}</p>
+                <p>{contactPhone || "Set NEXT_PUBLIC_CONTACT_PHONE in production"}</p>
+                <p>{contactEmail || "Set NEXT_PUBLIC_CONTACT_EMAIL in production"}</p>
                 <p>Human response only. No generic queue.</p>
               </div>
             </div>

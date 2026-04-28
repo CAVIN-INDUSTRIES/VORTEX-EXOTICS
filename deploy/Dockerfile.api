@@ -1,8 +1,12 @@
-# API image: monorepo root as context (`docker compose build` from deploy/).
+# API image: monorepo root as context (`docker compose build` from deploy/)
+
 FROM node:22-bookworm-slim AS build
+
 WORKDIR /repo
 ENV CI=1
+
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
@@ -15,9 +19,12 @@ RUN pnpm --filter @vex/api run db:generate
 RUN pnpm --filter @vex/api build
 
 FROM node:22-bookworm-slim AS runner
+
 WORKDIR /repo
 ENV NODE_ENV=production
+
 RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 
 COPY --from=build /repo/package.json /repo/pnpm-lock.yaml /repo/pnpm-workspace.yaml ./
@@ -29,5 +36,8 @@ COPY --from=build /repo/apps/api/prisma ./apps/api/prisma
 COPY --from=build /repo/node_modules ./node_modules
 
 WORKDIR /repo/apps/api
+
 EXPOSE 3001
-CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node dist/index.js"]
+
+# Migrations are not run at container boot — run `pnpm --filter @vex/api exec prisma migrate deploy` once per deploy (release job / CI) before rolling out replicas. See deploy/README.md.
+CMD ["node", "/repo/apps/api/dist/index.js"]

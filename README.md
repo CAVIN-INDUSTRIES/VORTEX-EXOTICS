@@ -119,8 +119,8 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 
 ## Prerequisites
 
-- Node 20+
-- pnpm (install globally: `npm install -g pnpm`, or use `npx pnpm` for every command)
+- Node 22 (repo root `.node-version` and `package.json` `engines`; run `pnpm run node:check` to fail fast on the wrong major)
+- pnpm (install globally: `npm install -g pnpm`, or use `npx pnpm` for every command; `packageManager` pins 9.15.9 — `corepack enable` recommended)
 - PostgreSQL (for API)
 
 ## Setup
@@ -143,7 +143,7 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 
    - Copy `apps/api/.env.example` to `apps/api/.env` and set `DATABASE_URL` and `JWT_SECRET`.
    - Run migrations: `cd apps/api && npx prisma migrate deploy` (or `migrate dev` for a fresh DB).
-   - Seed the database (admin user, sample vehicles, inventory): `cd apps/api && npx pnpm run db:seed` or `npx prisma db seed`.
+   - Seed the database (admin user, sample vehicles, inventory): `cd apps/api && pnpm run db:seed` or `pnpm exec prisma db seed`.
    - Start API: `pnpm dev:api` (or `cd apps/api && npx tsx src/index.ts`)
 
 3. **Shared package** (required before API or apps that use it)
@@ -170,7 +170,7 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 |-------|------------------------|--------------------------------|
 | API   | `DATABASE_URL`         | PostgreSQL connection string (pooler or Accelerate) |
 | API   | `DIRECT_DATABASE_URL`  | Direct Postgres URL for migrations / long scripts |
-| API   | `REDIS_URL`              | Redis for BullMQ, cache, refresh tokens, rate limits |
+| API   | `REDIS_URL`              | Redis for BullMQ, cache, refresh tokens, rate limits — **required** when `NODE_ENV=production` (startup fails if unset); optional locally when not production |
 | API   | `JWT_SECRET`           | Secret for signing JWTs         |
 | API   | `PORT`                 | Server port (default 3001)      |
 | API   | `CORS_ORIGIN`          | Allowed origin (e.g. http://localhost:3000) |
@@ -185,10 +185,25 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 | Ops   | `PILOT_VERIFY_API_URL`  | Deployed API origin for `pnpm run pilot:verify` ([docs/PILOT_SHIP.md](docs/PILOT_SHIP.md)). |
 | Ops   | `PILOT_VERIFY_BRANDING_DOMAIN` | Optional: pilot `customDomain` to assert `GET /public/branding`. |
 
+### Env contract (Phase 0.4 / 0.5)
+
+`scripts/env-contract.mjs` defines **local**, **CI**, and **production** required keys, plus shell-safety lint for known `.env*` files. Use from repo root:
+
+| Command | When |
+|---------|------|
+| `pnpm run env:check:local` | After copying `.env.example` → `.env` / `.env.local` — validates API + web minimums for local dev. |
+| `pnpm run env:check:ci` | Simulates the CI contract (set `DATABASE_URL`, `DIRECT_DATABASE_URL`, `JWT_SECRET` in the shell or CI step env). |
+| `pnpm run env:check:production` | Staging/prod checklists — set **all** required keys in the process environment (see script). |
+
+`pnpm run ship:gate` and `pnpm run verify:ship` run `env:check:local` at the start (after loading local API env and clearing `NODE_ENV` where applicable), before build / Prisma / E2E.
+
+- **Where env may be read in code (policy):** [docs/stabilization/env-access-boundary.md](docs/stabilization/env-access-boundary.md)
+- **Shell scripts vs `env-contract` (local):** [docs/stabilization/local-orchestration.md](docs/stabilization/local-orchestration.md)
+
 ## Production deployment
 
 - **Chosen stack:** `apps/web` on **Vercel**, `apps/api` on **Railway**, **Neon Postgres**, **Upstash Redis**, and **Cloudflare R2** for media. See [docs/PRODUCTION_INFRASTRUCTURE_DECISION.md](docs/PRODUCTION_INFRASTRUCTURE_DECISION.md) and [docs/DEPLOYMENT_PUBLIC_STACK.md](docs/DEPLOYMENT_PUBLIC_STACK.md).
-- **API (Docker-first):** See [deploy/docker-compose.yml](deploy/docker-compose.yml), [deploy/.env.example](deploy/.env.example), and [deploy/README.md](deploy/README.md). With `NODE_ENV=production`, the process **exits on boot** if `CORS_ORIGIN` is empty or `*`, if `SKIP_VALUATION_ENV_CHECK` is set, or if valuation keys are missing — by design. Set `JWT_SECRET`, `REDIS_URL` (recommended), `PUBLIC_WEB_URL` (Stripe return URLs), and Stripe secrets if billing is live.
+- **API (Docker-first):** See [deploy/docker-compose.yml](deploy/docker-compose.yml), [deploy/.env.example](deploy/.env.example), and [deploy/README.md](deploy/README.md). **`prisma migrate deploy`** runs in your **release/deploy job** (once per deploy), **not** inside the API container **`CMD`** — [deploy/README.md](deploy/README.md) deploy order + [migration memo](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md). With `NODE_ENV=production`, the process **exits on boot** if `CORS_ORIGIN` is empty or `*`, if `SKIP_VALUATION_ENV_CHECK` is set, if valuation keys are missing, or if **`REDIS_URL`** is missing or blank — by design ([production env readiness](docs/stabilization/decisions/2026-04-27-production-env-readiness.md)). Local/dev without `NODE_ENV=production` may still omit Redis where in-memory fallback applies. Set `JWT_SECRET`, **`REDIS_URL`** (required for production), `PUBLIC_WEB_URL` (Stripe return URLs), and Stripe secrets if billing is live.
 - **Next.js (web + CRM):** Run `apps/web` and `apps/crm` on a second platform (Vercel, Fly.io, Railway, etc.) with the **same** `NEXT_PUBLIC_API_URL` pointing at the API origin. Compose in this repo targets the API and backing services by design.
 - **Pilot white-label (custom domain → tenant):** [docs/pilot-white-label-dns.md](docs/pilot-white-label-dns.md)
 - **Full pilot checklist (ordered):** [docs/PILOT_SHIP.md](docs/PILOT_SHIP.md). After the API is live, `PILOT_VERIFY_API_URL=… pnpm run pilot:verify` is the line between “builds” and “dealer-ready.”
@@ -201,15 +216,17 @@ Follow [docs/PILOT_SHIP.md](docs/PILOT_SHIP.md) end-to-end. Quick compile + DB i
 pnpm -w turbo run build && pnpm --filter @vex/api run test:e2e
 ```
 
-Or: `pnpm run release:pilot-check` (same commands). E2E needs a reachable Postgres (`DATABASE_URL`). For the **deployed** API, run `pnpm run pilot:verify` with `PILOT_VERIFY_API_URL` set.
+Or: `pnpm run release:pilot-check` (same commands). E2E needs a reachable Postgres (`DATABASE_URL`). For the **deployed** API, run `pnpm run pilot:verify` with `PILOT_VERIFY_API_URL` set — **after** deploy; it does **not** substitute **`ship:gate`** ([runbook memo](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md)).
 
 ## Quality gates
 
 | Gate | What it proves |
 |------|----------------|
-| **GitHub: `ci / build-and-api-e2e`** (workflow `ci.yml`) | Postgres + migrate + full `turbo` build + tenant isolation E2E on every PR / `main` push. Set branch protection to **require** this check. |
-| **`pnpm run ship:gate`** | Same sequence locally: `db:generate` → build → `migrate deploy` → `test:e2e` (appraisal + inventory isolation; needs `DATABASE_URL`). Not the same as `release:pilot-check` (build + E2E, no migrate). |
-| **`pnpm run pilot:verify`** | Deployed API is reachable and healthy (`PILOT_VERIFY_API_URL`). Dealer-ready line — see [docs/PILOT_SHIP.md](docs/PILOT_SHIP.md). |
+| **GitHub CI** (`ci.yml` — e.g. Turbo Gate / build + API E2E) | Postgres + migrate + full `turbo` build + tenant isolation E2E on PR / `main` push. Set branch protection to **require** this check. |
+| **`pnpm run ship:gate`** | **Pre-deploy / release bar:** **env contract (local)** → `db:generate` → build → `migrate deploy` → `test:e2e` — **not** a deployed URL check. See [pilot-verify memo](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md). |
+| **`pnpm run pilot:verify`** | **Post-deploy only:** set **`PILOT_VERIFY_API_URL`** to the live API origin — HTTP **`/health`** + **`/`** sanity ([docs/PILOT_SHIP.md](docs/PILOT_SHIP.md)). Does **not** replace **`ship:gate`**, migrations, or E2E. Default PR CI **often skips** when URL unset unless **`PILOT_VERIFY_STRICT`**. |
+
+**Smoke tiers (governance):** local env/build vs **`GET /health`** vs **`docker compose … config`** vs deployed **`pilot:verify`** — [deploy-smoke-test-strategy memo](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md).
 
 ## Scripts (from repo root)
 
@@ -224,6 +241,11 @@ Use `pnpm` or `npx pnpm` if pnpm isn’t installed globally:
 | `pnpm run release:pilot-check` | Turbo build + appraisal E2E (needs `DATABASE_URL`) |
 | `pnpm run ship:gate` | Generate + build + migrate + appraisal E2E — same bar as CI ([docs/PILOT_SHIP.md](docs/PILOT_SHIP.md)) |
 | `pnpm run pilot:verify` | After API is deployed: set `PILOT_VERIFY_API_URL`, then run ([docs/PILOT_SHIP.md](docs/PILOT_SHIP.md) Step 5) |
+| `pnpm run env:check:local` | Validate the local contract and lint known `.env*` files for shell-safety (`scripts/env-contract.mjs`) |
+| `pnpm run env:check:ci` | CI contract (set `DATABASE_URL`, `DIRECT_DATABASE_URL`, `JWT_SECRET`) |
+| `pnpm run env:check:production` | Production contract (all required API + web + CRM keys) |
+| `pnpm run node:check` | Assert current Node major matches `.node-version` / `engines` (CI runs this; use locally to match CI) |
+| `pnpm run web:lock:check` | Fail if `apps/web/.next/lock` exists (stale Next lock); does not delete anything — see `docs/stabilization/decisions/2026-04-27-next-build-lock-policy.md` and web vs CRM clean-build policy `docs/stabilization/decisions/2026-04-27-next-clean-build-policy.md` |
 | `pnpm run git:save -- "type: message"` | Stage all, commit, push current branch (default message if omitted). Use `GIT_SAVE_MSG` or pass a message after `--`. |
 | `pnpm run git:save:verify -- "type: message"` | Run `pnpm -w turbo run build`, then same as `git:save` (recommended before sharing). |
 | `cd apps/api && pnpm run db:seed` or `npx prisma db seed` | Seed DB (admin, vehicles, inventory) |

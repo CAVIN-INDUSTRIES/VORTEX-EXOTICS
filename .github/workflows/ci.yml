@@ -47,13 +47,23 @@ jobs:
       - name: Setup Node + pnpm + Turbo cache
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
+
+      - name: Node version contract
+        run: node scripts/assert-node-version.mjs
 
       - name: Install dependencies (pnpm store cache)
         run: pnpm install --frozen-lockfile
         env:
           CI: true
+
+      - name: Env contract (CI)
+        run: pnpm run env:check:ci
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex
+          DIRECT_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vex
+          JWT_SECRET: ci-env-contract-test
 
       - name: Install Playwright (Chromium) for web E2E
         run: pnpm --filter @vex/web exec playwright install --with-deps chromium

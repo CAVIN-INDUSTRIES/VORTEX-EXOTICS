@@ -39,9 +39,10 @@ export function assertProductionReady(): void {
   }
 
   if (!process.env.REDIS_URL?.trim()) {
-    console.warn(
-      "[production] REDIS_URL is not set — using in-memory rate limits and BullMQ/async jobs are disabled. Set REDIS_URL for pilot-grade reliability."
+    console.error(
+      "[production] REDIS_URL must be set to a non-empty connection string. Redis is required for queues, shared cache, refresh-token denylist, and distributed rate limits across replicas."
     );
+    process.exit(1);
   }
 
   requireCompleteIntegrationEnv(

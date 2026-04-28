@@ -14,10 +14,16 @@
     "dev:apex-v42": "NEXT_PUBLIC_CINEMATIC_SHADERS_V3=true pnpm --filter @vex/web dev",
     "dev:apex-v44": "NEXT_PUBLIC_CINEMATIC_SHADERS_V3=true pnpm --filter @vex/web dev",
     "dev:crm": "pnpm --filter @vex/crm dev",
+    "env:check": "node scripts/env-contract.mjs",
+    "env:check:local": "node scripts/env-contract.mjs local",
+    "env:check:ci": "node scripts/env-contract.mjs ci",
+    "env:check:production": "node scripts/env-contract.mjs production",
+    "node:check": "node scripts/assert-node-version.mjs",
+    "web:lock:check": "node scripts/check-next-lock.mjs",
     "build": "turbo run build",
     "turbo:build": "turbo run build --filter=[HEAD^1]",
     "turbo:ci": "turbo run build test:e2e ship:gate --filter=[HEAD^1] --concurrency=4",
-    "morning-gate": "pnpm turbo run build test:e2e ship:gate pilot:verify",
+    "morning-gate": "pnpm -w turbo run build test:e2e ship:gate pilot:verify",
     "build:api": "pnpm --filter @vex/api build",
     "build:web": "pnpm --filter @vex/web build",
     "build:web:vercel": "pnpm --filter @vex/shared run build && pnpm --filter @vex/cinematic run build && pnpm --filter @vex/3d-configurator run build && pnpm --filter @vex/ui run build && pnpm --filter @vex/design-system run build && pnpm --filter @vex/web run build",
@@ -45,7 +51,7 @@
     "git:save:verify": "bash scripts/git-save-verify.sh"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22 <23"
   },
   "devDependencies": {
     "turbo": "^2.9.3"

@@ -16,6 +16,10 @@ load_api_env() {
 }
 
 load_api_env
+unset NODE_ENV
+
+echo "==> Env contract (local)"
+pnpm run env:check:local
 
 echo "==> Prisma generate"
 pnpm --filter @vex/api run db:generate

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run from anywhere: full build + API e2e + ship gate (requires Node 20+ on PATH + DATABASE_URL).
+# Run from anywhere: full build + API e2e + ship gate (requires Node 22 per package.json engines + DATABASE_URL).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -7,7 +7,7 @@ cd "$ROOT"
 if ! command -v node >/dev/null 2>&1; then
   echo "ERROR: node is not on PATH."
   echo "  CachyOS/Arch: sudo pacman -S nodejs npm"
-  echo "  Or use fnm/nvm/asdf with Node >= 20 (see package.json engines)."
+  echo "  Or use fnm/nvm/asdf with Node 22 (see package.json engines)."
   exit 1
 fi
 
@@ -23,6 +23,10 @@ if [[ -f apps/api/.env.local ]]; then
   source apps/api/.env.local
   set +a
 fi
+unset NODE_ENV
+
+echo "==> Env contract (local)"
+pnpm run env:check:local
 
 if [[ -z "${DATABASE_URL:-}" ]]; then
   echo "ERROR: DATABASE_URL is not set."

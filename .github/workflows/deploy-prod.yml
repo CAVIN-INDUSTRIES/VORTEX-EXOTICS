@@ -34,10 +34,14 @@ jobs:
           version: 9.15.9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
+      - name: Node version contract
+        run: node scripts/assert-node-version.mjs
       - name: Install
         run: pnpm install --frozen-lockfile
+      - name: Env contract (CI)
+        run: pnpm run env:check:ci
       - name: Turbo Remote Cache
         uses: turborepo/action@v2
         with:
@@ -45,7 +49,7 @@ jobs:
           team: ${{ secrets.TURBO_TEAM }}
       - name: Prisma generate
         run: pnpm --filter @vex/api run db:generate
-      - name: Migrate (API E2E prerequisite)
+      - name: Migrate (API E2E prerequisite — production images no longer run migrate at container boot; align CI/host migrate step with deploy/README.md)
         working-directory: apps/api
         run: pnpm exec prisma migrate deploy
       - name: Security scan

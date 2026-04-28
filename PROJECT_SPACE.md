@@ -32,15 +32,35 @@ Use this file as the primary command center for execution.
 - Tenant/RBAC details: `docs/TENANT_RBAC.md`
 - Reality check memo: `docs/ENGINEERING_REALITY.md`
 - Competitive execution system: `docs/VEX_COMPETITIVE_EXECUTION_PLAN_2026-04-02.md`
+- **Phase 0.6 — Guardrails Review:** `docs/stabilization/phase-0.6-guardrails-review.md` (decision memos **Approved**; Phase 1.1–1.4 landed)
+- **Env access policy (docs):** `docs/stabilization/env-access-boundary.md`
+- **Local orchestration / env contract (docs):** `docs/stabilization/local-orchestration.md`
+- **Stabilization Phase 2 (complete):** `docs/stabilization/phase-2-build-graph-ci-parity-review.md` · **Workflow inventory:** `docs/stabilization/workflow-inventory-2026-04-27.md`
+- **Stabilization Phase 3 (governance complete):** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md) · **Evidence:** [runtime-deploy-inventory-2026-04-27.md](docs/stabilization/runtime-deploy-inventory-2026-04-27.md). **Memos:** migration [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md); production env / Redis [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md); smoke tiers [Approved — governance](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md); **`pilot:verify`** runbook [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
 - **Digital presence v2 (elite luxury framework):** `docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md`
 - **Elite digital presence v2.0 (Crown Jewel Protocol — full spec):** `docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md`
 - **Elite v2 summary checklist:** `docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md`
 - **Apex Studio `/build` (v2.1):** `docs/plans/2026-04-05-vex-apex-studio-configurator-v1.0.md`
 - **Elite digital presence v1** (**§0–§31** — WebGL §21+, VLR, Cox §28 / §28.3, **§29** **Always** background, **§30** **GLB + dry-run=text** + **`NEXT_PUBLIC_HERO_VEHICLE_GLB`** + Turbo **warm-up** + **`TURBO_CACHE`** + **`turbo.json`**, **§31** **pitch deck**): `docs/plans/2026-04-04-vex-ELITE-DIGITAL-PRESENCE-v1.md`
 
+## Phase 0.6 / Phase 1 guardrails (complete)
+
+Decision memos **Approved** (`docs/stabilization/decisions/`). Implemented: **Node version check** (`pnpm run node:check`), **Next lock detection** (`pnpm run web:lock:check`), **env access** + **local orchestration** docs. **Turbo `db:generate` graph:** [2026-04-27-turbo-db-generate-dependency.md](docs/stabilization/decisions/2026-04-27-turbo-db-generate-dependency.md) — **Approved — implemented**. **CRM `.next` clean vs web lock policy:** [2026-04-27-next-clean-build-policy.md](docs/stabilization/decisions/2026-04-27-next-clean-build-policy.md) — **Approved — implemented** (CRM behavior unchanged; future CRM edits need separate approval).
+
+## Stabilization Phase 2 — Build graph & CI parity (**complete**)
+
+**Turbo `db:generate`**, **CI workflow parity**, **release vs fast-feedback gates**, and **Next clean-build policy** — all **Approved — implemented**. See [phase-2-build-graph-ci-parity-review.md](docs/stabilization/phase-2-build-graph-ci-parity-review.md) and decision memos under `docs/stabilization/decisions/2026-04-27-*.md`. Inventory: [workflow-inventory-2026-04-27.md](docs/stabilization/workflow-inventory-2026-04-27.md).
+
+## Stabilization Phase 3 — Runtime & deploy readiness (**governance complete**)
+
+**Hub:** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md). **Migration:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md) — **`migrate deploy`** in release job; **`Dockerfile.api`** **`CMD`** = **`node` only**. **Production Redis:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md). **Smoke tiers:** [Approved — governance](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md). **`ship:gate`** vs **`pilot:verify`:** [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
+
 ## Standard Commands
 
 - Install: `pnpm install`
+- Node major (match CI): `pnpm run node:check`
+- Stale Next lock diagnostic: `pnpm run web:lock:check`
+- Env contract (local, before ship): `pnpm run env:check:local` (see `scripts/env-contract.mjs`; `ship:gate` / `verify:ship` also run this)
 - Build all: `pnpm -w turbo run build`
 - API E2E isolation: `pnpm --filter @vex/api run test:e2e`
 - CI mirror: `pnpm run ship:gate`

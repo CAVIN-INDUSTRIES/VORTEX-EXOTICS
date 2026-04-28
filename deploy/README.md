@@ -4,7 +4,7 @@ This folder is **API-first**: Postgres and Redis run here; `apps/web` and `apps/
 
 Recommended split:
 
-- `apps/web` -> **Vercel**
+- `apps/web` -> **Netlify**
 - `apps/api` -> **Railway**
 - Database -> **Neon Postgres**
 - Redis -> **Upstash Redis**
@@ -93,9 +93,10 @@ Kubernetes: mirror the same env contract—secrets for `JWT_SECRET`, Stripe, and
 
 ## Health checks (load balancer / pilot)
 
-**Smoke tiers (governance):** local **`env:check:local`** / build vs **`GET /health`** (API + DB) vs **`docker compose … config`** (syntax only) vs post-deploy **`pilot:verify`** — [2026-04-27-deploy-smoke-test-strategy.md](../docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md). **`pilot:verify`** is post-deploy and does **not** replace **`ship:gate`** ([runbook memo](../docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md)).
+**Smoke tiers (implemented):** local **`env:check:local`** / build vs **`GET /health`** (API + DB) vs compose **`config`** + API service healthcheck vs post-deploy **`pilot:verify`** — [2026-04-27-deploy-smoke-test-strategy.md](../docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md). **`pilot:verify`** is post-deploy and does **not** replace **`ship:gate`** ([runbook memo](../docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md)).
 
 - **`GET /health`** — expect **200** and JSON with `db: "ok"` and `status: "ok"` before sending customer traffic.
+- Compose `api` has a healthcheck that calls `http://127.0.0.1:3001/health` via Node `fetch`; orchestrators can rely on container health state before routing traffic.
 - **`GET /`** — quick JSON sanity check (API marker).
 
 After the container or process is reachable at your public API origin (TLS + DNS):
@@ -108,6 +109,23 @@ pnpm run pilot:verify
 ```
 
 Exit **0** = automated dealer-ready smoke passed. Runbook: [docs/PILOT_SHIP.md](../docs/PILOT_SHIP.md).
+
+## Netlify post-deploy public smoke
+
+After Netlify is live, run this public revenue smoke (blocks ship when core public workflow is broken):
+
+```bash
+PUBLIC_SITE_URL="https://vortex-exotics.netlify.app" \
+NEXT_PUBLIC_API_URL="https://api.your-domain.com" \
+PUBLIC_SMOKE_TENANT_ID="<tenant-id>" \
+pnpm run public:smoke
+```
+
+This verifies:
+
+- critical public pages render (`/`, `/inventory`, `/contact`, `/appraisal`, `/pricing`)
+- no placeholder contact/config text leaks publicly
+- anonymous lead intake works via `POST /public/leads`
 
 ## Demo data (optional)
 

@@ -203,11 +203,12 @@ If you add or change workspace packages, run `pnpm install` again so `pnpm-lock.
 
 ## Production deployment
 
-- **Chosen stack:** `apps/web` on **Vercel**, `apps/api` on **Railway**, **Neon Postgres**, **Upstash Redis**, and **Cloudflare R2** for media. See [docs/PRODUCTION_INFRASTRUCTURE_DECISION.md](docs/PRODUCTION_INFRASTRUCTURE_DECISION.md) and [docs/DEPLOYMENT_PUBLIC_STACK.md](docs/DEPLOYMENT_PUBLIC_STACK.md).
+- **Chosen stack:** `apps/web` on **Netlify**, `apps/api` on **Railway**, **Neon Postgres**, **Upstash Redis**, and **Cloudflare R2** for media. See [docs/PRODUCTION_INFRASTRUCTURE_DECISION.md](docs/PRODUCTION_INFRASTRUCTURE_DECISION.md) and [docs/DEPLOYMENT_PUBLIC_STACK.md](docs/DEPLOYMENT_PUBLIC_STACK.md).
 - **API (Docker-first):** See [deploy/docker-compose.yml](deploy/docker-compose.yml), [deploy/.env.example](deploy/.env.example), and [deploy/README.md](deploy/README.md). **`prisma migrate deploy`** runs in your **release/deploy job** (once per deploy), **not** inside the API container **`CMD`** — [deploy/README.md](deploy/README.md) deploy order + [migration memo](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md). With `NODE_ENV=production`, the process **exits on boot** if `CORS_ORIGIN` is empty or `*`, if `SKIP_VALUATION_ENV_CHECK` is set, if valuation keys are missing, or if **`REDIS_URL`** is missing or blank — by design ([production env readiness](docs/stabilization/decisions/2026-04-27-production-env-readiness.md)). Local/dev without `NODE_ENV=production` may still omit Redis where in-memory fallback applies. **`pnpm run env:check:production`** additionally requires **`PUBLIC_WEB_URL`** for Stripe return URL parity ([public web URL memo](docs/stabilization/decisions/2026-04-27-production-public-web-url-env-contract.md)). Set `JWT_SECRET`, **`REDIS_URL`**, **`PUBLIC_WEB_URL`**, and Stripe secrets if billing is live.
 - **Next.js (web + CRM):** Run `apps/web` and `apps/crm` on a second platform (Vercel, Fly.io, Railway, etc.) with the **same** `NEXT_PUBLIC_API_URL` pointing at the API origin. Compose in this repo targets the API and backing services by design.
 - **Pilot white-label (custom domain → tenant):** [docs/pilot-white-label-dns.md](docs/pilot-white-label-dns.md)
 - **Full pilot checklist (ordered):** [docs/PILOT_SHIP.md](docs/PILOT_SHIP.md). After the API is live, `PILOT_VERIFY_API_URL=… pnpm run pilot:verify` is the line between “builds” and “dealer-ready.”
+- **Public revenue smoke (Netlify):** `PUBLIC_SITE_URL=https://vortex-exotics.netlify.app NEXT_PUBLIC_API_URL=https://<api-origin> PUBLIC_SMOKE_TENANT_ID=<tenant-id> pnpm run public:smoke`
 
 ## Pilot release gate
 
@@ -227,7 +228,7 @@ Or: `pnpm run release:pilot-check` (same commands). E2E needs a reachable Postgr
 | **`pnpm run ship:gate`** | **Pre-deploy / release bar:** **env contract (local)** → `db:generate` → build → `migrate deploy` → `test:e2e` — **not** a deployed URL check. See [pilot-verify memo](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md). |
 | **`pnpm run pilot:verify`** | **Post-deploy only:** set **`PILOT_VERIFY_API_URL`** to the live API origin — HTTP **`/health`** + **`/`** sanity ([docs/PILOT_SHIP.md](docs/PILOT_SHIP.md)). Does **not** replace **`ship:gate`**, migrations, or E2E. Default PR CI **often skips** when URL unset unless **`PILOT_VERIFY_STRICT`**. |
 
-**Smoke tiers (governance):** local env/build vs **`GET /health`** vs **`docker compose … config`** vs deployed **`pilot:verify`** — [deploy-smoke-test-strategy memo](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md).
+**Smoke tiers (implemented):** local env/build vs **`GET /health`** vs compose **`config`** + API healthcheck vs deployed **`pilot:verify`** — [deploy-smoke-test-strategy memo](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md).
 
 ## Scripts (from repo root)
 

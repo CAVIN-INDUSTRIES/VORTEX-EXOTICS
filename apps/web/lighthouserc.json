@@ -7,14 +7,16 @@
         "http://127.0.0.1:3000/",
         "http://127.0.0.1:3000/configure",
         "http://127.0.0.1:3000/inventory",
-        "http://127.0.0.1:3000/build"
+        "http://127.0.0.1:3000/build",
+        "http://127.0.0.1:3000/contact",
+        "http://127.0.0.1:3000/pricing"
       ]
     },
     "assert": {
       "assertions": {
-        "categories:performance": ["warn", { "minScore": 0.8 }],
-        "categories:accessibility": ["error", { "minScore": 0.9 }],
-        "categories:seo": ["warn", { "minScore": 0.85 }]
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "categories:accessibility": ["error", { "minScore": 0.92 }],
+        "categories:seo": ["error", { "minScore": 0.9 }]
       }
     }
   }

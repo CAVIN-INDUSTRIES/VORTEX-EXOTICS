@@ -9,6 +9,24 @@ Use this file as the primary command center for execution.
 - Convert pilots to paid usage, not feature sprawl.
 - Execute competitive plan: `docs/VEX_COMPETITIVE_EXECUTION_PLAN_2026-04-02.md`.
 
+## Public Growth Workflow (Active)
+
+- **Sprint objective:** run the public site as a revenue system (visitor -> lead -> CRM -> follow-up -> close).
+- **Live production URL checked:** `https://vortex-exotics.netlify.app`
+- **Primary must-ship checklist:**
+  - [x] Anonymous lead intake endpoint (`POST /public/leads`) with tenant resolution + IP rate limiting + audit logging.
+  - [ ] Netlify production env fully configured (`NEXT_PUBLIC_API_URL`, contact email, contact phone, analytics keys).
+  - [ ] Public deploy smoke command wired into release workflow and used post-deploy.
+  - [ ] Homepage + pricing + contact copy aligned to buyer/seller/dealer conversion paths.
+  - [ ] No placeholder public text (`Not configured`, `Phone on request`, etc.) on live pages.
+- **Open blockers:**
+  - Netlify deploy propagation lag can temporarily show stale copy after push.
+  - Contact/env placeholders remain until production vars are set in Netlify.
+- **Verification commands run (latest cycle):**
+  - `pnpm --filter @vex/api run build`
+  - `pnpm --filter @vex/web run build`
+  - `pnpm -w turbo run build`
+
 ## 14-Day Beachhead Sprint
 
 ### Must Ship
@@ -36,7 +54,7 @@ Use this file as the primary command center for execution.
 - **Env access policy (docs):** `docs/stabilization/env-access-boundary.md`
 - **Local orchestration / env contract (docs):** `docs/stabilization/local-orchestration.md`
 - **Stabilization Phase 2 (complete):** `docs/stabilization/phase-2-build-graph-ci-parity-review.md` · **Workflow inventory:** `docs/stabilization/workflow-inventory-2026-04-27.md`
-- **Stabilization Phase 3 (governance complete):** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md) · **Evidence:** [runtime-deploy-inventory-2026-04-27.md](docs/stabilization/runtime-deploy-inventory-2026-04-27.md). **Memos:** migration [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md); production env / Redis [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md); **`PUBLIC_WEB_URL`** contract [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-public-web-url-env-contract.md); smoke tiers [Approved — governance](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md); **`pilot:verify`** runbook [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
+- **Stabilization Phase 3 (governance complete):** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md) · **Evidence:** [runtime-deploy-inventory-2026-04-27.md](docs/stabilization/runtime-deploy-inventory-2026-04-27.md). **Memos:** migration [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md); production env / Redis [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md); **`PUBLIC_WEB_URL`** contract [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-public-web-url-env-contract.md); smoke tiers [Approved — implemented](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md); **`pilot:verify`** runbook [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
 - **Digital presence v2 (elite luxury framework):** `docs/plans/2026-04-05-vex-DIGITAL-PRESENCE-v2-ELITE.md`
 - **Elite digital presence v2.0 (Crown Jewel Protocol — full spec):** `docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.0.md`
 - **Elite v2 summary checklist:** `docs/plans/2026-04-05-vex-ELITE-DIGITAL-PRESENCE-v2.md`
@@ -53,7 +71,7 @@ Decision memos **Approved** (`docs/stabilization/decisions/`). Implemented: **No
 
 ## Stabilization Phase 3 — Runtime & deploy readiness (**governance complete**)
 
-**Hub:** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md). **Migration:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md) — **`migrate deploy`** in release job; **`Dockerfile.api`** **`CMD`** = **`node` only**. **Production Redis:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md). **Smoke tiers:** [Approved — governance](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md). **`ship:gate`** vs **`pilot:verify`:** [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
+**Hub:** [phase-3-runtime-deploy-readiness.md](docs/stabilization/phase-3-runtime-deploy-readiness.md). **Migration:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-api-container-migration-responsibility.md) — **`migrate deploy`** in release job; **`Dockerfile.api`** **`CMD`** = **`node` only**. **Production Redis:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-production-env-readiness.md). **Smoke tiers:** [Approved — implemented](docs/stabilization/decisions/2026-04-27-deploy-smoke-test-strategy.md). **`ship:gate`** vs **`pilot:verify`:** [Approved — governance](docs/stabilization/decisions/2026-04-27-pilot-verify-runbook-consistency.md).
 
 ## Standard Commands
 

@@ -14,6 +14,7 @@ Clarify migrations at boot vs CI vs workflows, smoke tiers, production env layer
 |------|--------|--------|
 | [2026-04-27-api-container-migration-responsibility.md](decisions/2026-04-27-api-container-migration-responsibility.md) | Release job owns **`migrate deploy`**; **`CMD`** = app only | **Approved — implemented** |
 | [2026-04-27-production-env-readiness.md](decisions/2026-04-27-production-env-readiness.md) | **`REDIS_URL`** required when **`NODE_ENV=production`** | **Approved — implemented** |
+| [2026-04-27-production-public-web-url-env-contract.md](decisions/2026-04-27-production-public-web-url-env-contract.md) | **`PUBLIC_WEB_URL`** in **`env-contract`** **`production`** | **Approved — implemented** |
 | [2026-04-27-deploy-smoke-test-strategy.md](decisions/2026-04-27-deploy-smoke-test-strategy.md) | Smoke tiers (local / **`/health`** / compose config / deployed **`pilot:verify`**) | **Approved — governance implemented** |
 | [2026-04-27-pilot-verify-runbook-consistency.md](decisions/2026-04-27-pilot-verify-runbook-consistency.md) | **`ship:gate`** vs **`pilot:verify`**; CI skip semantics | **Approved — governance implemented** |
 

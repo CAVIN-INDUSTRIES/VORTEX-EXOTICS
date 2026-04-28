@@ -125,7 +125,7 @@ export default function ContactPage() {
       </MotionReveal>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <MotionReveal className="glass-panel rounded-[2rem] p-7 sm:p-9">
+        <MotionReveal className="rounded-2xl border border-white/10 p-7 sm:p-9">
           <p className="section-kicker">Direct line</p>
           <h2 className="mt-4 text-3xl text-[#fff8eb]">VEX Auto private acquisitions</h2>
           <div className="mt-6 space-y-4 text-sm leading-7 text-[#d8d0c2]">
@@ -136,7 +136,7 @@ export default function ContactPage() {
           </div>
         </MotionReveal>
 
-        <MotionReveal delay={0.08} className="cinema-panel rounded-[2rem] p-7 sm:p-9">
+        <MotionReveal delay={0.08} className="rounded-2xl border border-white/10 p-7 sm:p-9">
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="grid gap-2">
               <span className="text-sm text-[#ddd4c6]">Name</span>
@@ -183,7 +183,7 @@ export default function ContactPage() {
             <span className="text-sm text-[#ddd4c6]">I am a</span>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {["Buyer", "Seller"].map((option) => (
-                <label key={option} className="flex items-center gap-3 rounded-[1.25rem] border border-white/10 bg-white/[0.05] px-4 py-3 text-sm text-[#f5f1e8]">
+                <label key={option} className="flex items-center gap-3 rounded-md border border-white/10 px-4 py-3 text-sm text-[#f5f1e8]">
                   <input
                     type="radio"
                     name="role"

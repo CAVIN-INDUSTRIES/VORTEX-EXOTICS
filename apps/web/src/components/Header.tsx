@@ -60,8 +60,8 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-3 py-2 font-[family-name:var(--font-montserrat)] text-[0.7rem] uppercase tracking-[0.24em] transition ${
-                  active ? "bg-white/[0.07] text-[#fff8eb]" : "text-[#d6ccbd]/72 hover:bg-white/[0.04] hover:text-[#f1d38a]"
+                className={`relative rounded-md px-3 py-2 font-[family-name:var(--font-montserrat)] text-[0.7rem] uppercase tracking-[0.24em] transition ${
+                  active ? "text-[#fff8eb]" : "text-[#d6ccbd]/72 hover:text-[#f1d38a]"
                 }`}
                 onClick={() => setMenuOpen(false)}
               >
@@ -72,7 +72,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/appraisal" className="hidden rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#f5f1e8] transition hover:border-[#f1d38a]/28 hover:bg-white/[0.08] lg:inline-flex">
+          <Link href="/appraisal" className="hidden rounded-md border border-white/12 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#f5f1e8] transition hover:border-[#f1d38a]/28 lg:inline-flex">
             Request Appraisal
           </Link>
           <Link href="/contact" className="gold-button hidden sm:inline-flex">
@@ -114,7 +114,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.25 }}
-              className="absolute inset-x-5 top-24 rounded-[2rem] border border-[#f1d38a]/16 bg-[#111111]/90 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl"
+              className="absolute inset-x-5 top-24 rounded-2xl border border-[#f1d38a]/16 bg-[#111111]/90 p-6 shadow-[0_24px_56px_rgba(0,0,0,0.36)] backdrop-blur-xl"
             >
               <p className="text-xs uppercase tracking-[0.32em] text-[#f1d38a]/70">Navigate the estate</p>
               <div className="mt-5 grid gap-3">
@@ -122,7 +122,7 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-[#f5f1e8]"
+                    className="rounded-md border border-white/10 px-4 py-3 text-[#f5f1e8]"
                     onClick={() => setMenuOpen(false)}
                   >
                     {item.label}

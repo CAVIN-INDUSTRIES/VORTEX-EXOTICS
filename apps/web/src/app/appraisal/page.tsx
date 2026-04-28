@@ -136,22 +136,22 @@ export default function AppraisalPage() {
       <SectionShell variant="default" atmosphere={<AutomotiveAtmosphere variant="auth" intensity="medium" />}>
         <EditorialContainer>
       <MotionReveal className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-        <div className="glass-panel rounded-[2rem] p-7 sm:p-9">
+        <div className="rounded-2xl border border-white/10 p-7 sm:p-9">
           <EditorialHeader
             eyebrow="Private valuation intake"
             title="A premium appraisal flow built around confidence, not guesswork."
             description="Submit the vehicle for a discreet review that considers market timing, condition quality, provenance, and acquisition fit. No noisy onboarding, just the details needed to start a serious valuation conversation."
           />
-          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+          <div className="mt-8 grid gap-3 text-sm text-[#d8d0c2]">
             {["Private submission", "Expert review", "Market-aware guidance"].map((signal) => (
-              <div key={signal} className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
-                <p className="text-sm text-[#fff8eb]">{signal}</p>
+              <div key={signal} className="border-b border-white/10 pb-3 last:border-b-0 last:pb-0">
+                <p>{signal}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="cinema-panel rounded-[2rem] p-7 sm:p-9">
+        <div className="rounded-2xl border border-white/10 p-7 sm:p-9">
           {result ? (
             <div>
               <p className="section-kicker">Submitted</p>
@@ -239,7 +239,7 @@ export default function AppraisalPage() {
                 {loading ? "Submitting..." : "Request Private Valuation"}
               </button>
 
-              <div className="mt-6 rounded-[1.35rem] border border-white/10 bg-black/20 p-4 text-sm leading-7 text-[#d8d0c2]">
+              <div className="mt-6 border-t border-white/10 pt-4 text-sm leading-7 text-[#d8d0c2]">
                 <p className="section-kicker">Manual fallback</p>
                 <p className="mt-3">
                   If the live intake line is unavailable, the concierge team can still review the vehicle directly.
@@ -271,14 +271,14 @@ export default function AppraisalPage() {
 
       <MotionReveal className="mt-12 grid gap-6 lg:grid-cols-3">
         {methodology.map((item) => (
-          <div key={item.title} className="glass-panel rounded-[1.75rem] p-6">
+          <div key={item.title} className="rounded-xl border border-white/10 p-6">
             <p className="section-kicker">{item.title}</p>
             <p className="mt-5 text-sm leading-7 text-[#d8d0c2]">{item.copy}</p>
           </div>
         ))}
       </MotionReveal>
 
-      <MotionReveal className="mt-12 cinema-panel rounded-[2rem] p-7 sm:p-9">
+      <MotionReveal className="mt-12 rounded-2xl border border-white/10 p-7 sm:p-9">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="section-kicker">Review timeline</p>
@@ -290,7 +290,7 @@ export default function AppraisalPage() {
           </div>
           <div className="grid gap-4">
             {timeline.map((step, index) => (
-              <div key={step} className="rounded-[1.35rem] border border-white/10 bg-black/24 p-5">
+              <div key={step} className="border-b border-white/10 pb-4 last:border-b-0 last:pb-0">
                 <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#f1d38a]/70">Step 0{index + 1}</p>
                 <p className="mt-3 text-sm leading-7 text-[#d8d0c2]">{step}</p>
               </div>
@@ -300,7 +300,7 @@ export default function AppraisalPage() {
       </MotionReveal>
 
       <MotionReveal className="mt-12 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <div className="glass-panel rounded-[2rem] p-7 sm:p-9">
+        <div className="rounded-2xl border border-white/10 p-7 sm:p-9">
           <p className="section-kicker">Privacy standard</p>
           <h2 className="mt-4 text-3xl text-[#fff8eb]">Your vehicle data should not feel like a lead form commodity.</h2>
           <p className="mt-5 text-sm leading-7 text-[#d8d0c2]">
@@ -308,7 +308,7 @@ export default function AppraisalPage() {
             and concierge follow-up should happen with purpose, not generic sales pressure.
           </p>
         </div>
-        <div className="glass-panel rounded-[2rem] p-7 sm:p-9">
+        <div className="rounded-2xl border border-white/10 p-7 sm:p-9">
           <p className="section-kicker">Condition guidance</p>
           <div className="mt-5 grid gap-3 text-sm leading-7 text-[#d8d0c2]">
             <p>Excellent: documented care, strong cosmetics, clean ownership story.</p>
